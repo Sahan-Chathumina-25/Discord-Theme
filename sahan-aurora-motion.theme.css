@@ -1,0 +1,2670 @@
+/**
+ * @name S A H A N — Aurora Motion
+ * @author Sahan
+ * @version 1.0.0
+ * @description Premium dark aurora theme translated from sahancs.is-a.dev — ink #07090d base, sky-400 #38bdf8 accent, Space Grotesk headings, multi-layer animated aurora background, glass surfaces, subtle micro-interactions. For BetterDiscord / Vencord.
+ * @source https://sahancs.is-a.dev
+ * @website https://sahancs.is-a.dev
+ */
+
+/* ===== 01 DESIGN TOKENS ===== */
+/* Measured live from https://sahancs.is-a.dev — do not restyle. */
+:root {
+  /* --- ClearVision-style user settings: edit these to customize --- */
+  --background-image: none;
+  --channel-unread: #38bdf8;
+  --channel-color: #cfccc2;
+  --muted-color: rgba(208, 205, 195, 0.55);
+  --online: #23a55a;
+  --idle: #f0b232;
+  --dnd: #f23f43;
+  --streaming: #a970ff;
+  --offline: #6d6f78;
+  --main-font: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --code-font: "JetBrains Mono", "Cascadia Code", "Fira Code", ui-monospace, SFMono-Regular, Menlo, monospace;
+  --channels-width: 240px;
+  --members-width: 240px;
+
+  /* --- S A H A N identity (mapped onto settings above) --- */
+  --sahan-bg: #07090d;
+  --sahan-bg-deep: #04060a;
+  --sahan-surface: #10141b;
+  --sahan-elevated: #171d27;
+  --sahan-card: rgba(16, 20, 27, 0.6);
+  --sahan-card-border: rgba(255, 255, 255, 0.1);
+  --sahan-primary: #38bdf8;
+  --sahan-secondary: #22d3ee;
+  --sahan-accent: #38bdf8;
+  --sahan-violet: #a78bfa;
+  --sahan-text: #f4f2ec;
+  --sahan-text-secondary: #cfccc2;
+  --sahan-text-muted: rgba(208, 205, 195, 0.7);
+  --sahan-border: rgba(255, 255, 255, 0.1);
+  --sahan-border-active: rgba(56, 189, 248, 0.4);
+  --sahan-accent-line: rgba(56, 189, 248, 0.25);
+  --sahan-selection: rgba(56, 189, 248, 0.3);
+  --sahan-btn-text: #07090d;
+  --sahan-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  --sahan-shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.6);
+  --sahan-glow: 0 0 18px rgba(56, 189, 248, 0.28);
+  --sahan-glow-soft: 0 0 12px rgba(56, 189, 248, 0.16);
+  --sahan-radius-xs: 4px;
+  --sahan-radius-sm: 6px;
+  --sahan-radius-md: 8px;
+  --sahan-radius-lg: 12px;
+  --sahan-radius-xl: 16px;
+  --sahan-radius-pill: 9999px;
+  --sahan-font-heading: "Space Grotesk", "Inter", system-ui, sans-serif;
+  --sahan-font-body: var(--main-font);
+  --sahan-font-code: var(--code-font);
+  --sahan-font-eyebrow: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  --sahan-blur: 12px;
+  --sahan-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --sahan-ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  --sahan-fast: 160ms;
+  --sahan-normal: 280ms;
+  --sahan-slow: 500ms;
+  --sahan-duration-fast: 140ms;
+  --sahan-duration-normal: 240ms;
+  --sahan-duration-medium: 360ms;
+  --sahan-duration-slow: 700ms;
+  --sahan-grid: linear-gradient(rgba(56, 189, 248, 0.05) 1px, transparent 0), linear-gradient(90deg, rgba(56, 189, 248, 0.05) 1px, transparent 0);
+  --sahan-vignette: radial-gradient(ellipse at top, transparent 40%, rgba(7, 9, 13, 0.9) 100%);
+  --sahan-online: var(--online);
+  --sahan-idle: var(--idle);
+  --sahan-dnd: var(--dnd);
+  --sahan-streaming: var(--streaming);
+  --sahan-offline: var(--offline);
+  --sahan-channels-width: var(--channels-width);
+  --sahan-members-width: var(--members-width);
+}
+
+/* ===== 02 GLOBAL DISCORD VARIABLES ===== */
+/* Map Discord's native theme variables onto the sahan tokens so every
+   unthemed surface inherits the portfolio palette automatically.
+   ClearVision-v7 architecture: background vars are TRANSLUCENT ink tints
+   (alpha tuned per surface), never opaque hex — Discord paints rail /
+   sidebar / scrollers / panels with these vars on inner wrappers, so
+   opaque fills would bury the §04/§05 aurora. The native bg element (§04)
+   carries the static aurora safety net underneath. */
+:root {
+  --background-primary: rgba(16, 20, 27, 0.72);
+  --background-secondary: rgba(7, 9, 13, 0.62);
+  --background-secondary-alt: rgba(7, 9, 13, 0.68);
+  --background-tertiary: rgba(4, 6, 10, 0.55);
+  --background-accent: var(--sahan-primary);
+  --background-floating: rgba(23, 29, 39, 0.94);
+  --background-mobile-primary: rgba(16, 20, 27, 0.72);
+  --background-mobile-secondary: rgba(7, 9, 13, 0.62);
+  --background-modifier-hover: rgba(56, 189, 248, 0.12);
+  --background-modifier-active: rgba(56, 189, 248, 0.14);
+  --background-modifier-selected: rgba(56, 189, 248, 0.18);
+  --background-modifier-accent: rgba(56, 189, 248, 0.25);
+  --modal-background: rgba(16, 20, 27, 0.96);
+  --text-normal: var(--sahan-text);
+  --text-muted: var(--sahan-text-muted);
+  --text-link: var(--sahan-primary);
+  --text-positive: var(--sahan-online);
+  --text-warning: var(--sahan-idle);
+  --text-danger: var(--sahan-dnd);
+  --interactive-normal: var(--sahan-text-secondary);
+  --interactive-hover: var(--sahan-text);
+  --interactive-active: var(--sahan-text);
+  --interactive-muted: var(--sahan-text-muted);
+  --brand-500: var(--sahan-primary);
+  --brand-560: var(--sahan-primary);
+  --brand-600: var(--sahan-primary);
+  --control-brand-foreground: var(--sahan-btn-text);
+  --info-positive-foreground: var(--sahan-online);
+  --info-warning-foreground: var(--sahan-idle);
+  --info-danger-foreground: var(--sahan-dnd);
+  --status-positive: var(--sahan-online);
+  --status-warning: var(--sahan-idle);
+  --status-danger: var(--sahan-dnd);
+  --input-background: var(--sahan-elevated);
+  --channeltextarea-background: var(--sahan-surface);
+  --scrollbar-thin-thumb: rgba(56, 189, 248, 0.25);
+  --scrollbar-thin-track: transparent;
+  --scrollbar-auto-thumb: rgba(148, 163, 184, 0.25);
+  --scrollbar-auto-track: transparent;
+  --elevation-stroke: var(--sahan-card-border);
+  --elevation-low: var(--sahan-shadow);
+  --elevation-medium: var(--sahan-shadow);
+  --elevation-high: var(--sahan-shadow-lg);
+}
+
+/* --- VISUAL REFRESH TOKENS (current Discord — verified against live CSS) ---
+   Discord's visual refresh retired --background-primary/secondary/tertiary and
+   --background-modifier-* (undefined and unused on current Discord; empty
+   computed values, zero defining rules). The legacy remaps above are kept as
+   harmless compat for any stragglers.
+   Current Discord defines on .theme-dark (specificity 0,1,0) and paints with:
+   - guild rail sections (.guildSection_*) -> var(--background-base-lower)
+   - channel sidebar (.sidebar__5e434) -> var(--background-base-lower)
+   - side column (.sidebar_df4c28), chat scroller (.scroller__00843),
+     .sidebar__5e434:after -> var(--background-base-lowest)
+   - user panel / private channels / scrollers (.guildSidebar__1add6,
+     .privateChannels_e6b769, .scroller__99e7c, .panels__5e434) ->
+     var(--background-gradient-high, var(--background-base-lowest)) /
+     var(--background-gradient-highest, var(--background-base-low))
+   - topics scroller -> var(--background-gradient-lower, var(--background-base-lower))
+   - app bg layer (.bg__960e4) ->
+     var(--background-gradient-app-frame, var(--background-base-lowest))
+   - hovers (.peopleListItem:hover, .item_c1e9c4:hover, ...) ->
+     var(--background-mod-subtle); active/selected -> var(--background-mod-normal)
+   Declared on :root, html.theme-dark to out-specify Discord's .theme-dark.
+   --background-gradient-high/lower/highest are INTENTIONALLY left undefined so
+   they fall through to these remapped base tokens (translucent glass
+   everywhere automatically). Safe: #app-mount already sets
+   color: var(--sahan-text) via id selector, beating .appMount's inherited
+   color: var(--background-base-lowest). */
+:root,
+html.theme-dark {
+  --background-base-lowest: rgba(4, 6, 10, 0.45);
+  --background-base-lower: rgba(7, 9, 13, 0.55);
+  --background-base-low: rgba(16, 20, 27, 0.6);
+  --background-surface-high: rgba(23, 29, 39, 0.92);
+  --background-surface-higher: rgba(23, 29, 39, 0.95);
+  --background-surface-highest: rgba(23, 29, 39, 0.97);
+  --background-mod-muted: rgba(56, 189, 248, 0.07);
+  --background-mod-subtle: rgba(56, 189, 248, 0.12);
+  --background-mod-normal: rgba(56, 189, 248, 0.18);
+  --background-mod-strong: rgba(56, 189, 248, 0.24);
+  /* Same static aurora stack as the §04 native bg layer safety net — one
+     source of truth, same visual. Defining --background-gradient-app-frame
+     makes Discord paint OUR value on its native .bg__960e4 layer (undefined
+     by default, would fall back to flat base-lowest). See §04. */
+  --background-gradient-app-frame:
+    radial-gradient(900px 480px at 12% -6%, rgba(56, 189, 248, 0.09), transparent 60%),
+    radial-gradient(860px 520px at 88% 4%, rgba(167, 139, 250, 0.08), transparent 62%),
+    radial-gradient(700px 500px at 50% 110%, rgba(34, 211, 238, 0.05), transparent 60%),
+    linear-gradient(180deg, #04060a 0%, #07090d 100%);
+}
+
+/* ===== 03 BASE APPLICATION ===== */
+/* Fallback page color lives on html ONLY — body / appMount stay transparent
+   so the §04 backdrop stack shows through (ClearVision step 1). */
+html {
+  background-color: var(--sahan-bg-deep);
+}
+
+body,
+#app-mount,
+div[class*="appMount-"],
+div[class*="appMount__"] {
+  background-color: transparent;
+  color: var(--sahan-text);
+  font-family: var(--sahan-font-body);
+  text-rendering: optimizeLegibility;
+}
+
+/* Transparency chain: intermediate layers stay transparent so the layered
+   backdrop (§04/§05) shows through. Scoped to direct app children and the
+   known layer wrappers only — never a bare div[class*="bg"] nuke. */
+#app-mount > div[class*="app-"],
+#app-mount > div[class*="app__"],
+#app-mount > div[class*="app_"],
+#app-mount > div[class*="bg-"],
+#app-mount > div[class*="bg__"],
+div[class*="appMount-"] > div[class*="app-"],
+div[class*="appMount__"] > div[class*="app__"],
+div[class*="appMount-"] > div[class*="app_"],
+div[class*="appMount__"] > div[class*="app_"],
+div[class*="appMount-"] > div[class*="bg-"],
+div[class*="appMount__"] > div[class*="bg__"],
+#app-mount div[class*="layers-"],
+#app-mount div[class*="layers__"],
+#app-mount div[class*="layer-"],
+#app-mount div[class*="layer__"],
+div[class*="appMount-"] div[class*="layers-"],
+div[class*="appMount__"] div[class*="layers__"],
+div[class*="appMount-"] div[class*="layer-"],
+div[class*="appMount__"] div[class*="layer__"],
+#app-mount div[class*="base-"],
+#app-mount div[class*="base__"],
+#app-mount div[class*="base_"],
+div[class*="layerContainer-"],
+div[class*="layerContainer__"],
+#app-mount main,
+main[class*="chatContent-"],
+main[class*="chatContent__"],
+div[class*="chatContent-"],
+div[class*="chatContent__"] {
+  background-color: transparent;
+  border-color: var(--sahan-border);
+}
+
+/* Transparency extension (rail + sidebar innards): Discord paints these
+   inner wrappers natively with --background-secondary / --background-tertiary
+   (mapped to opaque ink in §02), which buries the §06/§07 glass roots and
+   hides the §04 fixed aurora + §05 orb glows behind flat black. Scoped to
+   rail/sidebar ancestry only — chat keeps its §09 readability wash, and
+   popovers / modals / settings keep their surfaces. */
+#app-mount div[class*="base-"] > div[class*="content-"],
+#app-mount div[class*="base__"] > div[class*="content__"],
+#app-mount div[class*="base_"] > div[class*="content_"],
+nav[aria-label="Servers"] div[class*="scroller-"],
+nav[aria-label="Servers"] div[class*="scroller__"],
+nav[class*="guilds-"] div[class*="scroller-"],
+nav[class*="guilds__"] div[class*="scroller__"],
+div[class*="guilds-"] div[class*="scroller-"],
+div[class*="guilds__"] div[class*="scroller__"],
+nav[aria-label="Servers"] div[class*="tree-"],
+nav[aria-label="Servers"] div[class*="tree__"],
+nav[class*="guilds-"] div[class*="tree-"],
+nav[class*="guilds__"] div[class*="tree__"],
+nav[class*="guilds-"] div[class*="stack-"],
+nav[class*="guilds__"] div[class*="stack__"],
+div[class*="sidebar-"] div[class*="content-"],
+div[class*="sidebar__"] div[class*="content__"],
+div[class*="sidebar-"] div[class*="scroller-"],
+div[class*="sidebar__"] div[class*="scroller__"],
+div[class*="sidebar-"] div[class*="sidebarList-"],
+div[class*="sidebar__"] div[class*="sidebarList__"],
+div[class*="sidebar-"] nav[class*="privateChannels-"],
+div[class*="sidebar__"] nav[class*="privateChannels__"],
+div[class*="sidebar-"] ul[class*="content-"],
+div[class*="sidebar__"] ul[class*="content__"] {
+  background-color: transparent !important;
+}
+
+body, button, input, textarea, select {
+  font-family: var(--sahan-font-body);
+}
+
+h1, h2 {
+  font-family: var(--sahan-font-heading);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--sahan-text);
+}
+
+h3 {
+  font-family: var(--sahan-font-heading);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--sahan-primary);
+}
+
+code, pre,
+span[class*="inlineCode-"],
+div[class*="codeBlock-"] {
+  font-family: var(--sahan-font-code);
+}
+
+div[class*="markup-"],
+div[class*="messageContent-"] {
+  line-height: 1.6;
+  color: var(--sahan-text);
+}
+
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+::selection {
+  background: var(--sahan-selection);
+  color: #ffffff;
+}
+
+/* ===== 04 ANIMATED BACKGROUND ===== */
+/* Signature fixed layered system on the app mount. Stack order:
+   html base (§03) → app-mount::before base coat (z 0) → body::before
+   companion glow (z 1) → app-mount::after drift glow (z 2) →
+   body::after grid (z 3) → bg::before constellation A (z 4) →
+   bg::after constellation B (z 5) → vignette on html (z 6) →
+   content (z 10). Transform/opacity animation only. */
+#app-mount,
+div[class*="appMount-"],
+div[class*="appMount__"] {
+  background-color: transparent;
+}
+
+/* Native bg layer safety net (ClearVision step 2): Discord structures this
+   element behind app content, so nothing can bury it. Static aurora stack,
+   no animation — the §04/§05 pseudo-layers above provide the motion. */
+#app-mount div[class*="bg-"],
+#app-mount div[class*="bg__"],
+div[class*="appMount-"] div[class*="bg-"],
+div[class*="appMount__"] div[class*="bg__"] {
+  background:
+    radial-gradient(900px 480px at 12% -6%, rgba(56, 189, 248, 0.09), transparent 60%),
+    radial-gradient(860px 520px at 88% 4%, rgba(167, 139, 250, 0.08), transparent 62%),
+    radial-gradient(700px 500px at 50% 110%, rgba(34, 211, 238, 0.05), transparent 60%),
+    linear-gradient(180deg, #04060a 0%, #07090d 100%);
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
+
+/* Thin app-root wash (ClearVision step 3): readability over the aurora
+   without hiding its motion. */
+#app-mount > div[class*="app-"],
+#app-mount > div[class*="app__"],
+div[class*="appMount-"] > div[class*="app-"],
+div[class*="appMount__"] > div[class*="app__"] {
+  background: rgba(7, 9, 13, 0.28);
+}
+
+div[class*="appMount-"]::before,
+div[class*="appMount__"]::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(900px 480px at 12% -6%, rgba(56, 189, 248, 0.09), transparent 60%),
+    radial-gradient(860px 520px at 88% 4%, rgba(167, 139, 250, 0.08), transparent 62%),
+    radial-gradient(700px 500px at 50% 110%, rgba(34, 211, 238, 0.05), transparent 60%),
+    var(--background-image);
+  background-color: transparent;
+  background-position: center, center, center, center;
+  background-size: auto, auto, auto, cover;
+  background-repeat: no-repeat;
+  z-index: 0;
+}
+
+/* Slow sky-glow drift above the base coat, below content. */
+div[class*="appMount-"]::after,
+div[class*="appMount__"]::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(640px 340px at 22% 18%, rgba(56, 189, 248, 0.07), transparent 70%),
+    radial-gradient(620px 360px at 78% 12%, rgba(167, 139, 250, 0.06), transparent 70%);
+  opacity: 0.9;
+  animation: sahanGlowDrift 26s ease-in-out infinite alternate;
+  z-index: 2;
+}
+
+/* Companion ultra-soft glow: second independent drift axis. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(720px 420px at 18% 82%, rgba(56, 189, 248, 0.08), transparent 65%),
+    radial-gradient(760px 440px at 84% 78%, rgba(34, 211, 238, 0.05), transparent 65%);
+  opacity: 0.8;
+  animation: sahanAuroraThree 42s ease-in-out infinite alternate-reverse;
+  z-index: 1;
+}
+
+/* Faint cyan technical grid — portfolio signature, static. */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image: var(--sahan-grid);
+  background-size: 48px 48px;
+  background-repeat: repeat;
+  opacity: 1;
+  z-index: 3;
+}
+
+/* Constellation layer A: sparse wandering specks + faint network-node
+   fragments, drifting down-right. */
+#app-mount div[class*="bg-"]::before,
+#app-mount div[class*="bg__"]::before,
+div[class*="appMount-"] div[class*="bg-"]::before,
+div[class*="appMount__"] div[class*="bg__"]::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    radial-gradient(circle at 48px 64px, rgba(56, 189, 248, 0.85) 1.5px, transparent 2.3px),
+    radial-gradient(circle at 210px 180px, rgba(34, 211, 238, 0.85) 1px, transparent 1.8px),
+    radial-gradient(circle at 262px 292px, rgba(167, 139, 250, 0.8) 1.5px, transparent 2.3px),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='380' height='380'%3E%3Cg stroke='%2338bdf8' stroke-opacity='0.12' stroke-width='1'%3E%3Cline x1='60' y1='80' x2='94' y2='92'/%3E%3Cline x1='200' y1='240' x2='194' y2='268'/%3E%3Cline x1='300' y1='120' x2='322' y2='128'/%3E%3C/g%3E%3C/svg%3E");
+  background-size: 320px 320px, 320px 320px, 320px 320px, 380px 380px;
+  background-repeat: repeat;
+  opacity: 0.5;
+  animation:
+    sahanConstellationA 50s linear infinite,
+    sahanTwinkle 7s ease-in-out infinite alternate;
+  z-index: 4;
+}
+
+/* Constellation layer B: counter-drift partner, up-left. */
+#app-mount div[class*="bg-"]::after,
+#app-mount div[class*="bg__"]::after,
+div[class*="appMount-"] div[class*="bg-"]::after,
+div[class*="appMount__"] div[class*="bg__"]::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    radial-gradient(circle at 80px 120px, rgba(34, 211, 238, 0.85) 1.5px, transparent 2.3px),
+    radial-gradient(circle at 300px 90px, rgba(56, 189, 248, 0.8) 1px, transparent 1.8px),
+    radial-gradient(circle at 220px 330px, rgba(167, 139, 250, 0.7) 2px, transparent 2.8px);
+  background-size: 430px 430px, 430px 430px, 430px 430px;
+  background-repeat: repeat;
+  opacity: 0.4;
+  animation:
+    sahanConstellationB 70s linear infinite,
+    sahanSpeckBreathe 14s ease-in-out infinite alternate;
+  z-index: 5;
+}
+
+/* Cinematic vignette above the motion, below content. */
+html::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background: var(--sahan-vignette);
+  z-index: 6;
+}
+
+/* Content provably above every background layer (z 0–6). */
+#app-mount nav[aria-label="Servers"],
+#app-mount div[class*="sidebar-"],
+#app-mount div[class*="sidebar__"],
+#app-mount main,
+#app-mount div[class*="chat-"],
+#app-mount div[class*="chat__"],
+#app-mount aside[class*="membersWrap-"],
+#app-mount aside[class*="membersWrap__"] {
+  position: relative;
+  z-index: 10;
+}
+
+/* ===== 05 AURORA LAYERS ===== */
+/* 2–3 independently animated aurora orbs: different durations
+   (22s / 31s / 42s), alternate + alternate-reverse — never synchronized.
+   Painted on the guilds rail backdrop and the chat backdrop so the aurora
+   breathes behind real surfaces. Transform/opacity only. */
+nav[aria-label="Servers"],
+nav[class*="guilds-"],
+nav[class*="guilds__"],
+div[class*="guilds-"],
+div[class*="guilds__"] {
+  position: relative;
+}
+
+nav[aria-label="Servers"]::before,
+nav[class*="guilds-"]::before,
+nav[class*="guilds__"]::before,
+div[class*="guilds-"]::before,
+div[class*="guilds__"]::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(220px 320px at 50% 12%, rgba(56, 189, 248, 0.12), transparent 70%),
+    radial-gradient(200px 280px at 50% 88%, rgba(167, 139, 250, 0.1), transparent 70%);
+  opacity: 0.8;
+  animation: sahanAuroraOne 22s ease-in-out infinite alternate;
+}
+
+div[class*="chat-"]::before,
+div[class*="chat__"]::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(560px 300px at 15% 0%, rgba(56, 189, 248, 0.07), transparent 65%),
+    radial-gradient(620px 320px at 90% 100%, rgba(34, 211, 238, 0.05), transparent 65%);
+  opacity: 0.7;
+  animation: sahanAuroraTwo 31s ease-in-out infinite alternate-reverse;
+}
+
+div[class*="sidebar-"]::after,
+div[class*="sidebar__"]::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(300px 220px at 80% 20%, rgba(56, 189, 248, 0.08), transparent 65%),
+    radial-gradient(280px 240px at 10% 90%, rgba(167, 139, 250, 0.07), transparent 65%);
+  opacity: 0.75;
+  animation: sahanAuroraThree 42s ease-in-out infinite alternate;
+}
+
+/* ===== 06 SERVER LIST ===== */
+/* Root glass retuned to 0.45 alpha: --background-tertiary (§02) is now
+   translucent, so the old 0.62 double-darkened and hid the aurora. */
+nav[aria-label="Servers"],
+nav[class*="guilds-"],
+nav[class*="guilds__"],
+div[class*="guilds-"],
+div[class*="guilds__"] {
+  background-color: rgba(7, 9, 13, 0.45);
+  border-right: 1px solid var(--sahan-border);
+  backdrop-filter: blur(12px);
+}
+
+div[class*="guilds-"] div[class*="listItem-"],
+div[class*="guilds__"] div[class*="listItem__"],
+nav[aria-label="Servers"] div[class*="listItem-"],
+nav[aria-label="Servers"] div[class*="listItem__"] {
+  transition: transform var(--sahan-duration-normal) var(--sahan-ease);
+}
+
+/* Icon lift is transform-only so neighbors never shift. */
+div[class*="guilds-"] div[class*="listItem-"]:hover,
+div[class*="guilds__"] div[class*="listItem__"]:hover,
+nav[aria-label="Servers"] div[class*="listItem-"]:hover,
+nav[aria-label="Servers"] div[class*="listItem__"]:hover {
+  transform: translateY(-2px) scale(1.035);
+}
+
+div[class*="guilds-"] div[class*="listItem-"] div[class*="wrapper-"],
+div[class*="guilds__"] div[class*="listItem__"] div[class*="wrapper__"],
+nav[aria-label="Servers"] div[class*="wrapper-"],
+nav[aria-label="Servers"] div[class*="wrapper__"] {
+  border-radius: 50%;
+  transition: box-shadow var(--sahan-duration-normal) var(--sahan-ease-standard);
+}
+
+div[class*="guilds-"] div[class*="listItem-"] img,
+div[class*="guilds__"] div[class*="listItem__"] img,
+div[class*="guilds-"] div[class*="listItem-"] div[class*="icon-"],
+div[class*="guilds__"] div[class*="listItem__"] div[class*="icon__"],
+div[class*="guilds-"] div[class*="listItem-"] div[class*="childWrapper-"],
+div[class*="guilds__"] div[class*="listItem__"] div[class*="childWrapper__"],
+nav[aria-label="Servers"] img,
+nav[aria-label="Servers"] div[class*="icon-"],
+nav[aria-label="Servers"] div[class*="icon__"],
+nav[aria-label="Servers"] div[class*="childWrapper-"],
+nav[aria-label="Servers"] div[class*="childWrapper__"] {
+  border-radius: 50%;
+  transition: transform var(--sahan-duration-normal) var(--sahan-ease), box-shadow var(--sahan-duration-normal) var(--sahan-ease-standard), filter var(--sahan-duration-normal) var(--sahan-ease-standard);
+}
+
+div[class*="guilds-"] div[class*="listItem-"]:hover img,
+div[class*="guilds__"] div[class*="listItem__"]:hover img,
+nav[aria-label="Servers"] div[class*="listItem-"]:hover img,
+nav[aria-label="Servers"] div[class*="listItem__"]:hover img,
+div[class*="guilds-"] div[class*="listItem-"]:hover div[class*="icon-"],
+div[class*="guilds__"] div[class*="listItem__"]:hover div[class*="icon__"],
+nav[aria-label="Servers"] div[class*="listItem-"]:hover div[class*="icon-"],
+nav[aria-label="Servers"] div[class*="listItem__"]:hover div[class*="icon__"],
+div[class*="guilds-"] div[class*="listItem-"]:hover div[class*="childWrapper-"],
+div[class*="guilds__"] div[class*="listItem__"]:hover div[class*="childWrapper__"],
+nav[aria-label="Servers"] div[class*="listItem-"]:hover div[class*="childWrapper-"],
+nav[aria-label="Servers"] div[class*="listItem__"]:hover div[class*="childWrapper__"] {
+  transform: scale(1.035);
+  filter: brightness(1.12);
+  box-shadow: var(--sahan-glow);
+}
+
+/* --- 06A ACTIVE PILL + UNREAD DOT --- */
+/* Active-server pill: Discord moves the pill node itself, so we transition
+   its geometry/appearance and add a subtle glow breathe — no bouncing. */
+div[class*="guilds-"] div[class*="pill-"] span,
+div[class*="guilds__"] div[class*="pill__"] span,
+div[class*="guilds-"] div[class*="pill-"] span[class*="item-"],
+div[class*="guilds__"] div[class*="pill__"] span[class*="item__"],
+nav[aria-label="Servers"] div[class*="pill-"] span,
+nav[aria-label="Servers"] div[class*="pill__"] span,
+nav[aria-label="Servers"] div[class*="pill-"] span[class*="item-"],
+nav[aria-label="Servers"] div[class*="pill__"] span[class*="item__"] {
+  background: linear-gradient(180deg, var(--sahan-primary), var(--sahan-violet));
+  border-radius: var(--sahan-radius-pill);
+  transition: height var(--sahan-duration-medium) var(--sahan-ease), opacity var(--sahan-duration-normal) var(--sahan-ease-standard), background var(--sahan-duration-medium) var(--sahan-ease-standard), border-radius var(--sahan-duration-medium) var(--sahan-ease-standard), box-shadow var(--sahan-duration-medium) var(--sahan-ease-standard);
+  box-shadow: var(--sahan-glow-soft);
+  animation: sahanActivePill 3s ease-in-out infinite alternate;
+}
+
+/* Unreadservers: small dot breathes slowly, pauses on hover. */
+div[class*="guilds-"] div[class*="unread-"],
+div[class*="guilds__"] div[class*="unread__"],
+nav[aria-label="Servers"] div[class*="unread-"],
+nav[aria-label="Servers"] div[class*="unread__"] {
+  background: var(--sahan-primary);
+  border-radius: var(--sahan-radius-pill);
+  box-shadow: var(--sahan-glow-soft);
+  animation: sahanUnreadBreathe 2.4s ease-in-out infinite alternate;
+}
+
+div[class*="guilds-"] div[class*="listItem-"]:hover div[class*="unread-"],
+div[class*="guilds__"] div[class*="listItem__"]:hover div[class*="unread__"],
+nav[aria-label="Servers"] div[class*="listItem-"]:hover div[class*="unread-"],
+nav[aria-label="Servers"] div[class*="listItem__"]:hover div[class*="unread__"] {
+  animation-play-state: paused;
+  opacity: 1;
+}
+
+/* --- 06B BADGES --- */
+div[class*="guilds-"] div[class*="unreadMentionsIndicator-"],
+div[class*="guilds__"] div[class*="unreadMentionsIndicator__"],
+div[class*="guilds-"] div[class*="mention-"],
+div[class*="guilds__"] div[class*="mention__"],
+nav[aria-label="Servers"] div[class*="unreadMentionsIndicator-"],
+nav[aria-label="Servers"] div[class*="unreadMentionsIndicator__"],
+nav[aria-label="Servers"] div[class*="unread-"] {
+  background-color: var(--sahan-primary);
+  color: var(--sahan-btn-text);
+  border-radius: var(--sahan-radius-pill);
+}
+
+nav[aria-label="Servers"] div[class*="lowerBadge-"] div[class*="numberBadge-"],
+nav[aria-label="Servers"] div[class*="lowerBadge__"] div[class*="numberBadge__"],
+div[class*="guilds-"] div[class*="lowerBadge-"] div[class*="numberBadge-"],
+div[class*="guilds__"] div[class*="lowerBadge__"] div[class*="numberBadge__"] {
+  background-color: var(--sahan-primary);
+  color: var(--sahan-btn-text);
+  border-radius: var(--sahan-radius-pill);
+  font-weight: 700;
+  transition: transform var(--sahan-duration-normal) var(--sahan-ease);
+}
+
+nav[aria-label="Servers"] div[class*="lowerBadge-"] div[class*="numberBadge-"]:hover,
+nav[aria-label="Servers"] div[class*="lowerBadge__"] div[class*="numberBadge__"]:hover,
+div[class*="guilds-"] div[class*="lowerBadge-"] div[class*="numberBadge-"]:hover,
+div[class*="guilds__"] div[class*="lowerBadge__"] div[class*="numberBadge__"]:hover {
+  transform: scale(1.06);
+}
+
+/* --- 06C FOLDERS --- */
+div[class*="guilds-"] div[class*="folder-"],
+div[class*="guilds__"] div[class*="folder__"],
+nav[aria-label="Servers"] div[class*="folder-"],
+nav[aria-label="Servers"] div[class*="folder__"] {
+  background: var(--sahan-card);
+  border: 1px solid var(--sahan-card-border);
+  border-radius: var(--sahan-radius-lg);
+  transition: border-color var(--sahan-duration-normal) var(--sahan-ease-standard), box-shadow var(--sahan-duration-normal) var(--sahan-ease-standard), background-color var(--sahan-duration-normal) var(--sahan-ease-standard);
+}
+
+div[class*="guilds-"] div[class*="folder-"]:hover,
+div[class*="guilds__"] div[class*="folder__"]:hover,
+nav[aria-label="Servers"] div[class*="folder-"]:hover,
+nav[aria-label="Servers"] div[class*="folder__"]:hover {
+  border-color: var(--sahan-border-active);
+  box-shadow: var(--sahan-glow-soft);
+}
+
+div[class*="guilds-"] div[class*="expandedFolderBackground-"],
+div[class*="guilds__"] div[class*="expandedFolderBackground__"],
+nav[aria-label="Servers"] div[class*="expandedFolderBackground-"],
+nav[aria-label="Servers"] div[class*="expandedFolderBackground__"] {
+  background: rgba(56, 189, 248, 0.06);
+  border: 1px solid var(--sahan-accent-line);
+  border-radius: var(--sahan-radius-lg);
+}
+
+/* Folder chevron/icon rotates open ↔ closed. */
+nav[aria-label="Servers"] div[class*="folder-"] svg,
+nav[aria-label="Servers"] div[class*="folder__"] svg,
+div[class*="guilds-"] div[class*="folder-"] svg,
+div[class*="guilds__"] div[class*="folder__"] svg,
+nav[aria-label="Servers"] div[class*="folderIcon-"] svg,
+nav[aria-label="Servers"] div[class*="folderIcon__"] svg {
+  transition: transform var(--sahan-duration-normal) var(--sahan-ease);
+}
+
+nav[aria-label="Servers"] div[class*="folder-"][class*="expanded-"] svg,
+nav[aria-label="Servers"] div[class*="folder__"][class*="expanded__"] svg,
+div[class*="guilds-"] div[class*="folder-"][class*="expanded-"] svg,
+div[class*="guilds__"] div[class*="folder__"][class*="expanded__"] svg {
+  transform: rotate(90deg);
+}
+
+/* Folder popover gets the §22 glass entrance (opacity + scale .98 → 1). */
+div[class*="expandedFolder-"],
+div[class*="expandedFolder__"],
+div[class*="folderEndWrapper-"],
+div[class*="folderEndWrapper__"] {
+  animation: sahanPopIn 200ms var(--sahan-ease);
+}
+
+/* --- 06D HOVER HARDENING (current Discord markup) --- */
+/* Short chains against the real hit element (the listItem div) with
+   !important on the animated properties, so Discord inline styles and
+   later same-specificity rules cannot silently win. Base transitions are
+   declared here BEFORE the hover rules. Design values unchanged from §06:
+   translateY(-2px) scale(1.035) over 240ms, icon scale(1.035) + glow. */
+nav[class*="guilds-"] div[class*="listItem-"],
+nav[class*="guilds__"] div[class*="listItem__"],
+div[class*="guilds-"] div[class*="listItem-"],
+div[class*="guilds__"] div[class*="listItem__"] {
+  transition: transform var(--sahan-duration-normal) var(--sahan-ease) !important;
+}
+
+nav[class*="guilds-"] div[class*="listItem-"]:hover,
+nav[class*="guilds__"] div[class*="listItem__"]:hover,
+div[class*="guilds-"] div[class*="listItem-"]:hover,
+div[class*="guilds__"] div[class*="listItem__"]:hover {
+  transform: translateY(-2px) scale(1.035) !important;
+}
+
+nav[class*="guilds-"] div[class*="listItem-"] img,
+nav[class*="guilds__"] div[class*="listItem__"] img,
+nav[class*="guilds-"] div[class*="listItem-"] div[class*="icon-"],
+nav[class*="guilds__"] div[class*="listItem__"] div[class*="icon__"],
+nav[class*="guilds-"] div[class*="listItem-"] div[class*="childWrapper-"],
+nav[class*="guilds__"] div[class*="listItem__"] div[class*="childWrapper__"] {
+  transition: transform var(--sahan-duration-normal) var(--sahan-ease), box-shadow var(--sahan-duration-normal) var(--sahan-ease-standard), filter var(--sahan-duration-normal) var(--sahan-ease-standard);
+}
+
+nav[class*="guilds-"] div[class*="listItem-"]:hover img,
+nav[class*="guilds__"] div[class*="listItem__"]:hover img,
+nav[class*="guilds-"] div[class*="listItem-"]:hover div[class*="icon-"],
+nav[class*="guilds__"] div[class*="listItem__"]:hover div[class*="icon__"],
+nav[class*="guilds-"] div[class*="listItem-"]:hover div[class*="childWrapper-"],
+nav[class*="guilds__"] div[class*="listItem__"]:hover div[class*="childWrapper__"] {
+  transform: scale(1.035) !important;
+  filter: brightness(1.12) !important;
+  box-shadow: var(--sahan-glow) !important;
+}
+
+/* Selected server keeps the accent ring even when Discord repaints it. */
+nav[class*="guilds-"] div[class*="listItem-"][class*="selected-"] div[class*="childWrapper-"],
+nav[class*="guilds__"] div[class*="listItem__"][class*="selected__"] div[class*="childWrapper__"],
+div[class*="guilds-"] div[class*="listItem-"][class*="selected-"] div[class*="childWrapper-"],
+div[class*="guilds__"] div[class*="listItem__"][class*="selected__"] div[class*="childWrapper__"] {
+  box-shadow: var(--sahan-glow) !important;
+}
+
+/* Folders + badges: same treatment, design values unchanged. */
+nav[class*="guilds-"] div[class*="folder-"]:hover,
+nav[class*="guilds__"] div[class*="folder__"]:hover,
+div[class*="guilds-"] div[class*="folder-"]:hover,
+div[class*="guilds__"] div[class*="folder__"]:hover {
+  border-color: var(--sahan-border-active) !important;
+  box-shadow: var(--sahan-glow-soft) !important;
+  background-color: rgba(56, 189, 248, 0.06) !important;
+}
+
+nav[class*="guilds-"] div[class*="numberBadge-"]:hover,
+nav[class*="guilds__"] div[class*="numberBadge__"]:hover {
+  transform: scale(1.06) !important;
+}
+
+/* ===== 07 CHANNEL SIDEBAR ===== */
+/* Root glass retuned to 0.50 alpha: --background-secondary (§02) is now
+   translucent, so the old 0.66 double-darkened and hid the aurora. Row
+   bases stay transparent so Discord's native --background-modifier-hover
+   (0.12) shows through; our !important hovers (§07D) add the nudge. */
+div[class*="sidebar-"],
+div[class*="sidebar__"],
+nav[aria-label*="channel"] {
+  background: rgba(7, 9, 13, 0.5);
+  border-right: 1px solid var(--sahan-border);
+  border-radius: 0 var(--sahan-radius-md) var(--sahan-radius-md) 0;
+  width: var(--sahan-channels-width);
+  backdrop-filter: blur(var(--sahan-blur));
+}
+
+/* Portfolio eyebrow labels: uppercase mono. */
+div[class*="sidebar-"] h2[class*="name-"],
+div[class*="sidebar__"] h2[class*="name__"],
+div[class*="sidebar-"] h3[class*="name-"],
+div[class*="sidebar__"] h3[class*="name__"],
+div[class*="sidebar-"] span[class*="name-"],
+div[class*="sidebar__"] span[class*="name__"],
+div[class*="sidebar-"] div[class*="headerText-"],
+div[class*="sidebar__"] div[class*="headerText__"],
+div[class*="sidebar-"] div[class*="container-"][class*="bannerVisible-"] div[class*="name-"],
+div[class*="sidebar__"] div[class*="container__"][class*="bannerVisible__"] div[class*="name__"] {
+  font-family: var(--sahan-font-eyebrow);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 11px;
+  color: var(--sahan-text-muted);
+  transition: color var(--sahan-duration-normal) var(--sahan-ease-standard), background-color var(--sahan-duration-normal) var(--sahan-ease-standard);
+}
+
+/* --- 07A CATEGORY HEADERS --- */
+/* Chevron rotates on collapse; header hover is a faint bg fade + brighter
+   eyebrow. The category list itself is never height/opacity-animated here —
+   Discord owns the collapse and we must not fight it. */
+div[class*="sidebar-"] div[class*="container-"] svg[class*="icon-"],
+div[class*="sidebar__"] div[class*="container__"] svg[class*="icon__"],
+div[class*="sidebar-"] li div[class*="arrow-"] svg,
+div[class*="sidebar__"] li div[class*="arrow__"] svg,
+div[class*="sidebar-"] div[class*="collapsible-"] svg,
+div[class*="sidebar__"] div[class*="collapsible__"] svg {
+  color: var(--sahan-text-muted);
+  transition: transform var(--sahan-duration-normal) var(--sahan-ease), color var(--sahan-fast) var(--sahan-ease-standard);
+}
+
+div[class*="sidebar-"] div[class*="container-"][class*="collapsed-"] svg[class*="icon-"],
+div[class*="sidebar__"] div[class*="container__"][class*="collapsed__"] svg[class*="icon__"],
+div[class*="sidebar-"] li div[class*="arrow-"][class*="collapsed-"] svg,
+div[class*="sidebar__"] li div[class*="arrow__"][class*="collapsed__"] svg {
+  transform: rotate(-90deg);
+}
+
+div[class*="sidebar-"] div[class*="container-"]:hover h2[class*="name-"],
+div[class*="sidebar__"] div[class*="container__"]:hover h2[class*="name__"],
+div[class*="sidebar-"] div[class*="container-"]:hover h3[class*="name-"],
+div[class*="sidebar__"] div[class*="container__"]:hover h3[class*="name__"],
+div[class*="sidebar-"] li:hover div[class*="arrow-"] svg,
+div[class*="sidebar__"] li:hover div[class*="arrow__"] svg {
+  color: var(--sahan-text);
+}
+
+div[class*="sidebar-"] div[class*="container-"]:hover,
+div[class*="sidebar__"] div[class*="container__"]:hover {
+  background-color: rgba(56, 189, 248, 0.04);
+  border-radius: var(--sahan-radius-sm);
+}
+
+div[class*="sidebar-"] div[class*="containerDefault-"] a,
+div[class*="sidebar__"] div[class*="containerDefault__"] a,
+div[class*="sidebar-"] li div[class*="link-"],
+div[class*="sidebar__"] li div[class*="link__"],
+div[class*="sidebar-"] li a[class*="link-"],
+div[class*="sidebar__"] li a[class*="link__"] {
+  background-color: transparent;
+  border-radius: var(--sahan-radius-sm);
+  color: var(--channel-color);
+  border-left: 2px solid transparent;
+  transition: background-color var(--sahan-duration-normal) var(--sahan-ease-standard), color var(--sahan-fast) var(--sahan-ease-standard), transform var(--sahan-duration-normal) var(--sahan-ease-standard), border-color var(--sahan-duration-normal) var(--sahan-ease-standard), box-shadow var(--sahan-duration-normal) var(--sahan-ease-standard);
+}
+
+/* Row-only nudge: the link moves, never the whole sidebar. */
+div[class*="sidebar-"] div[class*="containerDefault-"] a:hover,
+div[class*="sidebar__"] div[class*="containerDefault__"] a:hover,
+div[class*="sidebar-"] li div[class*="link-"]:hover,
+div[class*="sidebar__"] li div[class*="link__"]:hover,
+div[class*="sidebar-"] li a[class*="link-"]:hover,
+div[class*="sidebar__"] li a[class*="link__"]:hover {
+  background-color: rgba(56, 189, 248, 0.08);
+  color: var(--sahan-text);
+  transform: translateX(3px);
+}
+
+/* Channel `#`/emoji glyph brightens + scales on row hover. */
+div[class*="sidebar-"] div[class*="containerDefault-"] a svg[class*="icon-"],
+div[class*="sidebar__"] div[class*="containerDefault__"] a svg[class*="icon__"],
+div[class*="sidebar-"] li div[class*="link-"] svg[class*="icon-"],
+div[class*="sidebar__"] li div[class*="link__"] svg[class*="icon__"],
+div[class*="sidebar-"] div[class*="iconContainer-"] svg,
+div[class*="sidebar__"] div[class*="iconContainer__"] svg {
+  transition: transform var(--sahan-duration-normal) var(--sahan-ease), color var(--sahan-fast) var(--sahan-ease-standard);
+}
+
+div[class*="sidebar-"] div[class*="containerDefault-"] a:hover svg[class*="icon-"],
+div[class*="sidebar__"] div[class*="containerDefault__"] a:hover svg[class*="icon__"],
+div[class*="sidebar-"] li div[class*="link-"]:hover svg[class*="icon-"],
+div[class*="sidebar__"] li div[class*="link__"]:hover svg[class*="icon__"] {
+  transform: scale(1.06);
+  color: var(--sahan-primary);
+}
+
+div[class*="sidebar-"] div[class*="containerDefault-"][class*="unread-"] a,
+div[class*="sidebar__"] div[class*="containerDefault__"][class*="unread__"] a,
+div[class*="sidebar-"] li div[class*="link-"][class*="unread-"],
+div[class*="sidebar__"] li div[class*="link__"][class*="unread__"],
+div[class*="sidebar-"] div[class*="modeUnread-"] a,
+div[class*="sidebar__"] div[class*="modeUnread__"] a {
+  color: var(--channel-unread);
+  font-weight: 600;
+  opacity: 1;
+}
+
+/* Unread channel dot breathes gently. */
+div[class*="sidebar-"] div[class*="unread-"],
+div[class*="sidebar__"] div[class*="unread__"],
+div[class*="sidebar-"] span[class*="unreadPill-"],
+div[class*="sidebar__"] span[class*="unreadPill__"] {
+  animation: sahanUnreadBreathe 2.4s ease-in-out infinite alternate;
+}
+
+/* Mentioned channel keeps an accent glow (transition only, no loop). */
+div[class*="sidebar-"] div[class*="containerDefault-"][class*="mentioned-"] a,
+div[class*="sidebar__"] div[class*="containerDefault__"][class*="mentioned__"] a,
+div[class*="sidebar-"] li div[class*="link-"][class*="mentioned-"],
+div[class*="sidebar__"] li div[class*="link__"][class*="mentioned__"] {
+  box-shadow: inset 0 0 12px rgba(56, 189, 248, 0.1), 0 0 10px rgba(56, 189, 248, 0.12);
+  border-left-color: var(--sahan-primary);
+}
+
+div[class*="sidebar-"] div[class*="containerDefault-"][class*="muted-"] a,
+div[class*="sidebar__"] div[class*="containerDefault__"][class*="muted__"] a,
+div[class*="sidebar-"] li div[class*="link-"][class*="muted-"],
+div[class*="sidebar__"] li div[class*="link__"][class*="muted__"] {
+  color: var(--muted-color);
+  opacity: 0.7;
+}
+
+/* --- 07B ACTIVE + MENTION PILLS --- */
+/* Active channel: premium surface + accent left-line + slow glow breathe
+   (glow alpha only — the row itself never fades). */
+div[class*="sidebar-"] div[class*="modeSelected-"] a,
+div[class*="sidebar__"] div[class*="modeSelected__"] a,
+div[class*="sidebar-"] li div[class*="selected-"],
+div[class*="sidebar__"] li div[class*="selected__"],
+div[class*="sidebar-"] li[class*="selected-"] a[class*="link-"],
+div[class*="sidebar__"] li[class*="selected__"] a[class*="link__"],
+div[class*="sidebar-"] a[class*="link-"][class*="selected-"],
+div[class*="sidebar__"] a[class*="link__"][class*="selected__"] {
+  background: linear-gradient(90deg, rgba(56, 189, 248, 0.16), rgba(56, 189, 248, 0.06));
+  color: var(--sahan-text);
+  border-left: 2px solid var(--sahan-primary);
+  box-shadow: inset 0 0 12px rgba(56, 189, 248, 0.06);
+  animation: sahanChannelBreathe 3.5s ease-in-out infinite alternate;
+}
+
+/* Mention / badge pills in channel rows: hover scale + glow. */
+div[class*="sidebar-"] div[class*="mentionsBadge-"],
+div[class*="sidebar__"] div[class*="mentionsBadge__"],
+div[class*="sidebar-"] div[class*="mention-"],
+div[class*="sidebar__"] div[class*="mention__"],
+div[class*="sidebar-"] span[class*="numberBadge-"],
+div[class*="sidebar__"] span[class*="numberBadge__"] {
+  transition: transform var(--sahan-duration-normal) var(--sahan-ease), box-shadow var(--sahan-duration-normal) var(--sahan-ease-standard);
+}
+
+div[class*="sidebar-"] div[class*="mentionsBadge-"]:hover,
+div[class*="sidebar__"] div[class*="mentionsBadge__"]:hover,
+div[class*="sidebar-"] div[class*="mention-"]:hover,
+div[class*="sidebar__"] div[class*="mention__"]:hover,
+div[class*="sidebar-"] span[class*="numberBadge-"]:hover,
+div[class*="sidebar__"] span[class*="numberBadge__"]:hover {
+  transform: scale(1.06);
+  box-shadow: var(--sahan-glow-soft);
+}
+
+/* --- 07C VOICE --- */
+div[class*="sidebar-"] div[class*="voiceUser-"],
+div[class*="sidebar__"] div[class*="voiceUser__"] {
+  border-radius: var(--sahan-radius-sm);
+  transition: background-color var(--sahan-duration-normal) var(--sahan-ease-standard);
+  animation: sahanVoiceIn var(--sahan-duration-normal) var(--sahan-ease);
+}
+
+div[class*="sidebar-"] div[class*="voiceUser-"]:hover,
+div[class*="sidebar__"] div[class*="voiceUser__"]:hover {
+  background-color: rgba(56, 189, 248, 0.06);
+}
+
+/* --- 07D HOVER HARDENING (current Discord markup) --- */
+/* Current rows render as li[class*="channel-"] > div[class*="linkContainer-"]
+   > a[class*="link-"]; the legacy containerDefault- wrapper used above no
+   longer exists, so these short chains target the real hit element (the
+   link anchor) with !important on the animated properties. Base transitions
+   are declared here BEFORE the hover rules. Design values unchanged:
+   translateX(3px) nudge, icon scale(1.06), sahanChannelBreathe selected. */
+div[class*="sidebar-"] li[class*="channel-"] a[class*="link-"],
+div[class*="sidebar__"] li[class*="channel__"] a[class*="link__"],
+div[class*="sidebar-"] div[class*="linkContainer-"] a[class*="link-"],
+div[class*="sidebar__"] div[class*="linkContainer__"] a[class*="link__"],
+div[class*="sidebar-"] a[class*="link-"],
+div[class*="sidebar__"] a[class*="link__"] {
+  border-radius: var(--sahan-radius-sm);
+  border-left: 2px solid transparent;
+  transition: background-color var(--sahan-duration-normal) var(--sahan-ease-standard), color var(--sahan-fast) var(--sahan-ease-standard), transform var(--sahan-duration-normal) var(--sahan-ease-standard), border-color var(--sahan-duration-normal) var(--sahan-ease-standard), box-shadow var(--sahan-duration-normal) var(--sahan-ease-standard);
+}
+
+div[class*="sidebar-"] li[class*="channel-"] a[class*="link-"]:hover,
+div[class*="sidebar__"] li[class*="channel__"] a[class*="link__"]:hover,
+div[class*="sidebar-"] div[class*="linkContainer-"] a[class*="link-"]:hover,
+div[class*="sidebar__"] div[class*="linkContainer__"] a[class*="link__"]:hover,
+div[class*="sidebar-"] a[class*="link-"]:hover,
+div[class*="sidebar__"] a[class*="link__"]:hover {
+  background-color: rgba(56, 189, 248, 0.08) !important;
+  color: var(--sahan-text) !important;
+  transform: translateX(3px) !important;
+}
+
+div[class*="sidebar-"] li[class*="channel-"] a[class*="link-"] svg[class*="icon-"],
+div[class*="sidebar__"] li[class*="channel__"] a[class*="link__"] svg[class*="icon__"],
+div[class*="sidebar-"] a[class*="link-"] svg[class*="icon-"],
+div[class*="sidebar__"] a[class*="link__"] svg[class*="icon__"] {
+  transition: transform var(--sahan-duration-normal) var(--sahan-ease), color var(--sahan-fast) var(--sahan-ease-standard);
+}
+
+div[class*="sidebar-"] li[class*="channel-"] a[class*="link-"]:hover svg[class*="icon-"],
+div[class*="sidebar__"] li[class*="channel__"] a[class*="link__"]:hover svg[class*="icon__"],
+div[class*="sidebar-"] a[class*="link-"]:hover svg[class*="icon-"],
+div[class*="sidebar__"] a[class*="link__"]:hover svg[class*="icon__"] {
+  transform: scale(1.06) !important;
+  color: var(--sahan-primary) !important;
+}
+
+/* Selected channel: accent surface + breathing glow that Discord cannot
+   override. Covers selected on the row, selected on the link, and the
+   legacy modeSelected row state. */
+div[class*="sidebar-"] li[class*="channel-"][class*="selected-"] a[class*="link-"],
+div[class*="sidebar__"] li[class*="channel__"][class*="selected__"] a[class*="link__"],
+div[class*="sidebar-"] li[class*="channel-"] a[class*="link-"][class*="selected-"],
+div[class*="sidebar__"] li[class*="channel__"] a[class*="link__"][class*="selected__"],
+div[class*="sidebar-"] div[class*="modeSelected-"] a[class*="link-"],
+div[class*="sidebar__"] div[class*="modeSelected__"] a[class*="link__"] {
+  background: linear-gradient(90deg, rgba(56, 189, 248, 0.16), rgba(56, 189, 248, 0.06)) !important;
+  color: var(--sahan-text) !important;
+  border-left: 2px solid var(--sahan-primary) !important;
+  box-shadow: inset 0 0 12px rgba(56, 189, 248, 0.06) !important;
+  animation: sahanChannelBreathe 3.5s ease-in-out infinite alternate;
+}
+
+/* Unread channel name stays sky even when Discord dims it. */
+div[class*="sidebar-"] li[class*="channel-"][class*="unread-"] a[class*="link-"],
+div[class*="sidebar__"] li[class*="channel__"][class*="unread__"] a[class*="link__"],
+div[class*="sidebar-"] div[class*="modeUnread-"] a[class*="link-"],
+div[class*="sidebar__"] div[class*="modeUnread__"] a[class*="link__"] {
+  color: var(--channel-unread) !important;
+  font-weight: 600 !important;
+}
+
+/* ===== 08 SERVER HEADER ===== */
+header[class*="header-"],
+header[class*="header__"],
+div[class*="headerBar-"],
+div[class*="headerBar__"] {
+  background: rgba(7, 9, 13, 0.5);
+  border-bottom: 1px solid var(--sahan-border);
+  color: var(--sahan-text);
+  backdrop-filter: blur(var(--sahan-blur));
+  transition: border-color var(--sahan-duration-normal) var(--sahan-ease-standard), background-color var(--sahan-duration-normal) var(--sahan-ease-standard), box-shadow var(--sahan-duration-normal) var(--sahan-ease-standard);
+}
+
+header[class*="header-"]:hover,
+header[class*="header__"]:hover {
+  border-bottom-color: var(--sahan-border-active);
+  background-color: rgba(23, 29, 39, 0.72);
+}
+
+/* "Default Gateway" button: bg fade on hover, chevron rotates when open. */
+header[class*="header-"] div[class*="headerContent-"],
+header[class*="header__"] div[class*="headerContent__"],
+div[class*="sidebar-"] header[class*="header-"],
+div[class*="sidebar__"] header[class*="header__"] {
+  transition: background-color 200ms var(--sahan-ease-standard);
+}
+
+header[class*="header-"] svg[class*="chevron-"],
+header[class*="header__"] svg[class*="chevron__"],
+header[class*="header-"] svg[class*="icon-"],
+header[class*="header__"] svg[class*="icon__"] {
+  transition: transform 200ms var(--sahan-ease);
+}
+
+header[class*="header-"][aria-expanded="true"] svg[class*="chevron-"],
+header[class*="header__"][aria-expanded="true"] svg[class*="chevron__"],
+header[class*="header-"][aria-expanded="true"] svg[class*="icon-"],
+header[class*="header__"][aria-expanded="true"] svg[class*="icon__"] {
+  transform: rotate(180deg);
+}
+
+header[class*="header-"] h1,
+header[class*="header__"] h1,
+header[class*="header-"] div[class*="name-"],
+header[class*="header__"] div[class*="name__"] {
+  font-family: var(--sahan-font-heading);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--sahan-text);
+}
+
+/* --- 08A QUEST / PROMO CARD (bottom, above the user panel) --- */
+/* Glass surface in the theme language; lifts + glows on hover; fades in
+   once on mount (200ms, no loop). */
+div[class*="questBar-"],
+div[class*="questBar__"],
+div[class*="quest-"][class*="container-"],
+div[class*="quest__"][class*="container__"],
+div[class*="promo-"][class*="container-"],
+div[class*="promo__"][class*="container__"],
+div[class*="sidebar-"] div[class*="notice-"][class*="quest-"],
+div[class*="sidebar__"] div[class*="notice__"][class*="quest__"],
+aside[class*="quest-"],
+aside[class*="quest__"] {
+  background: var(--sahan-card);
+  border: 1px solid var(--sahan-card-border);
+  border-radius: var(--sahan-radius-lg);
+  backdrop-filter: blur(var(--sahan-blur));
+  box-shadow: var(--sahan-shadow);
+  animation: sahanQuestIn 200ms var(--sahan-ease);
+  transition: transform var(--sahan-duration-normal) var(--sahan-ease), border-color var(--sahan-duration-normal) var(--sahan-ease-standard), box-shadow var(--sahan-duration-normal) var(--sahan-ease-standard);
+}
+
+div[class*="questBar-"]:hover,
+div[class*="questBar__"]:hover,
+div[class*="quest-"][class*="container-"]:hover,
+div[class*="quest__"][class*="container__"]:hover,
+div[class*="promo-"][class*="container-"]:hover,
+div[class*="promo__"][class*="container__"]:hover,
+aside[class*="quest-"]:hover,
+aside[class*="quest__"]:hover {
+  transform: translateY(-1px);
+  border-color: var(--sahan-border-active);
+  box-shadow: var(--sahan-glow-soft);
+}
+
+/* Underlined active-nav indicator (portfolio signature) for top tab bars. */
+div[class*="tabBar-"] div[class*="item-"] {
+  color: var(--sahan-text-secondary);
+  background-image: linear-gradient(90deg, var(--sahan-primary), var(--sahan-secondary));
+  background-size: 0% 2px;
+  background-position: left bottom;
+  background-repeat: no-repeat;
+  transition: color var(--sahan-fast) var(--sahan-ease-standard), background-size var(--sahan-normal) var(--sahan-ease);
+}
+
+div[class*="tabBar-"] div[class*="item-"]:hover {
+  color: var(--sahan-text);
+  background-size: 60% 2px;
+}
+
+div[class*="tabBar-"] div[class*="item-"][class*="selected-"] {
+  color: var(--sahan-primary);
+  background-size: 100% 2px;
+}
+
+/* ===== 09 CHAT ===== */
+/* Readability guard: chat stays lightweight over the animated backdrop —
+   a translucent ink wash keeps long-session contrast without burying §04. */
+div[class*="chat-"],
+div[class*="chat__"] {
+  background: transparent;
+}
+
+#app-mount div[class*="chat-"]:not([class*="chatContent-"]):not([class*="chatContent__"]),
+#app-mount div[class*="chat__"]:not([class*="chatContent-"]):not([class*="chatContent__"]) {
+  background: rgba(9, 12, 17, 0.72);
+}
+
+ol[class*="scrollerInner-"],
+div[class*="messagesWrapper-"] {
+  padding: 12px 8px 20px;
+}
+
+div[class*="divider-"] {
+  border-top-color: var(--sahan-border);
+}
+
+div[class*="divider-"] span[class*="content-"] {
+  font-family: var(--sahan-font-eyebrow);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 10px;
+  background: var(--sahan-surface);
+  color: var(--sahan-text-muted);
+  border: 1px solid var(--sahan-border);
+  border-radius: var(--sahan-radius-pill);
+}
+
+div[class*="divider-"][class*="isUnread-"] {
+  border-top-color: var(--sahan-primary);
+}
+
+div[class*="divider-"][class*="isUnread-"] span[class*="content-"] {
+  background: rgba(56, 189, 248, 0.14);
+  color: var(--sahan-primary);
+  border-color: var(--sahan-border-active);
+}
+
+/* Reply spine + thread spine in sky. */
+div[class*="repliedMessage-"]::before,
+div[class*="threadMessageAccessory-"]::before {
+  border-left: 2px solid var(--sahan-accent-line);
+}
+
+/* Typing indicator: sky dots with a gentle rise. */
+div[class*="typing-"] span[class*="text-"] {
+  color: var(--sahan-text-muted);
+}
+
+div[class*="typing-"] i[class*="dot-"] {
+  background-color: var(--sahan-primary);
+  animation: sahanTypingDot 1s ease-in-out infinite;
+}
+
+div[class*="typing-"] i[class*="dot-"]:nth-child(2) {
+  animation-delay: 0.15s;
+}
+
+div[class*="typing-"] i[class*="dot-"]:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+/* Reactions: glass chips, sky on reacted. */
+div[class*="reaction-"] {
+  background: var(--sahan-card);
+  border: 1px solid var(--sahan-card-border);
+  border-radius: var(--sahan-radius-md);
+  transition: border-color var(--sahan-fast) var(--sahan-ease-standard), background-color var(--sahan-fast) var(--sahan-ease-standard), transform var(--sahan-fast) var(--sahan-ease-standard);
+}
+
+div[class*="reaction-"]:hover {
+  border-color: var(--sahan-border-active);
+  transform: translateY(-1px);
+}
+
+div[class*="reaction-"][class*="reacted-"] {
+  background: rgba(56, 189, 248, 0.14);
+  border-color: var(--sahan-border-active);
+}
+
+/* ===== 10 MESSAGES ===== */
+li[class*="message-"],
+div[class*="message-"] {
+  padding: 8px 12px;
+  margin: 2px 8px;
+  border-radius: var(--sahan-radius-md);
+  border: 1px solid transparent;
+  /* Entrance runs once on mount (opacity + 4px rise); hover never replays it. */
+  animation: sahanMessageIn var(--sahan-duration-medium) var(--sahan-ease);
+  transition: background-color var(--sahan-duration-normal) var(--sahan-ease-standard), border-color var(--sahan-duration-normal) var(--sahan-ease-standard);
+}
+
+/* Hover = subtle background fade only. No scale, no shadow. */
+li[class*="message-"]:hover,
+div[class*="message-"]:hover {
+  background-color: rgba(148, 163, 184, 0.06);
+  border-color: rgba(148, 163, 184, 0.08);
+}
+
+div[class*="mentioned-"] {
+  background: rgba(56, 189, 248, 0.08);
+  border-left: 2px solid var(--sahan-primary);
+  border-radius: 0 var(--sahan-radius-md) var(--sahan-radius-md) 0;
+}
+
+div[class*="mentioned-"]:hover {
+  background: rgba(56, 189, 248, 0.12);
+}
+
+span[class*="username-"],
+span[class*="authorName-"] {
+  color: var(--sahan-text);
+  font-weight: 600;
+  transition: color var(--sahan-fast) var(--sahan-ease-standard), filter var(--sahan-fast) var(--sahan-ease-standard);
+}
+
+span[class*="username-"]:hover {
+  color: var(--sahan-primary);
+  filter: brightness(1.15);
+}
+
+time,
+span[class*="timestamp-"] {
+  color: var(--sahan-text-muted);
+  font-size: 0.72rem;
+  letter-spacing: 0.02em;
+}
+
+/* Message hover toolbar: floating glass pill. */
+div[class*="buttonContainer-"] div[class*="toolbar-"] {
+  background: rgba(23, 29, 39, 0.92);
+  border: 1px solid var(--sahan-border);
+  border-radius: var(--sahan-radius-pill);
+  box-shadow: var(--sahan-shadow);
+}
+
+/* ===== 11 MARKDOWN ===== */
+div[class*="markup-"] h1,
+div[class*="markup-"] h2 {
+  font-family: var(--sahan-font-heading);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--sahan-text);
+}
+
+div[class*="markup-"] h3 {
+  font-family: var(--sahan-font-heading);
+  font-weight: 600;
+  color: var(--sahan-primary);
+}
+
+blockquote,
+div[class*="blockquote-"] {
+  border-left: 3px solid var(--sahan-primary);
+  background: rgba(56, 189, 248, 0.06);
+  border-radius: 0 var(--sahan-radius-sm) var(--sahan-radius-sm) 0;
+  padding: 6px 12px;
+  color: var(--sahan-text-secondary);
+}
+
+div[class*="markup-"] hr,
+div[class*="separator-"] {
+  border-top: 1px solid var(--sahan-border);
+}
+
+div[class*="markup-"] ul li::marker,
+div[class*="markup-"] ol li::marker {
+  color: var(--sahan-primary);
+}
+
+span[class*="spoiler-"] {
+  background-color: var(--sahan-elevated);
+  border-radius: var(--sahan-radius-xs);
+}
+
+span[class*="spoiler-"][class*="hidden-"]:hover {
+  background-color: rgba(56, 189, 248, 0.2);
+}
+
+/* ===== 12 LINKS ===== */
+div[class*="markup-"] a[href],
+div[id="message-content"] a[href] {
+  color: var(--sahan-primary);
+  text-decoration: none;
+  background-image: linear-gradient(90deg, var(--sahan-primary), var(--sahan-secondary));
+  background-size: 0% 1px;
+  background-position: left bottom;
+  background-repeat: no-repeat;
+  padding-bottom: 1px;
+  transition: color var(--sahan-fast) var(--sahan-ease-standard), background-size var(--sahan-normal) var(--sahan-ease), filter var(--sahan-fast) var(--sahan-ease-standard);
+}
+
+/* Underline draws itself 0% → 100%. */
+div[class*="markup-"] a[href]:hover,
+div[id="message-content"] a[href]:hover {
+  color: var(--sahan-secondary);
+  background-size: 100% 1px;
+  filter: brightness(1.1);
+}
+
+/* ===== 13 CODE BLOCKS ===== */
+pre,
+div[class*="codeBlock-"],
+code[class*="codeBlockText-"] {
+  background: #0a0e15;
+  border: 1px solid rgba(56, 189, 248, 0.18);
+  border-radius: var(--sahan-radius-md);
+  color: #dbe7f5;
+}
+
+div[class*="codeActions-"] button {
+  color: var(--sahan-text-muted);
+  border-radius: var(--sahan-radius-xs);
+  transition: color var(--sahan-fast) var(--sahan-ease-standard), background-color var(--sahan-fast) var(--sahan-ease-standard);
+}
+
+div[class*="codeActions-"] button:hover {
+  color: var(--sahan-primary);
+  background-color: rgba(56, 189, 248, 0.1);
+}
+
+code[class*="inline-"],
+span[class*="inlineCode-"],
+div[class*="markup-"] code {
+  font-family: var(--sahan-font-code);
+  background: rgba(167, 139, 250, 0.12);
+  border: 1px solid rgba(167, 139, 250, 0.28);
+  border-radius: var(--sahan-radius-xs);
+  color: #a5f3fc;
+  padding: 1px 5px;
+}
+
+code::selection,
+pre::selection {
+  background: rgba(167, 139, 250, 0.45);
+  color: #ffffff;
+}
+
+/* ===== 14 EMBEDS ===== */
+div[class*="embedWrapper-"],
+article[class*="embed-"] {
+  background: var(--sahan-card);
+  border: 1px solid var(--sahan-card-border);
+  border-radius: var(--sahan-radius-lg);
+  box-shadow: var(--sahan-shadow);
+}
+
+article[class*="embed-"] span[class*="pill-"] {
+  border-radius: var(--sahan-radius-pill);
+}
+
+article[class*="embed-"] div[class*="embedAuthorName-"],
+article[class*="embed-"] div[class*="embedTitle-"] {
+  font-family: var(--sahan-font-heading);
+  color: var(--sahan-text);
+}
+
+article[class*="embed-"] div[class*="embedDescription-"] {
+  color: var(--sahan-text-secondary);
+}
+
+article[class*="embed-"] div[class*="embedFieldName-"] {
+  font-family: var(--sahan-font-eyebrow);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 10px;
+  color: var(--sahan-primary);
+}
+
+article[class*="embed-"] div[class*="embedFooterText-"] {
+  color: var(--sahan-text-muted);
+}
+
+/* Media: soft portfolio radii, never stretched. */
+div[class*="embedWrapper-"] img,
+div[class*="embedWrapper-"] video,
+div[class*="imageWrapper-"] img {
+  border-radius: var(--sahan-radius-md);
+}
+
+/* ===== 15 BUTTONS ===== */
+button[class*="button-"] {
+  border-radius: var(--sahan-radius-sm);
+  font-weight: 600;
+  transition: transform var(--sahan-fast) var(--sahan-ease-standard), box-shadow var(--sahan-fast) var(--sahan-ease-standard), background-color var(--sahan-fast) var(--sahan-ease-standard), border-color var(--sahan-fast) var(--sahan-ease-standard), filter var(--sahan-fast) var(--sahan-ease-standard);
+}
+
+/* Solid sky pill with ink text — portfolio primary. */
+button[class*="colorBrand-"],
+button[type="submit"],
+div[class*="loginButton-"] button {
+  background: linear-gradient(135deg, var(--sahan-primary) 0%, var(--sahan-secondary) 100%);
+  color: var(--sahan-btn-text);
+  border: 1px solid transparent;
+  border-radius: var(--sahan-radius-pill);
+}
+
+button[class*="colorBrand-"]:hover,
+button[type="submit"]:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.08);
+  box-shadow: var(--sahan-glow);
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+/* Ghost outline button — portfolio secondary. */
+button[class*="colorPrimary-"],
+button[class*="lookFilled-"][class*="grey-"],
+button[class*="secondary-"],
+button[class*="lookOutlined-"] {
+  background: transparent;
+  border: 1px solid var(--sahan-card-border);
+  color: var(--sahan-text);
+}
+
+button[class*="colorPrimary-"]:hover,
+button[class*="secondary-"]:hover,
+button[class*="lookOutlined-"]:hover {
+  transform: translateY(-1px);
+  border-color: var(--sahan-border-active);
+  box-shadow: var(--sahan-glow-soft);
+  filter: brightness(1.06);
+}
+
+button[class*="button-"]:active {
+  transform: translateY(0) scale(0.98);
+}
+
+button[class*="button-"]:focus-visible {
+  outline: 2px solid var(--sahan-primary);
+  outline-offset: 2px;
+}
+
+button[class*="colorRed-"],
+button[class*="danger-"] {
+  background: rgba(242, 63, 67, 0.12);
+  border: 1px solid rgba(242, 63, 67, 0.45);
+  color: var(--sahan-dnd);
+}
+
+button[class*="colorRed-"]:hover,
+button[class*="danger-"]:hover {
+  background: rgba(242, 63, 67, 0.2);
+  transform: translateY(-1px);
+}
+
+button[class*="button-"][disabled] {
+  opacity: 0.5;
+  transform: none;
+}
+
+/* Animated gradient border (padding-box / border-box trick) — reserved for
+   the special send/primary input action only. */
+div[class*="channelTextArea-"] button[class*="sendButton-"] {
+  border: 1px solid transparent;
+  background:
+    linear-gradient(var(--sahan-elevated), var(--sahan-elevated)) padding-box,
+    linear-gradient(120deg, var(--sahan-primary), var(--sahan-violet), var(--sahan-secondary), var(--sahan-primary)) border-box;
+  background-size: auto, 300% 300%;
+  color: var(--sahan-primary);
+}
+
+div[class*="channelTextArea-"] button[class*="sendButton-"]:hover {
+  animation: sahanGradientShift 4s linear infinite;
+  box-shadow: var(--sahan-glow-soft);
+}
+
+/* ===== 16 INPUTS ===== */
+div[class*="channelTextArea-"],
+form[class*="form-"] div[class*="scrollableContainer-"] {
+  background: rgba(16, 20, 27, 0.85);
+  border: 1px solid var(--sahan-border);
+  border-radius: var(--sahan-radius-lg);
+  transition: border-color var(--sahan-fast) var(--sahan-ease-standard), box-shadow var(--sahan-normal) var(--sahan-ease-standard);
+}
+
+div[class*="channelTextArea-"]:focus-within,
+form[class*="form-"] div[class*="scrollableContainer-"]:focus-within {
+  border-color: var(--sahan-border-active);
+  box-shadow: 0 0 0 1px rgba(56, 189, 248, 0.3), 0 0 20px rgba(56, 189, 248, 0.15);
+  background:
+    linear-gradient(rgba(16, 20, 27, 0.9), rgba(16, 20, 27, 0.9)) padding-box,
+    linear-gradient(120deg, rgba(56, 189, 248, 0.5), rgba(167, 139, 250, 0.35), rgba(56, 189, 248, 0.5)) border-box;
+  border: 1px solid transparent;
+  animation: sahanGradientShift 4s linear infinite;
+}
+
+div[class*="textArea-"] div[class*="placeholder-"] {
+  color: var(--sahan-text-muted);
+}
+
+div[class*="textArea-"] div[class*="textAreaSlate-"] {
+  color: var(--sahan-text);
+  caret-color: var(--sahan-primary);
+}
+
+div[class*="attachButton-"] button,
+div[class*="buttons-"] button {
+  color: var(--sahan-text-muted);
+  transition: color var(--sahan-fast) var(--sahan-ease-standard), transform var(--sahan-fast) var(--sahan-ease-standard);
+}
+
+div[class*="attachButton-"] button:hover,
+div[class*="buttons-"] button:hover {
+  color: var(--sahan-primary);
+  transform: translateY(-1px);
+}
+
+div[class*="charCounter-"],
+div[class*="slowmodeIcon-"] {
+  color: var(--sahan-text-muted);
+}
+
+div[class*="autocomplete-"] {
+  background: rgba(23, 29, 39, 0.95);
+  border: 1px solid var(--sahan-border);
+  border-radius: var(--sahan-radius-lg);
+  box-shadow: var(--sahan-shadow-lg);
+  animation: sahanPopIn var(--sahan-duration-normal) var(--sahan-ease);
+}
+
+div[class*="autocomplete-"] div[class*="option-"]:hover,
+div[class*="autocomplete-"] li[class*="option-"]:hover {
+  background-color: rgba(56, 189, 248, 0.1);
+}
+
+/* ===== 17 SEARCH ===== */
+div[class*="searchBar-"],
+div[class*="search-"] div[class*="DraftEditor-root"] {
+  background: rgba(16, 20, 27, 0.7);
+  border: 1px solid var(--sahan-border);
+  border-radius: var(--sahan-radius-sm);
+  color: var(--sahan-text-secondary);
+  backdrop-filter: blur(var(--sahan-blur));
+  transition: border-color var(--sahan-fast) var(--sahan-ease-standard), box-shadow var(--sahan-normal) var(--sahan-ease-standard), width var(--sahan-normal) var(--sahan-ease), filter var(--sahan-normal) var(--sahan-ease-standard), background-color var(--sahan-normal) var(--sahan-ease-standard);
+}
+
+div[class*="searchBar-"]:focus-within,
+div[class*="search-"]:focus-within {
+  border-color: var(--sahan-border-active);
+  box-shadow: 0 0 0 1px rgba(56, 189, 248, 0.3), var(--sahan-glow-soft);
+  filter: brightness(1.12);
+  width: 280px;
+  background-color: rgba(16, 20, 27, 0.9);
+}
+
+div[class*="searchResultsWrap-"] {
+  background: var(--sahan-surface);
+  border: 1px solid var(--sahan-border);
+  border-radius: var(--sahan-radius-lg);
+  box-shadow: var(--sahan-shadow-lg);
+}
+
+div[class*="searchResult-"] {
+  border-radius: var(--sahan-radius-md);
+  border: 1px solid transparent;
+  transition: background-color var(--sahan-fast) var(--sahan-ease-standard), border-color var(--sahan-fast) var(--sahan-ease-standard);
+}
+
+div[class*="searchResult-"]:hover {
+  background-color: var(--sahan-elevated);
+  border-color: var(--sahan-border);
+}
+
+div[class*="searchAnswer-"],
+div[class*="searchFilter-"],
+li[class*="option-"] div[class*="answer-"] {
+  background: rgba(56, 189, 248, 0.12);
+  color: var(--sahan-primary);
+  border-radius: var(--sahan-radius-xs);
+}
+
+li[class*="option-"]:hover {
+  background-color: var(--sahan-elevated);
+}
+
+div[class*="searchHeader-"],
+div[class*="channelName-"] {
+  color: var(--sahan-text-secondary);
+}
+
+div[class*="searchHeader-"] div[class*="totalResults-"] {
+  color: var(--sahan-text-muted);
+}
+
+/* ===== 18 MEMBERS ===== */
+aside[class*="membersWrap-"],
+div[class*="members-"] {
+  background: rgba(7, 9, 13, 0.5);
+  border-left: 1px solid var(--sahan-border);
+  width: var(--sahan-members-width);
+}
+
+div[class*="membersGroup-"],
+h3[class*="membersGroup-"] {
+  font-family: var(--sahan-font-eyebrow);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 11px;
+  color: var(--sahan-text-muted);
+}
+
+div[class*="member-"] div[class*="layout-"] {
+  border-radius: var(--sahan-radius-sm);
+  border-left: 2px solid transparent;
+  transition: background-color var(--sahan-duration-normal) var(--sahan-ease-standard), border-color var(--sahan-duration-normal) var(--sahan-ease-standard);
+}
+
+div[class*="member-"] div[class*="layout-"]:hover {
+  background-color: rgba(56, 189, 248, 0.07);
+  border-left-color: var(--sahan-accent-line);
+}
+
+div[class*="member-"] div[class*="name-"] {
+  color: var(--sahan-text-secondary);
+}
+
+div[class*="member-"]:hover div[class*="name-"] {
+  color: var(--sahan-text);
+}
+
+div[class*="member-"] div[class*="activity-"] {
+  color: var(--sahan-text-muted);
+}
+
+/* Status palette. Discord renders status via inline SVG fill, so a
+   deliberate !important is required for these to win. */
+div[class*="member-"] rect[fill="#23a55a"],
+div[class*="member-"] rect[fill="#43b581"] {
+  fill: var(--online) !important;
+}
+
+div[class*="member-"] rect[fill="#f0b232"],
+div[class*="member-"] rect[fill="#faa81a"] {
+  fill: var(--idle) !important;
+}
+
+div[class*="member-"] rect[fill="#f23f43"],
+div[class*="member-"] rect[fill="#ed4245"] {
+  fill: var(--dnd) !important;
+}
+
+div[class*="member-"] rect[fill="#593695"],
+div[class*="member-"] rect[fill="#a970ff"] {
+  fill: var(--streaming) !important;
+}
+
+div[class*="member-"] rect[fill="#80848e"],
+div[class*="member-"] rect[fill="#747f8d"] {
+  fill: var(--offline) !important;
+}
+
+/* ===== 19 AVATARS ===== */
+div[class*="avatar-"],
+img[class*="avatar-"] {
+  border-radius: 50%;
+  transition: transform var(--sahan-fast) var(--sahan-ease-standard), box-shadow var(--sahan-duration-normal) var(--sahan-ease-standard);
+}
+
+div[class*="member-"]:hover img[class*="avatar-"],
+div[class*="userInfo-"]:hover img[class*="avatar-"] {
+  transform: scale(1.04);
+  box-shadow: var(--sahan-glow-soft);
+}
+
+div[class*="avatarWrapper-"]:hover img[class*="avatar-"] {
+  transform: scale(1.04);
+}
+
+div[class*="avatarDecoration-"] {
+  transition: transform var(--sahan-duration-normal) var(--sahan-ease-standard);
+}
+
+/* ===== 20 VOICE ===== */
+/* Translucent tile tint (was opaque var(--sahan-surface)): lets the aurora
+   breathe in call / stage surfaces while keeping text readable. */
+div[class*="callTile-"],
+div[class*="voiceUser-"] {
+  background: rgba(16, 20, 27, 0.6);
+  border: 1px solid var(--sahan-border);
+  border-radius: var(--sahan-radius-xl);
+}
+
+div[class*="voiceUser-"] div[class*="username-"] {
+  color: var(--sahan-text);
+}
+
+div[class*="voiceUser-"][class*="speaking-"] div[class*="username-"] {
+  color: var(--sahan-online);
+}
+
+/* Speaking ring: slow breathe, never a flash. */
+div[class*="speaking-"],
+div[class*="avatarSpeaking-"] {
+  border-color: var(--sahan-online);
+  animation: sahanSpeaking 1.6s ease-in-out infinite;
+}
+
+div[class*="voiceUser-"] svg[class*="streaming-"] {
+  color: var(--sahan-streaming);
+}
+
+div[class*="voiceUser-"] svg[class*="deafen-"],
+div[class*="voiceUser-"] svg[class*="mute-"] {
+  color: var(--sahan-dnd);
+}
+
+div[class*="tile-"][class*="speaking-"] {
+  border-color: var(--sahan-online);
+  animation: sahanSpeaking 1.6s ease-in-out infinite;
+}
+
+/* Stage / call controls. */
+div[class*="participantsButton-"],
+button[class*="controlButton-"] {
+  transition: transform var(--sahan-fast) var(--sahan-ease-standard), background-color var(--sahan-fast) var(--sahan-ease-standard);
+}
+
+button[class*="controlButton-"]:hover {
+  transform: translateY(-1px);
+}
+
+/* ===== 21 USER PANEL ===== */
+div[class*="panels-"],
+section[class*="panels-"] {
+  background: rgba(7, 9, 13, 0.55);
+  border-top: 1px solid var(--sahan-border);
+  backdrop-filter: blur(var(--sahan-blur));
+}
+
+div[class*="panels-"] div[class*="container-"] {
+  border-radius: var(--sahan-radius-md);
+  transition: background-color var(--sahan-fast) var(--sahan-ease-standard);
+}
+
+div[class*="panels-"] div[class*="avatarWrapper-"]:hover {
+  background-color: rgba(56, 189, 248, 0.08);
+}
+
+div[class*="panels-"] rect[fill="#23a55a"],
+div[class*="panels-"] rect[fill="#43b581"] {
+  fill: var(--online) !important;
+}
+
+div[class*="panels-"] rect[fill="#f0b232"],
+div[class*="panels-"] rect[fill="#faa81a"] {
+  fill: var(--idle) !important;
+}
+
+div[class*="panels-"] rect[fill="#f23f43"],
+div[class*="panels-"] rect[fill="#ed4245"] {
+  fill: var(--dnd) !important;
+}
+
+div[class*="panels-"] rect[fill="#80848e"],
+div[class*="panels-"] rect[fill="#747f8d"] {
+  fill: var(--offline) !important;
+}
+
+div[class*="panels-"] button {
+  border-radius: var(--sahan-radius-sm);
+  color: var(--sahan-text-secondary);
+  transition: background-color var(--sahan-fast) var(--sahan-ease-standard), color var(--sahan-fast) var(--sahan-ease-standard), transform var(--sahan-fast) var(--sahan-ease-standard);
+}
+
+div[class*="panels-"] button:hover {
+  background-color: rgba(56, 189, 248, 0.1);
+  color: var(--sahan-text);
+  transform: translateY(-1px);
+}
+
+div[class*="connection-"] div[class*="rtcConnectionStatus-"] {
+  color: var(--sahan-text-secondary);
+}
+
+div[class*="activityPanel-"] {
+  background: transparent;
+  border-top: 1px solid var(--sahan-border);
+  color: var(--sahan-text-muted);
+}
+
+/* ===== 22 POPOVERS ===== */
+div[class*="popover-"],
+div[class*="popout-"],
+div[class*="userPopout-"] {
+  background: rgba(23, 29, 39, 0.92);
+  border: 1px solid var(--sahan-border);
+  border-radius: var(--sahan-radius-xl);
+  box-shadow: var(--sahan-shadow-lg);
+  backdrop-filter: blur(var(--sahan-blur));
+  animation: sahanPopIn var(--sahan-duration-normal) var(--sahan-ease);
+}
+
+div[class*="userPopout-"] div[class*="banner-"] {
+  border-radius: var(--sahan-radius-xl) var(--sahan-radius-xl) 0 0;
+}
+
+div[class*="userPopout-"] div[class*="username-"] {
+  font-family: var(--sahan-font-heading);
+  font-weight: 700;
+  color: var(--sahan-text);
+}
+
+div[class*="userPopout-"] div[class*="body-"] {
+  background: transparent;
+  color: var(--sahan-text-secondary);
+}
+
+div[class*="userPopout-"] div[class*="roles-"] span[class*="role-"] {
+  background: var(--sahan-card);
+  border: 1px solid var(--sahan-card-border);
+  border-radius: var(--sahan-radius-pill);
+  transition: border-color var(--sahan-fast) var(--sahan-ease-standard);
+}
+
+div[class*="userPopout-"] div[class*="roles-"] span[class*="role-"]:hover {
+  border-color: var(--sahan-border-active);
+}
+
+/* Inbox / pins popouts keep readable rows. */
+div[class*="recentMentionsPopout-"],
+div[class*="messagesPopout-"] {
+  background: rgba(23, 29, 39, 0.95);
+  border: 1px solid var(--sahan-border);
+  border-radius: var(--sahan-radius-lg);
+  box-shadow: var(--sahan-shadow-lg);
+  backdrop-filter: blur(var(--sahan-blur));
+  animation: sahanPopIn var(--sahan-duration-normal) var(--sahan-ease);
+}
+
+/* ===== 23 CONTEXT MENUS ===== */
+div[role="menu"],
+div[class*="menu-"],
+div[class*="contextMenu-"] {
+  background: rgba(23, 29, 39, 0.95);
+  border: 1px solid var(--sahan-border);
+  border-radius: var(--sahan-radius-lg);
+  box-shadow: var(--sahan-shadow-lg);
+  backdrop-filter: blur(var(--sahan-blur));
+  animation: sahanMenuIn var(--sahan-duration-normal) var(--sahan-ease);
+  padding: 6px;
+}
+
+div[role="menuitem"],
+div[class*="menu-"] div[class*="item-"] {
+  border-radius: var(--sahan-radius-sm);
+  color: var(--sahan-text-secondary);
+  transition: background-color var(--sahan-fast) var(--sahan-ease-standard), color var(--sahan-fast) var(--sahan-ease-standard), transform var(--sahan-fast) var(--sahan-ease-standard);
+}
+
+div[role="menuitem"]:hover,
+div[class*="menu-"] div[class*="item-"]:hover {
+  background-color: rgba(56, 189, 248, 0.12);
+  color: var(--sahan-text);
+  transform: translateX(2px);
+}
+
+div[class*="menu-"] div[class*="separator-"] {
+  border-top: 1px solid var(--sahan-border);
+}
+
+/* Danger stays red — never sky. */
+div[role="menuitem"][class*="danger-"],
+div[class*="menu-"] div[class*="item-"][class*="colorDanger-"] {
+  color: var(--sahan-dnd);
+}
+
+div[role="menuitem"][class*="danger-"]:hover,
+div[class*="menu-"] div[class*="item-"][class*="colorDanger-"]:hover {
+  background-color: rgba(242, 63, 67, 0.14);
+  color: #ff8a8e;
+}
+
+/* ===== 24 MODALS ===== */
+div[class*="backdrop-"],
+div[class*="backdropWithLayer-"] {
+  background: rgba(4, 6, 10, 0.7);
+  animation: sahanBackdropIn var(--sahan-duration-medium) var(--sahan-ease-standard);
+}
+
+div[role="dialog"],
+div[class*="modal-"],
+div[class*="userProfileModal-"] {
+  background: rgba(23, 29, 39, 0.94);
+  border: 1px solid var(--sahan-border);
+  border-radius: var(--sahan-radius-xl);
+  box-shadow: var(--sahan-shadow-lg);
+  backdrop-filter: blur(calc(var(--sahan-blur) + 4px));
+  animation: sahanModalIn var(--sahan-duration-medium) var(--sahan-ease);
+}
+
+div[class*="userProfileModal-"] div[class*="banner-"] {
+  border-radius: var(--sahan-radius-xl) var(--sahan-radius-xl) 0 0;
+}
+
+/* Active modal gets the animated gradient border — the one place a full
+   modal frame earns it. */
+div[class*="modal-"][class*="sizeLarge-"],
+div[class*="modal-"]:focus-within {
+  border: 1px solid transparent;
+  background:
+    linear-gradient(rgba(23, 29, 39, 0.96), rgba(23, 29, 39, 0.96)) padding-box,
+    linear-gradient(135deg, rgba(56, 189, 248, 0.6), rgba(167, 139, 250, 0.4), rgba(34, 211, 238, 0.5), rgba(56, 189, 248, 0.6)) border-box;
+  background-size: auto, 300% 300%;
+  animation: sahanModalIn var(--sahan-duration-medium) var(--sahan-ease), sahanGradientShift 7s linear infinite;
+}
+
+div[class*="modal-"] h1,
+div[class*="modal-"] h2[class*="title-"] {
+  font-family: var(--sahan-font-heading);
+  font-weight: 700;
+  color: var(--sahan-text);
+}
+
+div[class*="modal-"] div[class*="content-"] {
+  color: var(--sahan-text-secondary);
+}
+
+div[class*="modal-"] div[class*="footer-"] {
+  background: transparent;
+  border-top: 1px solid var(--sahan-border);
+}
+
+/* Quick switcher + toasts float above everything, glassed. */
+div[class*="quickswitcher-"] {
+  background: rgba(23, 29, 39, 0.96);
+  border: 1px solid var(--sahan-border);
+  border-radius: var(--sahan-radius-xl);
+  box-shadow: var(--sahan-shadow-lg);
+  animation: sahanModalIn var(--sahan-duration-medium) var(--sahan-ease);
+}
+
+div[class*="quickswitcher-"] input {
+  background: var(--sahan-bg);
+  border: 1px solid var(--sahan-border);
+  border-radius: var(--sahan-radius-md);
+  color: var(--sahan-text);
+}
+
+div[class*="quickswitcher-"] input:focus {
+  border-color: var(--sahan-border-active);
+  box-shadow: var(--sahan-glow-soft);
+}
+
+div[class*="toast-"] {
+  background: rgba(23, 29, 39, 0.95);
+  border: 1px solid var(--sahan-border);
+  border-left: 3px solid var(--sahan-primary);
+  border-radius: var(--sahan-radius-md);
+  box-shadow: var(--sahan-shadow);
+  color: var(--sahan-text);
+  animation: sahanPopIn var(--sahan-duration-normal) var(--sahan-ease);
+}
+
+/* ===== 25 SETTINGS ===== */
+/* Translucent tints (were opaque var(--sahan-bg) / var(--sahan-surface)):
+   settings keeps the aurora language instead of flat black. Controls,
+   inputs, switches and cards below stay opaque for readability. */
+div[class*="sidebarRegion-"] {
+  background: rgba(7, 9, 13, 0.6);
+  border-right: 1px solid var(--sahan-border);
+}
+
+div[class*="contentRegion-"] {
+  background: rgba(16, 20, 27, 0.72);
+}
+
+div[class*="sidebarRegion-"] div[class*="item-"] {
+  border-radius: var(--sahan-radius-sm);
+  color: var(--sahan-text-secondary);
+  border-left: 2px solid transparent;
+  transition: background-color var(--sahan-duration-normal) var(--sahan-ease-standard), color var(--sahan-fast) var(--sahan-ease-standard), border-color var(--sahan-duration-normal) var(--sahan-ease-standard), transform var(--sahan-duration-normal) var(--sahan-ease-standard);
+}
+
+div[class*="sidebarRegion-"] div[class*="item-"]:hover {
+  background-color: rgba(56, 189, 248, 0.07);
+  color: var(--sahan-text);
+  transform: translateX(2px);
+}
+
+div[class*="sidebarRegion-"] div[class*="selected-"] {
+  background: linear-gradient(90deg, rgba(56, 189, 248, 0.16), rgba(56, 189, 248, 0.04));
+  color: var(--sahan-text);
+  border-left: 2px solid var(--sahan-primary);
+}
+
+div[class*="contentRegion-"] div[class*="card-"],
+div[class*="contentRegion-"] div[class*="settingCard-"] {
+  background: var(--sahan-card);
+  border: 1px solid var(--sahan-card-border);
+  border-radius: var(--sahan-radius-lg);
+  box-shadow: var(--sahan-shadow);
+}
+
+div[class*="contentRegion-"] h2[class*="title-"],
+div[class*="contentRegion-"] h5[class*="title-"] {
+  font-family: var(--sahan-font-eyebrow);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 12px;
+  color: var(--sahan-primary);
+}
+
+div[class*="contentRegion-"] div[class*="description-"] {
+  color: var(--sahan-text-secondary);
+}
+
+div[class*="contentRegion-"] input[type="text"],
+div[class*="contentRegion-"] textarea,
+div[class*="contentRegion-"] select {
+  background: var(--sahan-elevated);
+  border: 1px solid var(--sahan-border);
+  border-radius: var(--sahan-radius-sm);
+  color: var(--sahan-text);
+  transition: border-color var(--sahan-fast) var(--sahan-ease-standard), box-shadow var(--sahan-fast) var(--sahan-ease-standard);
+}
+
+div[class*="contentRegion-"] input[type="text"]:focus,
+div[class*="contentRegion-"] textarea:focus,
+div[class*="contentRegion-"] select:focus {
+  border-color: var(--sahan-border-active);
+  box-shadow: 0 0 0 1px rgba(56, 189, 248, 0.3), var(--sahan-glow-soft);
+}
+
+div[class*="switch-"],
+div[role="switch"] {
+  background-color: var(--sahan-elevated);
+  border: 1px solid var(--sahan-border);
+  transition: background-color var(--sahan-duration-normal) var(--sahan-ease-standard), border-color var(--sahan-fast) var(--sahan-ease-standard);
+}
+
+div[class*="switch-"][class*="checked-"],
+div[aria-checked="true"][role="switch"] {
+  background: linear-gradient(135deg, var(--sahan-primary), var(--sahan-secondary));
+  border-color: transparent;
+}
+
+div[class*="slider-"] div[class*="bar-"] {
+  background: var(--sahan-elevated);
+  border-radius: var(--sahan-radius-pill);
+}
+
+div[class*="slider-"] div[class*="barFill-"] {
+  background: linear-gradient(90deg, var(--sahan-primary), var(--sahan-violet));
+  border-radius: var(--sahan-radius-pill);
+}
+
+div[class*="checkbox-"] {
+  border: 1px solid var(--sahan-border);
+  border-radius: var(--sahan-radius-xs);
+  transition: border-color var(--sahan-fast) var(--sahan-ease-standard), background-color var(--sahan-fast) var(--sahan-ease-standard);
+}
+
+div[class*="checkbox-"][class*="checked-"] {
+  background: linear-gradient(135deg, var(--sahan-primary), var(--sahan-secondary));
+  border-color: transparent;
+}
+
+div[class*="radioBar-"] {
+  background: var(--sahan-elevated);
+  border: 1px solid var(--sahan-border);
+  border-radius: var(--sahan-radius-md);
+  transition: border-color var(--sahan-fast) var(--sahan-ease-standard), background-color var(--sahan-fast) var(--sahan-ease-standard);
+}
+
+div[class*="radioBar-"]:hover {
+  border-color: var(--sahan-border-active);
+}
+
+div[class*="radioBar-"][class*="checked-"] {
+  border-color: var(--sahan-border-active);
+  background: rgba(56, 189, 248, 0.06);
+}
+
+div[class*="keybindInput-"] {
+  background: var(--sahan-elevated);
+  border: 1px solid var(--sahan-border);
+  border-radius: var(--sahan-radius-sm);
+  color: var(--sahan-text);
+  font-family: var(--sahan-font-code);
+}
+
+/* ===== 26 EMOJI PICKER ===== */
+div[class*="emojiPicker-"] {
+  background: rgba(23, 29, 39, 0.95);
+  border: 1px solid var(--sahan-border);
+  border-radius: var(--sahan-radius-xl);
+  box-shadow: var(--sahan-shadow-lg);
+  backdrop-filter: blur(var(--sahan-blur));
+  animation: sahanPopIn var(--sahan-duration-normal) var(--sahan-ease);
+}
+
+div[class*="emojiPicker-"] div[class*="category-"] {
+  font-family: var(--sahan-font-eyebrow);
+  color: var(--sahan-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 11px;
+}
+
+div[class*="emojiPicker-"] button[class*="emojiItem-"] {
+  border-radius: var(--sahan-radius-sm);
+  transition: transform var(--sahan-duration-fast) var(--sahan-ease-standard), background-color var(--sahan-duration-fast) var(--sahan-ease-standard);
+}
+
+div[class*="emojiPicker-"] button[class*="emojiItem-"]:hover,
+div[class*="emojiPicker-"] button[class*="emojiItem-"][class*="selected-"] {
+  background-color: rgba(56, 189, 248, 0.12);
+  transform: scale(1.12);
+}
+
+div[class*="emojiPicker-"] div[class*="inspector-"] {
+  background: var(--sahan-surface);
+  border-top: 1px solid var(--sahan-border);
+  color: var(--sahan-text-secondary);
+}
+
+div[class*="emojiPicker-"] input[class*="input-"] {
+  background: var(--sahan-elevated);
+  border: 1px solid var(--sahan-border);
+  border-radius: var(--sahan-radius-sm);
+  color: var(--sahan-text);
+  transition: border-color var(--sahan-fast) var(--sahan-ease-standard), box-shadow var(--sahan-fast) var(--sahan-ease-standard);
+}
+
+div[class*="emojiPicker-"] input[class*="input-"]:focus {
+  border-color: var(--sahan-border-active);
+  box-shadow: var(--sahan-glow-soft);
+}
+
+div[class*="emojiPicker-"] div[class*="navButton-"][class*="active-"] {
+  color: var(--sahan-primary);
+  border-bottom: 2px solid var(--sahan-primary);
+}
+
+/* GIF / sticker pickers share the glass panel language. */
+div[class*="gifPicker-"],
+div[class*="stickerPicker-"] {
+  background: rgba(23, 29, 39, 0.95);
+  border: 1px solid var(--sahan-border);
+  border-radius: var(--sahan-radius-xl);
+  box-shadow: var(--sahan-shadow-lg);
+}
+
+div[class*="gifPicker-"] div[class*="result-"]:hover,
+div[class*="stickerPicker-"] div[class*="result-"]:hover {
+  box-shadow: var(--sahan-glow-soft);
+  border-color: var(--sahan-border-active);
+}
+
+/* ===== 27 TOOLTIPS ===== */
+div[class*="tooltip-"],
+div[role="tooltip"] {
+  background: #0b0f16;
+  color: var(--sahan-text);
+  border: 1px solid var(--sahan-border);
+  border-radius: var(--sahan-radius-sm);
+  box-shadow: var(--sahan-shadow);
+  animation: sahanTooltipIn var(--sahan-duration-fast) var(--sahan-ease-standard);
+}
+
+div[class*="tooltip-"] div[class*="tip-"] {
+  color: var(--sahan-text-muted);
+}
+
+/* ===== 28 BADGES ===== */
+span[class*="numberBadge-"],
+div[class*="unreadBadge-"] {
+  background: linear-gradient(135deg, var(--sahan-primary), var(--sahan-secondary));
+  color: var(--sahan-btn-text);
+  border-radius: var(--sahan-radius-pill);
+  font-weight: 700;
+}
+
+span[class*="mention-"],
+div[class*="wrapper-"][class*="mention-"] {
+  background: rgba(56, 189, 248, 0.16);
+  color: #a5f3fc;
+  border-radius: var(--sahan-radius-xs);
+  padding: 0 4px;
+  transition: background-color var(--sahan-fast) var(--sahan-ease-standard);
+}
+
+span[class*="mention-"]:hover {
+  background: rgba(56, 189, 248, 0.28);
+}
+
+span[class*="mention-"][class*="role-"] {
+  background: rgba(167, 139, 250, 0.14);
+  color: #ddd0fe;
+  border-left: 2px solid var(--sahan-violet);
+}
+
+span[class*="botTag-"] {
+  background: rgba(167, 139, 250, 0.2);
+  color: var(--sahan-violet);
+  border-radius: var(--sahan-radius-xs);
+  font-family: var(--sahan-font-eyebrow);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+div[class*="warning-"] {
+  color: var(--sahan-idle);
+}
+
+/* Friends / DMs: card rows with sky active state. */
+div[class*="peopleListItem-"] {
+  border-radius: var(--sahan-radius-md);
+  border: 1px solid transparent;
+  transition: background-color var(--sahan-duration-normal) var(--sahan-ease-standard), border-color var(--sahan-duration-normal) var(--sahan-ease-standard), transform var(--sahan-duration-normal) var(--sahan-ease-standard);
+}
+
+div[class*="peopleListItem-"]:hover {
+  background-color: rgba(56, 189, 248, 0.05);
+  border-color: var(--sahan-border);
+  transform: translateX(2px);
+}
+
+div[class*="peopleListItem-"][class*="active-"] {
+  background: linear-gradient(90deg, rgba(56, 189, 248, 0.14), rgba(56, 189, 248, 0.04));
+  border-left: 2px solid var(--sahan-primary);
+}
+
+/* ===== 29 SCROLLBARS ===== */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.22);
+  border-radius: var(--sahan-radius-pill);
+  border: 2px solid transparent;
+  background-clip: content-box;
+  transition: background-color var(--sahan-duration-normal) var(--sahan-ease-standard);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(56, 189, 248, 0.45);
+  background-clip: content-box;
+}
+
+div[class*="sidebar-"] ::-webkit-scrollbar-thumb,
+div[class*="chat-"] ::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.18);
+  background-clip: content-box;
+}
+
+div[class*="sidebar-"] ::-webkit-scrollbar-thumb:hover,
+div[class*="chat-"] ::-webkit-scrollbar-thumb:hover {
+  background: rgba(56, 189, 248, 0.4);
+  background-clip: content-box;
+}
+
+/* ===== 30 MICRO-INTERACTIONS ===== */
+/* One home for the small portfolio-eased moments not owned by a surface
+   section: icon buttons, cards, threads, forum rows, directory tiles. */
+div[class*="iconWrapper-"],
+span[class*="iconWrapper-"] {
+  transition: background-color var(--sahan-fast) var(--sahan-ease-standard), color var(--sahan-fast) var(--sahan-ease-standard), transform var(--sahan-fast) var(--sahan-ease-standard);
+}
+
+div[class*="iconWrapper-"]:hover,
+span[class*="iconWrapper-"]:hover {
+  background-color: rgba(56, 189, 248, 0.1);
+  color: var(--sahan-primary);
+}
+
+div[class*="iconWrapper-"][class*="selected-"] {
+  background-color: rgba(56, 189, 248, 0.14);
+  color: var(--sahan-primary);
+}
+
+div[class*="card-"] {
+  transition: border-color var(--sahan-duration-normal) var(--sahan-ease-standard), box-shadow var(--sahan-duration-normal) var(--sahan-ease-standard), transform var(--sahan-duration-normal) var(--sahan-ease-standard);
+}
+
+div[class*="card-"]:hover {
+  border-color: var(--sahan-border-active);
+  box-shadow: var(--sahan-glow-soft);
+}
+
+li[class*="row-"],
+div[class*="threadRow-"] {
+  transition: background-color var(--sahan-fast) var(--sahan-ease-standard);
+}
+
+li[class*="row-"]:hover,
+div[class*="threadRow-"]:hover {
+  background-color: rgba(56, 189, 248, 0.05);
+}
+
+div[class*="container-"][class*="channelNotice-"] {
+  background: var(--sahan-card);
+  border: 1px solid var(--sahan-card-border);
+  border-radius: var(--sahan-radius-lg);
+}
+
+button[class*="closeButton-"],
+button[class*="close-"] {
+  transition: background-color var(--sahan-fast) var(--sahan-ease-standard), color var(--sahan-fast) var(--sahan-ease-standard), transform var(--sahan-fast) var(--sahan-ease-standard);
+}
+
+button[class*="closeButton-"]:hover,
+button[class*="close-"]:hover {
+  background-color: rgba(242, 63, 67, 0.14);
+  color: var(--sahan-dnd);
+  transform: scale(1.06);
+}
+
+/* ===== 31 BACKGROUND ANIMATIONS ===== */
+/* All motion keyframes live here, namespaced sahan*. Anything continuous
+   animates transform/opacity only. */
+@keyframes sahanAuroraOne {
+  from { opacity: 0.55; transform: translate3d(-2%, -3%, 0) scale(1); }
+  to { opacity: 0.9; transform: translate3d(2%, 3%, 0) scale(1.04); }
+}
+
+@keyframes sahanAuroraTwo {
+  from { opacity: 0.5; transform: translate3d(3%, -2%, 0) scale(1.02); }
+  to { opacity: 0.85; transform: translate3d(-3%, 2%, 0) scale(1); }
+}
+
+@keyframes sahanAuroraThree {
+  from { opacity: 0.6; transform: translate3d(-40px, -20px, 0) scale(1); }
+  to { opacity: 0.85; transform: translate3d(40px, 20px, 0) scale(1.03); }
+}
+
+@keyframes sahanGlowDrift {
+  from { opacity: 0.55; transform: translate3d(-1.5%, -1%, 0) scale(1); }
+  to { opacity: 0.9; transform: translate3d(1.5%, 1%, 0) scale(1.02); }
+}
+
+@keyframes sahanConstellationA {
+  from { background-position: 0 0, 0 0, 0 0, 0 0; }
+  to { background-position: 320px 320px, 320px 320px, 320px 320px, 380px 380px; }
+}
+
+@keyframes sahanConstellationB {
+  from { background-position: 0 0, 0 0, 0 0; }
+  to { background-position: -430px -430px, -430px -430px, -430px -430px; }
+}
+
+@keyframes sahanTwinkle {
+  from { opacity: 0.25; }
+  to { opacity: 0.6; }
+}
+
+@keyframes sahanSpeckBreathe {
+  from { opacity: 0.15; }
+  to { opacity: 0.55; }
+}
+
+@keyframes sahanBreathe {
+  from { box-shadow: inset 0 0 8px rgba(56, 189, 248, 0.04); }
+  to { box-shadow: inset 0 0 16px rgba(56, 189, 248, 0.12); }
+}
+
+/* Active-server pill: gentle glow breathe (glow alpha only, no geometry). */
+@keyframes sahanActivePill {
+  from { box-shadow: 0 0 6px rgba(56, 189, 248, 0.25); }
+  to { box-shadow: 0 0 14px rgba(56, 189, 248, 0.45); }
+}
+
+/* Unread dots (rail + sidebar): slow opacity breathe. */
+@keyframes sahanUnreadBreathe {
+  from { opacity: 0.55; }
+  to { opacity: 1; }
+}
+
+/* Active channel row: glow-alpha breathe only — the row never fades. */
+@keyframes sahanChannelBreathe {
+  from { box-shadow: inset 0 0 10px rgba(56, 189, 248, 0.05); }
+  to { box-shadow: inset 0 0 18px rgba(56, 189, 248, 0.13); }
+}
+
+/* Voice sublist rows: gentle fade-slide on mount (plays once). */
+@keyframes sahanVoiceIn {
+  from { opacity: 0; transform: translateX(-4px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+/* Quest / promo card: single 200ms entrance (plays once, no loop). */
+@keyframes sahanQuestIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes sahanSpeaking {
+  0%, 100% { box-shadow: 0 0 0 2px rgba(35, 165, 90, 0.55), 0 0 10px rgba(56, 189, 248, 0.15); }
+  50% { box-shadow: 0 0 0 3px rgba(35, 165, 90, 0.85), 0 0 18px rgba(56, 189, 248, 0.3); }
+}
+
+@keyframes sahanPopIn {
+  from { opacity: 0; transform: translateY(6px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes sahanModalIn {
+  from { opacity: 0; transform: translateY(12px) scale(0.97); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes sahanBackdropIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes sahanMenuIn {
+  from { opacity: 0; transform: translateY(4px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes sahanTooltipIn {
+  from { opacity: 0; transform: translateY(3px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes sahanMessageIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes sahanGradientShift {
+  from { background-position: auto, 0% 50%; }
+  to { background-position: auto, 300% 50%; }
+}
+
+@keyframes sahanTypingDot {
+  0%, 100% { opacity: 0.4; transform: translateY(0); }
+  50% { opacity: 1; transform: translateY(-2px); }
+}
+
+/* ===== 32 ACCESSIBILITY ===== */
+/* Readable contrast is the default; focus is always visible; interactive
+   elements never receive pointer-events: none. */
+:focus-visible {
+  outline: 2px solid var(--sahan-primary);
+  outline-offset: 2px;
+  border-radius: var(--sahan-radius-xs);
+}
+
+div[class*="placeholder-"],
+input::placeholder,
+textarea::placeholder {
+  color: var(--sahan-text-muted);
+  opacity: 1;
+}
+
+div[class*="muted-"] {
+  opacity: 0.75;
+}
+
+/* Screen-reader / keyboard affordances keep their geometry. */
+div[class*="srOnly-"],
+span[class*="srOnly-"] {
+  position: absolute;
+}
+
+/* Status contrast: text badges meet AA against the ink base. */
+span[class*="statusTag-"] {
+  border-radius: var(--sahan-radius-pill);
+}
+
+/* ===== 33 REDUCED MOTION ===== */
+/* Full kill-switch: every sahan* animation and transition collapses to a
+   single 0.01ms step, including the big background movement. Decorative
+   layers freeze at their base opacity; layout and functionality untouched. */
+@media (prefers-reduced-motion: reduce) {
+  div[class*="appMount-"]::before,
+  div[class*="appMount__"]::before,
+  div[class*="appMount-"]::after,
+  div[class*="appMount__"]::after,
+  body::before,
+  body::after,
+  html::after,
+  #app-mount div[class*="bg-"]::before,
+  #app-mount div[class*="bg__"]::before,
+  #app-mount div[class*="bg-"]::after,
+  #app-mount div[class*="bg__"]::after,
+  div[class*="appMount-"] div[class*="bg-"]::before,
+  div[class*="appMount__"] div[class*="bg__"]::before,
+  div[class*="appMount-"] div[class*="bg-"]::after,
+  div[class*="appMount__"] div[class*="bg__"]::after,
+  nav[aria-label="Servers"]::before,
+  div[class*="guilds-"]::before,
+  div[class*="chat-"]::before,
+  div[class*="chat__"]::before,
+  div[class*="sidebar-"]::after,
+  div[class*="sidebar__"]::after,
+  li[class*="message-"],
+  div[class*="message-"],
+  div[class*="sidebar-"] div[class*="modeSelected-"] a,
+  div[class*="sidebar-"] li div[class*="selected-"],
+  div[class*="speaking-"],
+  div[class*="avatarSpeaking-"],
+  div[class*="tile-"][class*="speaking-"],
+  div[class*="typing-"] i[class*="dot-"],
+  div[class*="channelTextArea-"] button[class*="sendButton-"],
+  div[class*="channelTextArea-"]:focus-within,
+  form[class*="form-"] div[class*="scrollableContainer-"]:focus-within,
+  div[class*="modal-"][class*="sizeLarge-"],
+  div[class*="modal-"]:focus-within,
+  div[role="dialog"],
+  div[class*="modal-"],
+  div[class*="popover-"],
+  div[class*="popout-"],
+  div[role="menu"],
+  div[class*="menu-"],
+  div[class*="contextMenu-"],
+  div[class*="autocomplete-"],
+  div[class*="emojiPicker-"],
+  div[class*="quickswitcher-"],
+  div[class*="toast-"],
+  div[class*="tooltip-"],
+  div[role="tooltip"],
+  div[class*="backdrop-"],
+  div[class*="backdropWithLayer-"],
+  button[class*="button-"],
+  li[class*="message-"]:hover,
+  div[class*="message-"]:hover,
+  div[class*="guilds-"] div[class*="listItem-"],
+  div[class*="guilds__"] div[class*="listItem__"],
+  nav[aria-label="Servers"] div[class*="listItem-"],
+  nav[aria-label="Servers"] div[class*="listItem__"],
+  nav[aria-label="Servers"] div[class*="pill-"] span,
+  nav[aria-label="Servers"] div[class*="pill__"] span,
+  nav[aria-label="Servers"] div[class*="unread-"],
+  nav[aria-label="Servers"] div[class*="unread__"],
+  nav[aria-label="Servers"] div[class*="lowerBadge-"] div[class*="numberBadge-"],
+  nav[aria-label="Servers"] div[class*="lowerBadge__"] div[class*="numberBadge__"],
+  div[class*="expandedFolder-"],
+  div[class*="expandedFolder__"],
+  div[class*="sidebar-"] div[class*="containerDefault-"] a,
+  div[class*="sidebar__"] div[class*="containerDefault__"] a,
+  div[class*="sidebar-"] li div[class*="link-"],
+  div[class*="sidebar__"] li div[class*="link__"],
+  div[class*="sidebar-"] div[class*="modeSelected-"] a,
+  div[class*="sidebar__"] div[class*="modeSelected__"] a,
+  div[class*="sidebar-"] li div[class*="selected-"],
+  div[class*="sidebar__"] li div[class*="selected__"],
+  div[class*="sidebar-"] div[class*="unread-"],
+  div[class*="sidebar__"] div[class*="unread__"],
+  div[class*="sidebar-"] div[class*="mentionsBadge-"],
+  div[class*="sidebar__"] div[class*="mentionsBadge__"],
+  div[class*="sidebar-"] div[class*="voiceUser-"],
+  div[class*="sidebar__"] div[class*="voiceUser__"],
+  nav[class*="guilds-"] div[class*="listItem-"],
+  nav[class*="guilds__"] div[class*="listItem__"],
+  div[class*="sidebar-"] li[class*="channel-"] a[class*="link-"],
+  div[class*="sidebar__"] li[class*="channel__"] a[class*="link__"],
+  div[class*="sidebar-"] li[class*="channel-"][class*="selected-"] a[class*="link-"],
+  div[class*="sidebar__"] li[class*="channel__"][class*="selected__"] a[class*="link__"],
+  div[class*="questBar-"],
+  div[class*="questBar__"],
+  header[class*="header-"],
+  header[class*="header__"],
+  div[class*="member-"] div[class*="layout-"],
+  div[class*="member-"] img[class*="avatar-"],
+  div[class*="avatar-"],
+  img[class*="avatar-"],
+  div[class*="switch-"],
+  div[role="switch"],
+  div[class*="checkbox-"],
+  div[class*="radioBar-"],
+  div[class*="reaction-"],
+  a[href] {
+    animation-duration: 0.01ms;
+    animation-iteration-count: 1;
+    transition-duration: 0.01ms;
+  }
+
+  div[class*="guilds-"] div[class*="listItem-"]:hover,
+  div[class*="guilds__"] div[class*="listItem__"]:hover,
+  nav[aria-label="Servers"] div[class*="listItem-"]:hover,
+  nav[aria-label="Servers"] div[class*="listItem__"]:hover,
+  div[class*="guilds-"] div[class*="listItem-"]:hover img,
+  div[class*="guilds__"] div[class*="listItem__"]:hover img,
+  nav[aria-label="Servers"] div[class*="listItem-"]:hover img,
+  nav[aria-label="Servers"] div[class*="listItem__"]:hover img,
+  nav[aria-label="Servers"] div[class*="lowerBadge-"] div[class*="numberBadge-"]:hover,
+  nav[aria-label="Servers"] div[class*="lowerBadge__"] div[class*="numberBadge__"]:hover,
+  div[class*="questBar-"]:hover,
+  div[class*="questBar__"]:hover,
+  button[class*="colorBrand-"]:hover,
+  button[type="submit"]:hover,
+  button[class*="button-"]:active,
+  div[class*="member-"]:hover img[class*="avatar-"],
+  div[class*="avatarWrapper-"]:hover img[class*="avatar-"],
+  div[class*="sidebar-"] div[class*="containerDefault-"] a:hover,
+  div[class*="sidebar__"] div[class*="containerDefault__"] a:hover,
+  div[class*="sidebar-"] li div[class*="link-"]:hover,
+  div[class*="sidebar__"] li div[class*="link__"]:hover,
+  nav[class*="guilds-"] div[class*="listItem-"]:hover,
+  nav[class*="guilds__"] div[class*="listItem__"]:hover,
+  div[class*="sidebar-"] li[class*="channel-"] a[class*="link-"]:hover,
+  div[class*="sidebar__"] li[class*="channel__"] a[class*="link__"]:hover,
+  div[class*="emojiPicker-"] button[class*="emojiItem-"]:hover {
+    transform: none;
+  }
+}

@@ -1,0 +1,318 @@
+/**
+ * @name DarkBlueTheme
+ * @author ClearVision Team
+ * @version 7.0.1
+  * @description Highly customizable theme for BetterDiscord. + S A H A N constellation animated background ported from sahancs.is-a.dev.
+ * @source https://github.com/ClearVision/ClearVision-v7
+ * @website https://clearvision.github.io
+ * @invite dHaSxn3
+ */
+/* IMPORT CSS */
+@import url("https://clearvision.github.io/ClearVision-v7/main.css");
+@import url("https://clearvision.github.io/ClearVision-v7/betterdiscord.css");
+/* SETTINGS */
+:root {
+  /* ACCENT COLORS */
+  --main-color: #2780e6; /* main accent color (hex, rgb or hsl) [default: #2780e6] */
+  --hover-color: #1e63b3; /* hover accent color (hex, rgb or hsl) [default: #1e63b3] */
+  --success-color: #43b581; /* positive accent color (hex, rgb or hsl) [default: #43b581] */
+  --danger-color: #982929; /* danger accent color (hex, rgb or hsl) [default: #982929] */
+  /* STATUS COLORS */
+  --online-color: #43b581; /* online status color (hex, rgb or hsl) [default: #43b581] */
+  --idle-color: #faa61a; /* idle status color (hex, rgb or hsl) [default: #faa61a] */
+  --dnd-color: #982929; /* dnd status color (hex, rgb or hsl) [default: #982929] */
+  --streaming-color: #593695; /* streaming status color (hex, rgb or hsl) [default: #593695] */
+  --offline-color: #808080; /* offline/invisible status color (hex, rgb or hsl) [default: #808080] */
+  /* APP BACKGROUND */
+  --background-shading-percent: 100%; /* app background shading amount (0 for complete smoothness) [default: 100%] */
+  --background-image: radial-gradient(900px 480px at 12% -6%, rgba(56, 189, 248, 0.05), transparent 60%), radial-gradient(700px 500px at 50% 110%, rgba(56, 189, 248, 0.04), transparent 60%), linear-gradient(180deg, #04060a 0%, #07090d 100%); /* sahan site-faithful dark base (cyan-only hints, alphas ≤ 0.05) [default: url(https://clearvision.github.io/images/sapphire.jpg)]*/
+  --background-position: center; /* app background position [default: center] */
+  --background-size: cover; /* app background size (px) [default: cover] */
+  --background-attachment: fixed; /* app background attachment [default: fixed] */
+  --background-filter: saturate(calc(var(--saturation-factor, 1) * 1)); /* app background adjustments (ex: blur, saturation, brightness) (more info: https://developer.mozilla.org/en-US/docs/Web/CSS/filter) [default: saturate(calc(var(--saturation-factor, 1) * 1))] */
+  /* USER POPOUT BACKGROUND */
+  --user-popout-image: var(--background-image); /* user popout background image (link must be HTTPS) (not applied to nitro users) [default: var(--background-image)] */
+  --user-popout-position: var(--background-position); /* user popout position [default: var(--background-position)] */
+  --user-popout-size: var(--background-size); /* user popout size (px) [default: var(--background-size)] */
+  --user-popout-attachment: var(--background-attachment); /* user popout background attachment [default: var(--background-attachment)] */
+  --user-popout-filter: var(--background-filter); /* user popout background adjustments (ex: blur, saturation, brightness) (more info: https://developer.mozilla.org/en-US/docs/Web/CSS/filter) [default: var(--background-filter);] */
+  /* USER MODAL BACKGROUND */
+  --user-modal-image: var(--background-image); /* user modal background image (link must be HTTPS) (not applied to nitro users) [default: var(--background-image)] */
+  --user-modal-position: var(--background-position); /* user modal position [default: var(--background-position)] */
+  --user-modal-size: var(--background-size); /* user modal size (px) [default: var(--background-size)] */
+  --user-modal-attachment: var(--background-attachment); /* user modal background attachment [default: var(--background-attachment)] */
+  --user-modal-filter: var(--background-filter); /* user modal background adjustments (ex: blur, saturation, brightness) (more info: https://developer.mozilla.org/en-US/docs/Web/CSS/filter) [default: var(--background-filter);] */
+  /* HOME ICON */
+  --home-icon: url(https://clearvision.github.io/icons/discord.svg); /* home button icon (link must be HTTPS) [default: url(https://clearvision.github.io/icons/discord.svg)]*/
+  --home-size: cover; /* home button icon size (px) [default:cover] */
+  /* FONTS */
+  --main-font: "gg sans", "Helvetica Neue", Helvetica, Arial, sans-serif; /* main font for app (font must be installed) [default: gg sans, Helvetica Neue, Helvetica, Arial, sans-serif] */
+  --code-font: Consolas, "gg mono", "Liberation Mono", Menlo, Courier, monospace; /* font for codeblocks (font must be installed) [default: Consolas, Liberation Mono, Menlo, Courier, monospace] */
+  /* CHANNEL COLORS */
+  --channel-normal: var(--interactive-text-default); /* channel text color [default: var(--interactive-text-default)] */
+  --channel-muted: var(--interactive-muted); /* muted channel text color [default: var(--interactive-muted)] */
+  --channel-hover: var(--interactive-text-hover); /* hovered channel text color [default: var(--interactive-text-hover)] */
+  --channel-selected: var(--interactive-text-active); /* selected channel text color [default: var(--interactive-text-active)] */
+  --channel-selected-bg: var(--main-color); /* selected channel background [default: var(--main-color)] */
+  --channel-unread: var(--main-color); /* unread channel text color [default: var(--main-color)] */
+  --channel-unread-hover: var(--hover-color); /* unread channel hover color [default: var(--hover-color)] */
+  /* ACCESSIBILITY */
+  --focus-color: var(--main-color); /* outline when pressing TAB key [default: var(--main-color)] */
+}
+
+/* THEME SPECIFIC SHADING */
+/* LIGHT THEME */
+:is(.theme-light, .theme-dark .theme-light) {
+  --background-shading: rgba(252, 252, 252, 0.3); /* app background shading color [default: rgba(252, 252, 252, 0.3)] */
+  --card-shading: rgba(252, 252, 252, 0.3); /* cards background shading color [default: rgba(252, 252, 252, 0.3)] */
+  --popout-shading: rgba(252, 252, 252, 0.7); /* popouts background shading color [default: rgba(252, 252, 252, 0.7)] */
+  --modal-shading: rgba(252, 252, 252, 0.5); /* modals background shading color [default: rgba(0, 0, 0, 0.6)] */
+  --input-shading: rgba(0, 0, 0, 0.3); /* inputs background shading color [default: rgba(0, 0, 0, 0.6)] */
+  --normal-text: #36363c; /* text color [default: #36363c] */
+  --muted-text: #75757e; /* muted text color [default: #75757e] */
+}
+
+/* ASH THEME */
+:is(.theme-dark, .theme-light .theme-dark) {
+  --background-shading: rgba(0, 0, 0, 0.4); /* app background shading color [default: rgba(0, 0, 0, 0.4)] */
+  --card-shading: rgba(0, 0, 0, 0.2); /* cards background shading color [default: rgba(0, 0, 0, 0.2)] */
+  --popout-shading: rgba(0, 0, 0, 0.6); /* popouts background shading color [default: rgba(0, 0, 0, 0.6)] */
+  --modal-shading: rgba(0, 0, 0, 0.4); /* modals background shading color [default: rgba(0, 0, 0, 0.4)] */
+  --input-shading: rgba(255, 255, 255, 0.05); /* inputs background shading color [default: rgba(255, 255, 255, 0.05)] */
+  --normal-text: #d8d8db; /* text color [default: #d8d8db] */
+  --muted-text: #aeaeb4; /* muted text color [default: #aeaeb4] */
+}
+
+/* DARK THEME */
+:is(.theme-darker, .theme-light .theme-darker) {
+  --background-shading: rgba(0, 0, 0, 0.6); /* app background shading color [default: rgba(0, 0, 0, 0.6)] */
+  --card-shading: rgba(0, 0, 0, 0.3); /* cards background shading color [default: rgba(0, 0, 0, 0.3)] */
+  --popout-shading: rgba(0, 0, 0, 0.7); /* popouts background shading color [default: rgba(0, 0, 0, 0.7)] */
+  --modal-shading: rgba(0, 0, 0, 0.5); /* modals background shading color [default: rgba(0, 0, 0, 0.6)] */
+  --input-shading: rgba(255, 255, 255, 0.05); /* inputs background shading color [default: rgba(255, 255, 255, 0.05)] */
+  --normal-text: #fbfbfb; /* text color [default: #fbfbfb] */
+  --muted-text: #94949c; /* muted text color [default: #94949c] */
+}
+
+/* ONYX THEME */
+:is(.theme-midnight, .theme-light .theme-midnight) {
+  --background-shading: rgba(0, 0, 0, 0.8); /* app background shading color [default: rgba(0, 0, 0, 0.8)] */
+  --card-shading: rgba(0, 0, 0, 0.4); /* cards background shading color [default: rgba(0, 0, 0, 0.4)] */
+  --popout-shading: rgba(0, 0, 0, 0.8); /* popouts background shading color [default: rgba(0, 0, 0, 0.8)] */
+  --modal-shading: rgba(0, 0, 0, 0.6); /* modals background shading color [default: rgba(0, 0, 0, 0.6)] */
+  --input-shading: rgba(255, 255, 255, 0.05); /* inputs background shading color [default: rgba(255, 255, 255, 0.05)] */
+  --normal-text: #dcdcde; /* text color [default: #dcdcde] */
+  --muted-text: #86868e; /* muted text color [default: #86868e] */
+}
+
+/* ADD ADDITIONAL CSS BELOW HERE */
+
+/* ===== SAHAN CONSTELLATION — animated background (ported from sahancs.is-a.dev §§04/31/33) ===== */
+/* Pure-CSS port of the site's fixed background stack: dark base, static
+/* masked grid, two drifting/twinkling cyan constellation layers (the
+/* site's canvas particle loop approximated with tiled dot + link layers),
+/* SVG noise, and vignette. No aurora glow orbs — the site has none.
+/* [CV-ADAPT] ClearVision keeps its remote imports, shading system, and
+/* settings UI. This block only paints the constellation behind/through them. */
+
+/* Vars the ported layers need. Approach: own :root definitions (literals
+/* copied from the site spec) — no dependency on any other theme. */
+:root {
+  --sahan-grid: linear-gradient(rgba(56, 189, 248, 0.05) 1px, transparent 0), linear-gradient(90deg, rgba(56, 189, 248, 0.05) 1px, transparent 0);
+  --sahan-grid-mask: radial-gradient(ellipse 90% 70% at 50% 30%, #000 30%, transparent 75%);
+  --sahan-vignette: radial-gradient(ellipse at 50% 0%, transparent 40%, rgba(7, 9, 13, 0.9) 100%);
+  --sahan-noise: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
+}
+
+/* ===== 04 ANIMATED BACKGROUND (ported) ===== */
+/* Signature fixed layered system. Stack order (all background layers at
+/* z -1, ordered by tree order, then content above — reproduces the site's
+/* z-order): .bg base + constellation ::before/::after (z -1 via ClearVision,
+/* filter makes its own stacking context) → body::after grid (z -1) →
+/* html::after noise+vignette combined (z -1) → static content →
+/* themed content (z 10). Background-position/opacity animation only.
+/* [CV-ADAPT] §03's `html { background-color }` and body/appMount fills are
+/* intentionally NOT ported: ClearVision's remote main.css already owns
+/* html/body/appMount (`:is(html,body,.appMount){background:none}`), so we
+/* stay off those and only paint layers behind content. */
+#app-mount,
+div[class*="appMount-"],
+div[class*="appMount__"] {
+  background-color: transparent;
+}
+
+/* Native bg layer safety net: Discord structures this
+/* element behind app content, so nothing can bury it. Site-faithful dark
+/* base (#04060a → #07090d), no animation — the pseudo-layers below
+/* provide the motion. */
+#app-mount div[class*="bg-"],
+#app-mount div[class*="bg__"],
+div[class*="appMount-"] div[class*="bg-"],
+div[class*="appMount__"] div[class*="bg__"] {
+  background: linear-gradient(180deg, #04060a 0%, #07090d 100%);
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
+
+/* Thin app-root wash: readability over the constellation web (the site has
+/* no wash; content sits on the web, so keep this minimal). */
+#app-mount > div[class*="app-"],
+#app-mount > div[class*="app__"],
+div[class*="appMount-"] > div[class*="app-"],
+div[class*="appMount__"] > div[class*="app__"] {
+  background: rgba(7, 9, 13, 0.10);
+}
+
+/* [CV-ADAPT] No base coat: .bg (ClearVision's own background element, z -1)
+/* IS the dark base (#04060a → #07090d, see :root line 28). A z 0 coat above
+/* it hid the constellation pseudo-layers living inside .bg, so it was
+/* deleted. The #app-mount transparent + .bg safety-net rules above keep the
+/* dark base painted on .bg itself. */
+
+/* Site grid (.bg-grid): exact 44px cyan lines with the site's radial mask,
+/* static (the site never animates it). Below content, above .bg, like the
+/* site. */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image: var(--sahan-grid);
+  background-size: 44px 44px;
+  background-repeat: repeat;
+  -webkit-mask-image: var(--sahan-grid-mask);
+  mask-image: var(--sahan-grid-mask);
+  opacity: 1;
+  z-index: -1;
+}
+
+/* Constellation layer A: site canvas port — 6 glowing cyan nodes per
+/* 320px tile plus an SVG link tile (stroke #38bdf8, opacity 0.30, every
+/* segment <= 140px) forming one continuous tiled web. Drifts down-right at
+/* site speed (≈15 px/s → 320px per 21s, seamless tile-multiple loop);
+/* twinkle 6s cycle owning opacity (floor 0.45 — the old 0.15 floor made the
+/* layer effectively invisible under the app wash). */
+#app-mount div[class*="bg-"]::before,
+#app-mount div[class*="bg__"]::before,
+div[class*="appMount-"] div[class*="bg-"]::before,
+div[class*="appMount__"] div[class*="bg__"]::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    radial-gradient(circle at 48px 64px, rgba(56, 189, 248, 0.95) 0 1.6px, rgba(56, 189, 248, 0.45) 3.2px, transparent 8px),
+    radial-gradient(circle at 140px 110px, rgba(56, 189, 248, 0.95) 0 1.6px, rgba(56, 189, 248, 0.45) 3.2px, transparent 8px),
+    radial-gradient(circle at 210px 180px, rgba(56, 189, 248, 0.95) 0 1.6px, rgba(56, 189, 248, 0.45) 3.2px, transparent 8px),
+    radial-gradient(circle at 125px 245px, rgba(56, 189, 248, 0.95) 0 1.6px, rgba(56, 189, 248, 0.45) 3.2px, transparent 8px),
+    radial-gradient(circle at 260px 90px, rgba(56, 189, 248, 0.95) 0 1.6px, rgba(56, 189, 248, 0.45) 3.2px, transparent 8px),
+    radial-gradient(circle at 45px 180px, rgba(56, 189, 248, 0.95) 0 1.6px, rgba(56, 189, 248, 0.45) 3.2px, transparent 8px),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='320'%3E%3Cg stroke='%2338bdf8' stroke-opacity='0.45' stroke-width='1'%3E%3Cline x1='48' y1='64' x2='140' y2='110'/%3E%3Cline x1='140' y1='110' x2='210' y2='180'/%3E%3Cline x1='210' y1='180' x2='125' y2='245'/%3E%3Cline x1='140' y1='110' x2='125' y2='245'/%3E%3Cline x1='140' y1='110' x2='260' y2='90'/%3E%3Cline x1='210' y1='180' x2='260' y2='90'/%3E%3Cline x1='48' y1='64' x2='45' y2='180'/%3E%3Cline x1='140' y1='110' x2='45' y2='180'/%3E%3Cline x1='125' y1='245' x2='45' y2='180'/%3E%3Cline x1='260' y1='90' x2='365' y2='180'/%3E%3Cline x1='48' y1='64' x2='-60' y2='90'/%3E%3C/g%3E%3C/svg%3E");
+  background-size: 320px 320px, 320px 320px, 320px 320px, 320px 320px, 320px 320px, 320px 320px, 320px 320px;
+  background-repeat: repeat;
+  opacity: 1;
+  animation:
+    sahanConstellationA 21s linear infinite,
+    sahanTwinkleA 6s ease-in-out infinite alternate;
+  z-index: 2;
+}
+
+/* Constellation layer B: parallax partner (4 glowing nodes per 430px
+/* tile + SVG link tile, stroke-opacity 0.28, every segment <= 140px),
+/* counter-drifting up-left at site speed (430px per 28s ≈ 15 px/s).
+/* Twinkle counter-phased (-3s) so the pair breathes, never pulses. */
+#app-mount div[class*="bg-"]::after,
+#app-mount div[class*="bg__"]::after,
+div[class*="appMount-"] div[class*="bg-"]::after,
+div[class*="appMount__"] div[class*="bg__"]::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    radial-gradient(circle at 80px 120px, rgba(56, 189, 248, 0.95) 0 1.6px, rgba(56, 189, 248, 0.42) 3.2px, transparent 8px),
+    radial-gradient(circle at 190px 180px, rgba(56, 189, 248, 0.95) 0 1.6px, rgba(56, 189, 248, 0.42) 3.2px, transparent 8px),
+    radial-gradient(circle at 290px 100px, rgba(56, 189, 248, 0.95) 0 1.6px, rgba(56, 189, 248, 0.42) 3.2px, transparent 8px),
+    radial-gradient(circle at 95px 255px, rgba(56, 189, 248, 0.95) 0 1.6px, rgba(56, 189, 248, 0.42) 3.2px, transparent 8px),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='430' height='430'%3E%3Cg stroke='%2338bdf8' stroke-opacity='0.40' stroke-width='1'%3E%3Cline x1='80' y1='120' x2='190' y2='180'/%3E%3Cline x1='190' y1='180' x2='290' y2='100'/%3E%3Cline x1='80' y1='120' x2='95' y2='255'/%3E%3Cline x1='190' y1='180' x2='95' y2='255'/%3E%3Cline x1='290' y1='100' x2='390' y2='70'/%3E%3Cline x1='-40' y1='70' x2='80' y2='120'/%3E%3C/g%3E%3C/svg%3E");
+  background-size: 430px 430px, 430px 430px, 430px 430px, 430px 430px, 430px 430px;
+  background-repeat: repeat;
+  opacity: 1;
+  animation:
+    sahanConstellationB 28s linear infinite,
+    sahanTwinkleB 9s ease-in-out -3s infinite alternate;
+  z-index: 3;
+}
+
+/* Site noise + vignette combined (noise alpha baked into the SVG rect at
+/* 0.05, element opacity 1). Vignette first = on top, matching the site:
+/* vignette over noise. Below content now (site order). */
+html::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background: var(--sahan-vignette), var(--sahan-noise);
+  background-size: cover, 120px 120px;
+  background-repeat: no-repeat, repeat;
+  opacity: 1;
+  z-index: -1;
+}
+
+/* Content provably above every background layer (z 0–5). */
+#app-mount nav[aria-label="Servers"],
+#app-mount div[class*="sidebar-"],
+#app-mount div[class*="sidebar__"],
+#app-mount main,
+#app-mount div[class*="chat-"],
+#app-mount div[class*="chat__"],
+#app-mount aside[class*="membersWrap-"],
+#app-mount aside[class*="membersWrap__"] {
+  position: relative;
+  z-index: 10;
+}
+
+/* ===== 31 BACKGROUND ANIMATIONS (ported — only keyframes referenced above) ===== */
+/* Drift loops shift by exactly one tile (seamless); twinkle floors raised
+/* (A 0.45–1, B 0.50–0.92) so the web stays visible through the wash. */
+@keyframes sahanConstellationA {
+  from { background-position: 0 0, 0 0, 0 0, 0 0, 0 0, 0 0, 0 0; }
+  to { background-position: 320px 320px, 320px 320px, 320px 320px, 320px 320px, 320px 320px, 320px 320px, 320px 320px; }
+}
+
+@keyframes sahanConstellationB {
+  from { background-position: 0 0, 0 0, 0 0, 0 0, 0 0; }
+  to { background-position: -430px -430px, -430px -430px, -430px -430px, -430px -430px, -430px -430px; }
+}
+
+@keyframes sahanTwinkleA {
+  from { opacity: 0.60; }
+  to { opacity: 1; }
+}
+
+@keyframes sahanTwinkleB {
+  from { opacity: 0.65; }
+  to { opacity: 0.95; }
+}
+
+/* ===== 33 REDUCED MOTION (ported — background layers only) ===== */
+/* Background-only subset of the site behavior: the site draws its canvas
+/* once, static (no loop) — so the ported layers freeze at base opacity. UI
+/* animations are ClearVision's domain. */
+@media (prefers-reduced-motion: reduce) {
+  body::after,
+  #app-mount div[class*="bg-"]::before,
+  #app-mount div[class*="bg__"]::before,
+  div[class*="appMount-"] div[class*="bg-"]::before,
+  div[class*="appMount__"] div[class*="bg__"]::before,
+  #app-mount div[class*="bg-"]::after,
+  #app-mount div[class*="bg__"]::after,
+  div[class*="appMount-"] div[class*="bg-"]::after,
+  div[class*="appMount__"] div[class*="bg__"]::after,
+  html::after {
+    animation-duration: 0.01ms;
+    animation-iteration-count: 1;
+  }
+}

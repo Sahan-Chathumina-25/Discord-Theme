@@ -1,0 +1,4633 @@
+/**
+ * @name Portfolio
+ * @author Sahan
+ * @version 1.0.0
+ * @description Portfolio-derived Discord theme: warm off-white text on deep #07090d, sky-400 accent, 6px buttons, 12px glass cards, Space Grotesk headings. Design language translated from https://sahancs.is-a.dev. For BetterDiscord / Vencord.
+ * @source https://sahancs.is-a.dev
+ * @website https://sahancs.is-a.dev
+ */
+
+/* ===== 01 TOKENS ===== */
+/* Real measured portfolio tokens — do not restyle. Surfaces, text,
+   accent, radii, blur, and motion below are computed-style values
+   extracted live from https://sahancs.is-a.dev (Next.js + Tailwind). */
+:root {
+  --pf-bg: #07090d;
+  --pf-surface: #10141b;
+  --pf-card: rgba(16, 20, 27, 0.6);
+  --pf-card-border: rgba(255, 255, 255, 0.1);
+  --pf-text: #f4f2ec;
+  --pf-text-secondary: #cfccc2;
+  --pf-muted: rgba(208, 205, 195, 0.7);
+  --pf-accent: #38bdf8;
+  --pf-accent-line: rgba(56, 189, 248, 0.25);
+  --pf-accent-border: rgba(56, 189, 248, 0.4);
+  --pf-selection: rgba(56, 189, 248, 0.3);
+  --pf-btn-text: #07090d;
+  --pf-font-body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --pf-font-heading: "Space Grotesk", "Inter", system-ui, sans-serif;
+  --pf-font-code: "JetBrains Mono", "Cascadia Code", "Fira Code", ui-monospace, SFMono-Regular, Menlo, monospace;
+  --pf-radius-btn: 6px;
+  --pf-radius-card: 12px;
+  --pf-radius-pill: 9999px;
+  --pf-blur: 8px;
+  --pf-motion: 150ms;
+  --pf-ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --pf-online: #23a55a;
+  --pf-idle: #f0b232;
+  --pf-dnd: #f23f43;
+  --pf-streaming: #a970ff;
+  --pf-offline: #6d6f78;
+  --pf-channels-width: 240px;
+  --pf-members-width: 240px;
+}
+
+/* ===== 02 BASE ===== */
+html {
+  background-color: var(--pf-bg);
+  color: var(--pf-text);
+  font-family: var(--pf-font-body);
+  text-rendering: optimizeLegibility;
+}
+
+/* Body + mount stay transparent so body::before/::after (BGFX §§54-55,
+   z-index 1/3) paint above the html base yet below content (z-index 10).
+   #app-mount keeps NO opaque fill here — §04 ::before owns the base coat
+   as a transparent-based layer (z-index 0), never a solid cover. */
+body,
+#app-mount,
+div[class*="appMount-"],
+div[class*="appMount__"] {
+  background-color: transparent;
+  color: var(--pf-text);
+  font-family: var(--pf-font-body);
+  text-rendering: optimizeLegibility;
+}
+
+/* Transparency chain: intermediate layers stay transparent so the
+   dedicated backdrop layer (section 04) shows through. Scoped to
+   direct app children only — never a bare div[class*="bg"]. */
+#app-mount > div[class*="app-"],
+#app-mount > div[class*="app__"],
+#app-mount > div[class*="bg-"],
+#app-mount > div[class*="bg__"],
+div[class*="appMount-"] > div[class*="app-"],
+div[class*="appMount__"] > div[class*="app__"],
+div[class*="appMount-"] > div[class*="bg-"],
+div[class*="appMount__"] > div[class*="bg__"],
+/* Current Discord nests layers/layer/base wrappers between app and content —
+   every one must stay transparent (both `-` and `__` variants) or it buries
+   the fixed bgfx layers behind an opaque fill. */
+#app-mount div[class*="layers-"],
+#app-mount div[class*="layers__"],
+#app-mount div[class*="layer-"],
+#app-mount div[class*="layer__"],
+div[class*="appMount-"] div[class*="layers-"],
+div[class*="appMount__"] div[class*="layers__"],
+div[class*="appMount-"] div[class*="layer-"],
+div[class*="appMount__"] div[class*="layer__"],
+#app-mount div[class*="base-"],
+#app-mount div[class*="base__"],
+div[class*="layerContainer-"],
+div[class*="layerContainer__"],
+#app-mount main,
+main[class*="chatContent-"],
+main[class*="chatContent__"],
+div[class*="chat-"],
+div[class*="chat__"],
+div[class*="chatContent-"],
+div[class*="chatContent__"] {
+  background-color: transparent;
+  border-color: var(--pf-card-border);
+}
+
+/* ===== 02A BASE COAT (stable selectors — always visibly applies) ===== */
+/* Current Discord ships double-underscore module classes (chat__x) while
+   older builds used single-dash (chat-x). Every rule below anchors on the
+   stable #app-mount id plus both suffix styles, so this block visibly
+   applies on any build. Tokens unchanged. */
+html {
+  background-color: var(--pf-bg);
+}
+/* #app-mount stays transparent: html owns the solid base so the fixed
+   bgfx layers (body pseudos + bg pseudos) paint above the base coat.
+   An opaque fill here would bury every body::before/::after layer. */
+#app-mount {
+  background-color: transparent;
+}
+#app-mount main,
+#app-mount div[class*="chat-"],
+#app-mount div[class*="chat__"] {
+  background-color: transparent;
+}
+#app-mount a[href] {
+  color: var(--pf-accent);
+}
+#app-mount nav[aria-label="Servers"],
+#app-mount div[class*="guilds-"],
+#app-mount div[class*="guilds__"] {
+  background-color: rgba(7, 9, 13, 0.78);
+}
+#app-mount div[class*="sidebar-"],
+#app-mount div[class*="sidebar__"],
+#app-mount nav[aria-label*="channel"] {
+  background: rgba(7, 9, 13, 0.66);
+}
+
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* ===== 03 TYPOGRAPHY ===== */
+body, button, input, textarea, select {
+  font-family: var(--pf-font-body);
+}
+
+h1 {
+  font-family: var(--pf-font-heading);
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  color: var(--pf-text);
+}
+
+h2 {
+  font-family: var(--pf-font-heading);
+  font-weight: 700;
+  color: var(--pf-text);
+}
+
+/* Portfolio card h3: Space Grotesk 600, sky accent. Size reverted — Discord default wins. */
+h3 {
+  font-family: var(--pf-font-heading);
+  font-weight: 600;
+  color: var(--pf-accent);
+}
+
+code, pre,
+span[class*="inlineCode-"],
+div[class*="codeBlock-"] {
+  font-family: var(--pf-font-code);
+}
+
+div[class*="markup-"],
+div[class*="messageContent-"] {
+  color: var(--pf-text);
+}
+
+/* ===== 04 BACKGROUND ===== */
+/* Page bg #07090d with subtle sky radial glows plus a faint dot
+   texture echoing the portfolio canvas particle-network / SVG node
+   motif (strokes rgba(56,189,248,.25), #10141b node fills).
+   Filters apply ONLY to this layer, never the app. */
+#app-mount,
+div[class*="appMount-"],
+div[class*="appMount__"] {
+  background-color: var(--pf-bg);
+}
+
+#app-mount::before,
+div[class*="appMount-"]::before,
+div[class*="appMount__"]::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  /* Transparent base: the solid page color lives on html (§02) only.
+     The old trailing `var(--pf-bg)` layer here was opaque and painted
+     OVER body::before/::after (later in tree order, same z-index),
+     burying the §54 glow + §55 grid completely. Stack order is now
+     base(html) → this coat (z 0) → glows (z 1-2) → grid (z 3) →
+     constellation (z 4-5) → content (z 10). */
+  background:
+    radial-gradient(900px 480px at 12% -6%, rgba(56, 189, 248, 0.08), transparent 60%),
+    radial-gradient(860px 520px at 88% 4%, rgba(56, 189, 248, 0.06), transparent 62%),
+    radial-gradient(rgba(56, 189, 248, 0.055) 1px, transparent 1.4px);
+  background-color: transparent;
+  background-size: auto, auto, 26px 26px;
+  background-position: center, center, 0 0;
+  background-repeat: no-repeat, no-repeat, repeat;
+  z-index: 0;
+}
+
+/* Slow sky-glow drift above the dot layer, below content.
+   Transform + opacity only, per portfolio reveal language.
+   z-index 2: above the §54 companion glow (z 1), below the grid (z 3). */
+#app-mount::after,
+div[class*="appMount-"]::after,
+div[class*="appMount__"]::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(640px 340px at 22% 18%, rgba(56, 189, 248, 0.06), transparent 70%),
+    radial-gradient(620px 360px at 78% 12%, rgba(56, 189, 248, 0.05), transparent 70%);
+  opacity: 0.9;
+  animation: pf-glow-drift 26s ease-in-out infinite alternate;
+  z-index: 2;
+}
+
+@keyframes pf-glow-drift {
+  from { opacity: 0.55; transform: translate3d(-1.5%, -1%, 0) scale(1); }
+  to { opacity: 0.9; transform: translate3d(1.5%, 1%, 0) scale(1.02); }
+}
+
+/* ===== 05 SERVER LIST ===== */
+/* Guild / server rail over the portfolio page bg. */
+nav[aria-label="Servers"],
+div[class*="guilds-"] {
+  background-color: rgba(7, 9, 13, 0.78);
+  border-right: 1px solid var(--pf-accent-line);
+}
+
+div[class*="guilds-"] div[class*="listItem-"] div[class*="wrapper-"],
+nav[aria-label="Servers"] div[class*="wrapper-"] {
+  border-radius: 50%;
+}
+
+div[class*="guilds-"] div[class*="listItem-"] img,
+nav[aria-label="Servers"] img {
+  border-radius: 50%;
+  transition: transform var(--pf-motion) var(--pf-ease), box-shadow var(--pf-motion) var(--pf-ease);
+}
+
+div[class*="guilds-"] div[class*="listItem-"]:hover img,
+nav[aria-label="Servers"] div[class*="listItem-"]:hover img {
+  transform: scale(1.04);
+  box-shadow: 0 0 14px var(--pf-accent-line);
+}
+
+/* Active server indicator: sky eyebrow-pill bar. */
+div[class*="guilds-"] div[class*="pill-"] span,
+nav[aria-label="Servers"] div[class*="pill-"] span {
+  background: var(--pf-accent);
+  border-radius: var(--pf-radius-pill);
+}
+
+/* Unread dots: sky pill, dark text. */
+div[class*="guilds-"] div[class*="unreadMentionsIndicator-"],
+div[class*="guilds-"] div[class*="mention-"],
+nav[aria-label="Servers"] div[class*="unread-"] {
+  background-color: var(--pf-accent);
+  color: var(--pf-btn-text);
+  border-radius: var(--pf-radius-pill);
+}
+
+/* ===== 06 CHANNEL SIDEBAR ===== */
+/* Portfolio nav is transparent — sidebar floats over page bg. */
+div[class*="sidebar-"],
+nav[aria-label*="channel"] {
+  background: rgba(7, 9, 13, 0.66);
+  border-right: 1px solid var(--pf-card-border);
+  width: var(--pf-channels-width);
+}
+
+div[class*="sidebar-"] div[class*="containerDefault-"] a,
+div[class*="sidebar-"] li div[class*="link-"] {
+  background-color: transparent;
+  border-radius: var(--pf-radius-btn);
+  color: var(--pf-text-secondary);
+  transition: background-color var(--pf-motion) var(--pf-ease), color var(--pf-motion) var(--pf-ease);
+}
+
+div[class*="sidebar-"] div[class*="containerDefault-"] a:hover,
+div[class*="sidebar-"] li div[class*="link-"]:hover {
+  background-color: var(--pf-card);
+  color: var(--pf-accent);
+}
+
+/* Unread channels: warm off-white, semibold, full opacity. */
+div[class*="sidebar-"] div[class*="containerDefault-"][class*="unread-"] a,
+div[class*="sidebar-"] li div[class*="link-"][class*="unread-"],
+div[class*="sidebar-"] div[class*="modeUnread-"] a {
+  color: var(--pf-text);
+  font-weight: 600;
+  opacity: 1;
+}
+
+/* Muted channels: muted warm gray. */
+div[class*="sidebar-"] div[class*="containerDefault-"][class*="muted-"] a,
+div[class*="sidebar-"] li div[class*="link-"][class*="muted-"] {
+  color: var(--pf-muted);
+  opacity: 0.7;
+}
+
+/* Active channel: glass surface with sky eyebrow accent bar. */
+div[class*="sidebar-"] div[class*="modeSelected-"] a,
+div[class*="sidebar-"] li div[class*="selected-"] {
+  background-color: var(--pf-card);
+  color: var(--pf-text);
+  box-shadow: inset 2px 0 0 0 var(--pf-accent);
+}
+
+/* Category headers: uppercase, letter-spaced, muted warm gray. */
+div[class*="sidebar-"] h2[class*="name-"],
+div[class*="sidebar-"] span[class*="name-"] {
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 11px;
+  color: var(--pf-muted);
+}
+
+/* ===== 07 HEADER ===== */
+header[class*="header-"],
+div[class*="headerBar-"] {
+  background: rgba(7, 9, 13, 0.6);
+  border-bottom: 1px solid var(--pf-card-border);
+  color: var(--pf-text);
+}
+
+header[class*="header-"]:hover {
+  border-bottom-color: var(--pf-accent-line);
+}
+
+div[class*="headerBar-"] div[class*="title-"],
+header[class*="header-"] h1[class*="name-"] {
+  font-family: var(--pf-font-heading);
+  color: var(--pf-text);
+}
+
+/* ===== 08 CHAT / MESSAGES ===== */
+div[class*="chat-"],
+div[class*="chatContent-"] {
+  background: transparent;
+}
+
+ol[class*="scrollerInner-"],
+div[class*="messagesWrapper-"] {
+  padding: 12px 8px 20px;
+}
+
+li[class*="message-"],
+div[class*="message-"] {
+  padding: 8px 12px;
+  margin: 2px 8px;
+  border-radius: var(--pf-radius-card);
+  border: 1px solid transparent;
+  transition: background-color var(--pf-motion) var(--pf-ease), border-color var(--pf-motion) var(--pf-ease);
+}
+
+li[class*="message-"]:hover,
+div[class*="message-"]:hover {
+  background-color: var(--pf-card);
+  border-color: var(--pf-card-border);
+}
+
+/* Timestamps: muted warm gray. */
+time,
+span[class*="timestamp-"] {
+  color: var(--pf-muted);
+  font-size: 0.72rem;
+  letter-spacing: 0.02em;
+}
+
+/* Message dividers: glass pills. */
+div[class*="divider-"] {
+  border-top-color: var(--pf-card-border);
+}
+
+div[class*="divider-"] span[class*="content-"] {
+  background: var(--pf-surface);
+  color: var(--pf-muted);
+  border: 1px solid var(--pf-card-border);
+  border-radius: var(--pf-radius-pill);
+}
+
+/* New-message divider: sky tint line + pill. */
+div[class*="divider-"][class*="isUnread-"] {
+  border-top-color: var(--pf-accent);
+}
+
+div[class*="divider-"][class*="isUnread-"] span[class*="content-"] {
+  background: var(--pf-accent-line);
+  color: var(--pf-accent);
+  border-color: var(--pf-accent-border);
+}
+
+/* ===== 09 MARKDOWN ===== */
+div[class*="markup-"] strong {
+  color: var(--pf-text);
+}
+
+div[class*="markup-"] em,
+div[class*="markup-"] span[class*="emoji-"] {
+  color: var(--pf-text-secondary);
+}
+
+div[class*="markup-"] a[href] {
+  color: var(--pf-accent);
+  text-decoration: none;
+  transition: color var(--pf-motion) var(--pf-ease);
+}
+
+div[class*="markup-"] a[href]:hover {
+  color: var(--pf-text);
+  text-decoration: underline;
+}
+
+div[class*="markup-"] h1 {
+  font-family: var(--pf-font-heading);
+  letter-spacing: -0.025em;
+  color: var(--pf-text);
+}
+
+div[class*="markup-"] h2 {
+  font-family: var(--pf-font-heading);
+  color: var(--pf-text);
+}
+
+div[class*="markup-"] h3 {
+  font-family: var(--pf-font-heading);
+  font-weight: 600;
+  color: var(--pf-accent);
+}
+
+div[class*="markup-"] li::marker {
+  color: var(--pf-accent);
+}
+
+div[class*="markup-"] hr,
+div[class*="markup-"] div[class*="separator-"] {
+  border-color: var(--pf-card-border);
+}
+
+/* Spoilers: dark surface, sky reveal on hover. */
+div[class*="markup-"] span[class*="spoiler-"] {
+  background-color: var(--pf-surface);
+  border-radius: var(--pf-radius-btn);
+}
+
+div[class*="markup-"] span[class*="spoiler-"]:hover {
+  border-color: var(--pf-accent-line);
+}
+
+/* ===== 10 CODE BLOCKS ===== */
+pre,
+div[class*="codeBlock-"],
+code[class*="codeBlockText-"] {
+  background: var(--pf-surface);
+  border: 1px solid var(--pf-accent-line);
+  border-radius: var(--pf-radius-card);
+  color: var(--pf-text);
+}
+
+div[class*="codeBlock-"] div[class*="codeActions-"] button {
+  color: var(--pf-muted);
+  border-radius: var(--pf-radius-btn);
+  transition: color var(--pf-motion) var(--pf-ease);
+}
+
+div[class*="codeBlock-"] div[class*="codeActions-"] button:hover {
+  color: var(--pf-accent);
+}
+
+code[class*="inline-"],
+span[class*="inlineCode-"],
+div[class*="markup-"] code {
+  font-family: var(--pf-font-code);
+  background: var(--pf-accent-line);
+  border: 1px solid var(--pf-accent-line);
+  border-radius: var(--pf-radius-btn);
+  color: var(--pf-accent);
+  padding: 1px 5px;
+}
+
+/* ===== 11 EMBEDS ===== */
+/* Portfolio glass cards: 12px radius, white/10 border, blur 8px,
+   no shadow. Discord side-pill accent colors are preserved. */
+div[class*="embedWrapper-"],
+article[class*="embed-"] {
+  background: var(--pf-card);
+  border: 1px solid var(--pf-card-border);
+  border-radius: var(--pf-radius-card);
+  box-shadow: none;
+  backdrop-filter: blur(var(--pf-blur));
+}
+
+article[class*="embed-"] span[class*="pill-"] {
+  border-radius: var(--pf-radius-pill);
+}
+
+article[class*="embed-"] div[class*="embedAuthorName-"],
+article[class*="embed-"] div[class*="embedTitle-"] {
+  color: var(--pf-text);
+  font-family: var(--pf-font-heading);
+}
+
+article[class*="embed-"] div[class*="embedDescription-"] {
+  color: var(--pf-text-secondary);
+}
+
+article[class*="embed-"] div[class*="embedFieldName-"] {
+  color: var(--pf-accent);
+  font-family: var(--pf-font-heading);
+}
+
+article[class*="embed-"] div[class*="embedFieldValue-"],
+article[class*="embed-"] div[class*="embedFooterText-"] {
+  color: var(--pf-muted);
+}
+
+/* ===== 12 BUTTONS ===== */
+button[class*="button-"] {
+  border-radius: var(--pf-radius-btn);
+  transition: background-color var(--pf-motion) var(--pf-ease), border-color var(--pf-motion) var(--pf-ease);
+}
+
+/* Primary CTA: sky bg, dark #07090d text, 600 weight, 6px radius,
+   no shadow — scaled to Discord button padding. */
+button[class*="colorBrand-"],
+button[type="submit"] {
+  background: var(--pf-accent);
+  color: var(--pf-btn-text);
+  font-weight: 600;
+  border: 1px solid transparent;
+  box-shadow: none;
+}
+
+button[class*="colorBrand-"]:hover,
+button[type="submit"]:hover {
+  background: var(--pf-accent);
+  color: var(--pf-btn-text);
+  transform: translateY(-1px);
+}
+
+/* Secondary: transparent bg, sky text, 1px sky/40 border, 6px radius. */
+button[class*="colorPrimary-"],
+button[class*="lookFilled-"][class*="grey-"],
+button[class*="secondary-"] {
+  background: transparent;
+  border: 1px solid var(--pf-accent-border);
+  color: var(--pf-accent);
+}
+
+button[class*="colorPrimary-"]:hover,
+button[class*="secondary-"]:hover {
+  background: var(--pf-accent-line);
+  border-color: var(--pf-accent);
+  color: var(--pf-accent);
+  transform: translateY(-1px);
+}
+button[class*="colorBrand-"],
+button[class*="colorBrand__"],
+button[type="submit"],
+button[class*="colorPrimary-"],
+button[class*="colorPrimary__"],
+button[class*="secondary-"],
+button[class*="secondary__"] {
+  transition: transform var(--pf-motion) var(--pf-ease), background-color var(--pf-motion) var(--pf-ease), border-color var(--pf-motion) var(--pf-ease);
+}
+
+/* Danger keeps a functional red treatment. */
+button[class*="colorRed-"],
+button[class*="danger-"] {
+  background: rgba(242, 63, 67, 0.14);
+  border: 1px solid rgba(242, 63, 67, 0.45);
+  color: var(--pf-dnd);
+}
+
+button[class*="colorRed-"]:hover,
+button[class*="danger-"]:hover {
+  background: rgba(242, 63, 67, 0.22);
+}
+
+/* Link-style buttons read as sky eyebrow text. */
+button[class*="lookLink-"] {
+  color: var(--pf-accent);
+}
+
+/* ===== 13 COMPOSER ===== */
+/* Portfolio input style: dark glass surface, white/10 border,
+   sky focus ring. */
+div[class*="channelTextArea-"],
+form[class*="form-"] div[class*="scrollableContainer-"] {
+  background: var(--pf-card);
+  border: 1px solid var(--pf-card-border);
+  border-radius: var(--pf-radius-card);
+  transition: border-color var(--pf-motion) var(--pf-ease), box-shadow var(--pf-motion) var(--pf-ease);
+}
+
+div[class*="channelTextArea-"]:focus-within,
+form[class*="form-"] div[class*="scrollableContainer-"]:focus-within {
+  border-color: var(--pf-accent-border);
+  box-shadow: 0 0 0 1px var(--pf-accent-line);
+}
+
+div[class*="textArea-"] div[class*="placeholder-"] {
+  color: var(--pf-muted);
+}
+
+div[class*="attachButton-"] button:hover,
+div[class*="buttons-"] button:hover {
+  color: var(--pf-accent);
+}
+
+/* Typing indicator: muted text, sky dots. */
+div[class*="typing-"] span[class*="text-"] {
+  color: var(--pf-muted);
+}
+
+div[class*="typing-"] i[class*="dot-"] {
+  background-color: var(--pf-accent);
+}
+
+/* Slowmode / character counter. */
+div[class*="charCounter-"],
+div[class*="slowmodeIcon-"] {
+  color: var(--pf-muted);
+}
+
+/* ===== 14 SEARCH ===== */
+div[class*="searchBar-"],
+div[class*="search-"] div[class*="DraftEditor-root"] {
+  background: var(--pf-card);
+  border: 1px solid var(--pf-card-border);
+  border-radius: var(--pf-radius-btn);
+  color: var(--pf-text-secondary);
+  transition: border-color var(--pf-motion) var(--pf-ease), box-shadow var(--pf-motion) var(--pf-ease);
+}
+
+div[class*="searchBar-"]:focus-within,
+div[class*="search-"]:focus-within {
+  border-color: var(--pf-accent-border);
+  box-shadow: 0 0 0 1px var(--pf-accent-line);
+}
+
+div[class*="searchResultsWrap-"] {
+  background: var(--pf-surface);
+  border: 1px solid var(--pf-card-border);
+  border-radius: var(--pf-radius-card);
+  box-shadow: none;
+}
+
+div[class*="searchResult-"] {
+  border-radius: var(--pf-radius-card);
+  border: 1px solid transparent;
+  transition: background-color var(--pf-motion) var(--pf-ease), border-color var(--pf-motion) var(--pf-ease);
+}
+
+div[class*="searchResult-"]:hover {
+  background-color: var(--pf-card);
+  border-color: var(--pf-card-border);
+}
+
+/* Search filter tags (author:, from:, has:) and option rows. */
+div[class*="searchAnswer-"],
+div[class*="searchFilter-"],
+li[class*="option-"] div[class*="answer-"] {
+  background: var(--pf-accent-line);
+  color: var(--pf-accent);
+  border-radius: var(--pf-radius-btn);
+}
+
+li[class*="option-"]:hover {
+  background-color: var(--pf-card);
+}
+
+div[class*="searchHeader-"],
+div[class*="channelName-"] {
+  color: var(--pf-text-secondary);
+}
+
+div[class*="searchHeader-"] div[class*="totalResults-"] {
+  color: var(--pf-muted);
+}
+
+/* ===== 15 MEMBERS LIST ===== */
+aside[class*="membersWrap-"],
+div[class*="members-"] {
+  background: rgba(7, 9, 13, 0.6);
+  border-left: 1px solid var(--pf-card-border);
+  width: var(--pf-members-width);
+}
+
+div[class*="membersGroup-"],
+h3[class*="membersGroup-"] {
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 11px;
+  font-family: var(--pf-font-heading);
+  color: var(--pf-muted);
+}
+
+div[class*="member-"] div[class*="layout-"] {
+  border-radius: var(--pf-radius-btn);
+  transition: background-color var(--pf-motion) var(--pf-ease);
+}
+
+div[class*="member-"] div[class*="layout-"]:hover {
+  background-color: var(--pf-card);
+}
+
+div[class*="member-"] img[class*="avatar-"] {
+  border-radius: 50%;
+  transition: transform var(--pf-motion) var(--pf-ease);
+}
+
+div[class*="member-"]:hover img[class*="avatar-"] {
+  transform: scale(1.06);
+}
+
+/* Status dots keep functional Discord colors.
+   Discord renders status via inline SVG fill, so a deliberate
+   !important is required for these to win. */
+div[class*="member-"] rect[fill="#23a55a"],
+div[class*="member-"] rect[fill="#43b581"] {
+  fill: var(--pf-online) !important;
+}
+
+div[class*="member-"] rect[fill="#f0b232"],
+div[class*="member-"] rect[fill="#faa81a"] {
+  fill: var(--pf-idle) !important;
+}
+
+div[class*="member-"] rect[fill="#f23f43"],
+div[class*="member-"] rect[fill="#ed4245"] {
+  fill: var(--pf-dnd) !important;
+}
+
+div[class*="member-"] rect[fill="#593695"],
+div[class*="member-"] rect[fill="#a970ff"] {
+  fill: var(--pf-streaming) !important;
+}
+
+div[class*="member-"] rect[fill="#80848e"],
+div[class*="member-"] rect[fill="#747f8d"] {
+  fill: var(--pf-offline) !important;
+}
+
+/* ===== 16 USER PANEL ===== */
+div[class*="panels-"],
+section[class*="panels-"] {
+  background: rgba(7, 9, 13, 0.85);
+  border-top: 1px solid var(--pf-card-border);
+}
+
+div[class*="panels-"] div[class*="container-"] {
+  border-radius: var(--pf-radius-card);
+}
+
+/* Self status dot follows the same functional palette. */
+div[class*="panels-"] rect[fill="#23a55a"],
+div[class*="panels-"] rect[fill="#43b581"] {
+  fill: var(--pf-online) !important;
+}
+
+div[class*="panels-"] rect[fill="#f0b232"],
+div[class*="panels-"] rect[fill="#faa81a"] {
+  fill: var(--pf-idle) !important;
+}
+
+div[class*="panels-"] rect[fill="#f23f43"],
+div[class*="panels-"] rect[fill="#ed4245"] {
+  fill: var(--pf-dnd) !important;
+}
+
+div[class*="panels-"] rect[fill="#80848e"],
+div[class*="panels-"] rect[fill="#747f8d"] {
+  fill: var(--pf-offline) !important;
+}
+
+div[class*="panels-"] button {
+  border-radius: var(--pf-radius-btn);
+  color: var(--pf-text-secondary);
+  transition: background-color var(--pf-motion) var(--pf-ease), color var(--pf-motion) var(--pf-ease);
+}
+
+div[class*="panels-"] button:hover {
+  background-color: var(--pf-card);
+  color: var(--pf-text);
+}
+
+/* Voice connection status text. */
+div[class*="connection-"] div[class*="rtcConnectionStatus-"] {
+  color: var(--pf-text-secondary);
+}
+
+/* ===== 17 VOICE ===== */
+div[class*="callTile-"],
+div[class*="voiceUser-"] {
+  background: var(--pf-surface);
+  border: 1px solid var(--pf-card-border);
+  border-radius: var(--pf-radius-card);
+}
+
+/* Speaking ring: functional green, always visible, no flashing. */
+div[class*="speaking-"],
+div[class*="avatarSpeaking-"] {
+  border-color: var(--pf-online);
+  box-shadow: 0 0 0 2px rgba(35, 165, 90, 0.55), 0 0 14px var(--pf-accent-line);
+}
+
+div[class*="voiceUser-"] div[class*="username-"] {
+  color: var(--pf-text);
+}
+
+div[class*="voiceUser-"][class*="speaking-"] div[class*="username-"] {
+  color: var(--pf-online);
+}
+
+div[class*="voiceUser-"] div[class*="icons-"] svg[class*="streaming-"] {
+  color: var(--pf-streaming);
+}
+
+/* Deafened / muted icon tint. */
+div[class*="voiceUser-"] svg[class*="deafen-"],
+div[class*="voiceUser-"] svg[class*="mute-"] {
+  color: var(--pf-dnd);
+}
+
+/* ===== 17B NATIVE ANIMATION GUARD ===== */
+/* Discord native transitions (modal/popover/toast/menu/message) are
+   intentionally untouched: no rule in this theme may set animation,
+   transition, or transform on Discord's own animated layers — those
+   shorthands would REPLACE native motion (modal/popover open,
+   message create, hover reveals, toasts, context menus, call tiles,
+   window-control hovers). Theme motion lives only on pf-* decorative
+   layers; kill-switches live solely inside prefers-reduced-motion. */
+
+/* ===== 18 POPOVERS ===== */
+/* Portfolio glass: 12px radius, white/10 border, blur 8px, no shadow. */
+div[class*="popover-"],
+div[class*="popout-"],
+div[class*="autocomplete-"] {
+  background: var(--pf-card);
+  border: 1px solid var(--pf-card-border);
+  border-radius: var(--pf-radius-card);
+  box-shadow: none;
+  backdrop-filter: blur(var(--pf-blur));
+  /* No animation: Discord's native popover entrance plays untouched. */
+}
+
+/* User profile popout accents. */
+div[class*="userPopout-"] {
+  border: 1px solid var(--pf-card-border);
+  border-radius: var(--pf-radius-card);
+  box-shadow: none;
+}
+
+div[class*="userPopout-"] div[class*="banner-"] {
+  border-radius: var(--pf-radius-card) var(--pf-radius-card) 0 0;
+}
+
+/* Portfolio reveal language: opacity + translateY + slight scale. */
+@keyframes pf-reveal {
+  from { opacity: 0; transform: translateY(4px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* ===== 19 CONTEXT MENUS ===== */
+div[role="menu"],
+div[class*="menu-"],
+div[class*="contextMenu-"] {
+  background: var(--pf-card);
+  border: 1px solid var(--pf-card-border);
+  border-radius: var(--pf-radius-card);
+  box-shadow: none;
+  backdrop-filter: blur(var(--pf-blur));
+  /* No animation: Discord's native menu open plays untouched. */
+}
+
+div[role="menuitem"],
+div[class*="menu-"] div[class*="item-"] {
+  border-radius: var(--pf-radius-btn);
+  color: var(--pf-text-secondary);
+  transition: background-color var(--pf-motion) var(--pf-ease), color var(--pf-motion) var(--pf-ease);
+}
+
+div[role="menuitem"]:hover,
+div[class*="menu-"] div[class*="item-"]:hover {
+  background-color: var(--pf-accent-line);
+  color: var(--pf-text);
+}
+
+/* Destructive menu items keep functional red. */
+div[class*="menu-"] div[class*="item-"][class*="danger-"],
+div[role="menuitem"][class*="danger-"] {
+  color: var(--pf-dnd);
+}
+
+/* ===== 20 MODALS ===== */
+div[role="dialog"],
+div[class*="modal-"],
+div[class*="root-"][class*="modal-"] {
+  background: var(--pf-card);
+  border: 1px solid var(--pf-card-border);
+  border-radius: var(--pf-radius-card);
+  box-shadow: none;
+  backdrop-filter: blur(var(--pf-blur));
+  /* No animation: Discord's native modal open plays untouched. */
+}
+
+div[class*="modal-"] div[class*="header-"] h2,
+div[role="dialog"] h2 {
+  font-family: var(--pf-font-heading);
+  color: var(--pf-text);
+}
+
+div[class*="modal-"] div[class*="content-"] {
+  color: var(--pf-text-secondary);
+}
+
+div[class*="userProfileModal-"] {
+  border: 1px solid var(--pf-card-border);
+  border-radius: var(--pf-radius-card);
+  box-shadow: none;
+}
+
+div[class*="userProfileModal-"] div[class*="banner-"] {
+  border-radius: var(--pf-radius-card) var(--pf-radius-card) 0 0;
+}
+
+/* Modal backdrop scrim over the page bg. */
+div[class*="backdrop-"] {
+  background: rgba(7, 9, 13, 0.7);
+}
+
+/* ===== 21 SETTINGS ===== */
+div[class*="sidebarRegion-"],
+div[class*="contentRegion-"] {
+  background: var(--pf-bg);
+}
+
+div[class*="sidebarRegion-"] div[class*="item-"] {
+  border-radius: var(--pf-radius-btn);
+  color: var(--pf-text-secondary);
+  transition: background-color var(--pf-motion) var(--pf-ease), color var(--pf-motion) var(--pf-ease);
+}
+
+div[class*="sidebarRegion-"] div[class*="item-"]:hover {
+  background-color: var(--pf-card);
+  color: var(--pf-text);
+}
+
+div[class*="sidebarRegion-"] div[class*="selected-"] {
+  background-color: var(--pf-card);
+  color: var(--pf-text);
+  box-shadow: inset 2px 0 0 0 var(--pf-accent);
+}
+
+/* Settings section titles and descriptions. */
+div[class*="contentRegion-"] h2[class*="title-"],
+div[class*="contentRegion-"] h5[class*="title-"] {
+  font-family: var(--pf-font-heading);
+  color: var(--pf-text);
+}
+
+div[class*="contentRegion-"] div[class*="description-"] {
+  color: var(--pf-text-secondary);
+}
+
+/* ===== 22 CONTROLS ===== */
+/* Settings text inputs, textareas, and selects: portfolio input style. */
+div[class*="contentRegion-"] input[type="text"],
+div[class*="contentRegion-"] textarea,
+div[class*="contentRegion-"] select {
+  background: var(--pf-card);
+  border: 1px solid var(--pf-card-border);
+  border-radius: var(--pf-radius-btn);
+  color: var(--pf-text);
+  transition: border-color var(--pf-motion) var(--pf-ease), box-shadow var(--pf-motion) var(--pf-ease);
+}
+
+div[class*="contentRegion-"] input[type="text"]:focus,
+div[class*="contentRegion-"] textarea:focus,
+div[class*="contentRegion-"] select:focus {
+  border-color: var(--pf-accent-border);
+  box-shadow: 0 0 0 1px var(--pf-accent-line);
+}
+
+/* Toggles: dark surface off, sky CTA on. */
+div[class*="switch-"],
+div[role="switch"] {
+  background-color: var(--pf-surface);
+  border: 1px solid var(--pf-card-border);
+  transition: background-color var(--pf-motion) var(--pf-ease);
+}
+
+div[class*="switch-"][class*="checked-"],
+div[aria-checked="true"][role="switch"] {
+  background: var(--pf-accent);
+  border-color: transparent;
+}
+
+/* Sliders: dark track, sky fill. */
+div[class*="slider-"] div[class*="bar-"] {
+  background: var(--pf-surface);
+  border-radius: var(--pf-radius-pill);
+}
+
+div[class*="slider-"] div[class*="barFill-"] {
+  background: var(--pf-accent);
+}
+
+/* Checkboxes. */
+div[class*="checkbox-"] {
+  border: 1px solid var(--pf-card-border);
+  border-radius: var(--pf-radius-btn);
+  transition: border-color var(--pf-motion) var(--pf-ease), background-color var(--pf-motion) var(--pf-ease);
+}
+
+div[class*="checkbox-"][class*="checked-"] {
+  background: var(--pf-accent);
+  border-color: transparent;
+}
+
+/* Radio options and keybind recorders. */
+div[class*="radioBar-"] {
+  background: var(--pf-card);
+  border: 1px solid var(--pf-card-border);
+  border-radius: var(--pf-radius-card);
+}
+
+div[class*="radioBar-"][class*="checked-"] {
+  border-color: var(--pf-accent-border);
+}
+
+div[class*="keybindInput-"] {
+  background: var(--pf-surface);
+  border: 1px solid var(--pf-card-border);
+  border-radius: var(--pf-radius-btn);
+  color: var(--pf-text);
+}
+
+/* ===== 23 EMOJI PICKER ===== */
+div[class*="emojiPicker-"] {
+  background: var(--pf-card);
+  border: 1px solid var(--pf-card-border);
+  border-radius: var(--pf-radius-card);
+  box-shadow: none;
+  backdrop-filter: blur(var(--pf-blur));
+}
+
+div[class*="emojiPicker-"] div[class*="category-"] {
+  color: var(--pf-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 11px;
+  font-family: var(--pf-font-heading);
+}
+
+div[class*="emojiPicker-"] button[class*="emojiItem-"]:hover,
+div[class*="emojiPicker-"] button[class*="emojiItem-"][class*="selected-"] {
+  background-color: var(--pf-accent-line);
+  border-radius: var(--pf-radius-btn);
+}
+
+div[class*="emojiPicker-"] div[class*="inspector-"] {
+  background: var(--pf-surface);
+  border-top: 1px solid var(--pf-card-border);
+  color: var(--pf-text-secondary);
+}
+
+div[class*="emojiPicker-"] input[class*="input-"] {
+  background: var(--pf-surface);
+  border: 1px solid var(--pf-card-border);
+  border-radius: var(--pf-radius-btn);
+  color: var(--pf-text);
+}
+
+div[class*="emojiPicker-"] input[class*="input-"]:focus {
+  border-color: var(--pf-accent-border);
+}
+
+/* ===== 24 TOOLTIPS ===== */
+div[class*="tooltip-"],
+div[role="tooltip"] {
+  background: var(--pf-surface);
+  color: var(--pf-text);
+  border: 1px solid var(--pf-card-border);
+  border-radius: var(--pf-radius-btn);
+  box-shadow: none;
+  /* No animation: Discord's native tooltip fade plays untouched. */
+}
+
+/* ===== 25 BADGES & MENTIONS ===== */
+/* Sky eyebrow-pill badges: sky bg, dark text, 9999px radius. */
+span[class*="numberBadge-"],
+div[class*="unreadBadge-"] {
+  background: var(--pf-accent);
+  color: var(--pf-btn-text);
+  border-radius: var(--pf-radius-pill);
+}
+
+/* Mention pills: sky tint chip, sky text. */
+span[class*="mention-"],
+div[class*="wrapper-"][class*="mention-"] {
+  background: var(--pf-accent-line);
+  color: var(--pf-accent);
+  border-radius: var(--pf-radius-btn);
+  padding: 0 4px;
+  transition: background-color var(--pf-motion) var(--pf-ease);
+}
+
+span[class*="mention-"]:hover {
+  background: var(--pf-accent-border);
+}
+
+/* Mentioned message rows: sky eyebrow edge. */
+div[class*="mentioned-"] {
+  background: var(--pf-accent-line);
+  border-left: 2px solid var(--pf-accent);
+}
+
+div[class*="mentioned-"]:hover {
+  background: var(--pf-accent-line);
+}
+
+/* Bot tags: dark glass pill, sky text. */
+span[class*="botTag-"] {
+  background: var(--pf-accent-line);
+  color: var(--pf-accent);
+  border-radius: var(--pf-radius-btn);
+}
+
+div[class*="warning-"] {
+  color: var(--pf-idle);
+}
+
+/* ===== 26 SCROLLBARS / SELECTION / FOCUS ===== */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(208, 205, 195, 0.22);
+  border-radius: var(--pf-radius-pill);
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--pf-accent-border);
+  background-clip: content-box;
+}
+
+/* Portfolio selection: sky tint. */
+::selection {
+  background: var(--pf-selection);
+  color: var(--pf-text);
+}
+
+code::selection,
+pre::selection {
+  background: var(--pf-selection);
+  color: var(--pf-text);
+}
+
+:focus-visible {
+  outline: 2px solid var(--pf-accent);
+  outline-offset: 2px;
+  border-radius: var(--pf-radius-btn);
+}
+
+/* ===== 27 REDUCED MOTION ===== */
+@media (prefers-reduced-motion: reduce) {
+  #app-mount::before,
+  #app-mount::after,
+  div[class*="appMount-"]::before,
+  div[class*="appMount-"]::after,
+  div[class*="appMount__"]::before,
+  div[class*="appMount__"]::after,
+  div[role="dialog"],
+  div[class*="modal-"],
+  div[class*="popover-"],
+  div[class*="popout-"],
+  div[role="menu"],
+  div[class*="menu-"],
+  div[class*="tooltip-"],
+  div[role="tooltip"] {
+    animation: none;
+    transition: none;
+  }
+
+  li[class*="message-"],
+  div[class*="message-"],
+  button[class*="button-"],
+  a[href],
+  div[class*="member-"] img[class*="avatar-"],
+  div[class*="guilds-"] div[class*="listItem-"] img,
+  div[class*="sidebar-"] div[class*="containerDefault-"] a,
+  div[class*="switch-"],
+  div[class*="checkbox-"] {
+    animation: none;
+    transition: none;
+    transform: none;
+  }
+
+  button[class*="colorBrand-"]:hover,
+  button[type="submit"]:hover,
+  button[class*="colorPrimary-"]:hover,
+  button[class*="secondary-"]:hover,
+  div[class*="guilds-"] div[class*="listItem-"]:hover img {
+    transform: none;
+  }
+}
+
+/* ===== 28 FRIENDS / DMS / ACTIVE NOW ===== */
+/* Friends list + DM rail over page bg; transparency chain preserved. */
+div[class*="privateChannels-"],
+div[class*="peopleColumn-"],
+aside[class*="nowPlayingColumn-"] {
+  background: transparent;
+}
+div[class*="privateChannels-"] div[class*="scroller-"],
+div[class*="peopleList-"],
+aside[class*="nowPlayingColumn-"] div[class*="scroller-"] {
+  background: transparent;
+}
+/* DM rows as portfolio list cards. */
+a[class*="channel-"][href*="/channels/@me/"],
+li[class*="channel-"] a[href*="@me"],
+div[class*="privateChannels-"] li div[class*="interactive-"] {
+  border-radius: var(--pf-radius-btn);
+  color: var(--pf-text-secondary);
+  border: 1px solid transparent;
+  transition: background-color var(--pf-motion) var(--pf-ease), border-color var(--pf-motion) var(--pf-ease), color var(--pf-motion) var(--pf-ease);
+}
+a[class*="channel-"][href*="/channels/@me/"]:hover,
+div[class*="privateChannels-"] li div[class*="interactive-"]:hover {
+  background-color: var(--pf-card);
+  border-color: var(--pf-card-border);
+  color: var(--pf-text);
+}
+a[class*="channel-"][href*="/channels/@me/"][class*="selected-"],
+div[class*="privateChannels-"] li div[class*="interactive-"][class*="selected-"] {
+  background-color: var(--pf-card);
+  border-color: var(--pf-card-border);
+  color: var(--pf-text);
+  box-shadow: inset 2px 0 0 0 var(--pf-accent);
+}
+/* Friends top tab bar: portfolio segmented eyebrows. */
+div[class*="peopleColumn-"] div[class*="topPill-"] div[class*="item-"],
+nav[aria-label="Friends"] button {
+  border-radius: var(--pf-radius-pill);
+  color: var(--pf-text-secondary);
+  border: 1px solid transparent;
+  transition: background-color var(--pf-motion) var(--pf-ease), color var(--pf-motion) var(--pf-ease);
+}
+div[class*="peopleColumn-"] div[class*="topPill-"] div[class*="item-"]:hover {
+  background-color: var(--pf-card);
+  color: var(--pf-text);
+}
+div[class*="peopleColumn-"] div[class*="topPill-"] div[class*="selected-"] {
+  background: var(--pf-accent-line);
+  border-color: var(--pf-accent-border);
+  color: var(--pf-accent);
+}
+/* Friend rows: pending / blocked / active. */
+div[class*="peopleListItem-"] {
+  border-radius: var(--pf-radius-card);
+  border: 1px solid transparent;
+  transition: background-color var(--pf-motion) var(--pf-ease), border-color var(--pf-motion) var(--pf-ease);
+}
+div[class*="peopleListItem-"]:hover {
+  background-color: var(--pf-card);
+  border-color: var(--pf-card-border);
+}
+div[class*="peopleListItem-"] div[class*="username-"] {
+  font-family: var(--pf-font-heading);
+  color: var(--pf-text);
+}
+div[class*="peopleListItem-"] div[class*="subtext-"],
+div[class*="peopleListItem-"] div[class*="activityText-"] {
+  color: var(--pf-muted);
+}
+/* Pending request actions keep functional green/red. */
+div[class*="peopleListItem-"] button[class*="actionAccept-"] {
+  background: rgba(35, 165, 90, 0.16);
+  border: 1px solid rgba(35, 165, 90, 0.45);
+  color: var(--pf-online);
+  border-radius: var(--pf-radius-btn);
+}
+div[class*="peopleListItem-"] button[class*="actionDeny-"],
+div[class*="peopleListItem-"] button[class*="actionBlock-"] {
+  background: rgba(242, 63, 67, 0.12);
+  border: 1px solid rgba(242, 63, 67, 0.4);
+  color: var(--pf-dnd);
+  border-radius: var(--pf-radius-btn);
+}
+/* Blocked rows dimmed but still visible. */
+div[class*="peopleListItem-"][class*="blocked-"] {
+  opacity: 0.75;
+  border-style: dashed;
+  border-color: var(--pf-card-border);
+}
+/* Search-in-DMs input. */
+div[class*="privateChannels-"] div[class*="searchBar-"] button,
+div[class*="privateChannels-"] input[aria-label*="Search"] {
+  background: var(--pf-card);
+  border: 1px solid var(--pf-card-border);
+  border-radius: var(--pf-radius-btn);
+  color: var(--pf-text);
+}
+div[class*="privateChannels-"] input[aria-label*="Search"]:focus {
+  border-color: var(--pf-accent-border);
+  box-shadow: 0 0 0 1px var(--pf-accent-line);
+}
+/* Active-now cards: portfolio glass cards. */
+aside[class*="nowPlayingColumn-"] div[class*="itemCard-"],
+aside[class*="nowPlayingColumn-"] div[class*="card-"],
+div[class*="activeGame-"] {
+  background: var(--pf-card);
+  border: 1px solid var(--pf-card-border);
+  border-radius: var(--pf-radius-card);
+  box-shadow: none;
+  transition: border-color var(--pf-motion) var(--pf-ease);
+}
+aside[class*="nowPlayingColumn-"] div[class*="itemCard-"]:hover {
+  border-color: var(--pf-accent-border);
+}
+aside[class*="nowPlayingColumn-"] div[class*="header-"] {
+  font-family: var(--pf-font-heading);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 11px;
+  color: var(--pf-muted);
+}
+aside[class*="nowPlayingColumn-"] div[class*="activityName-"] {
+  color: var(--pf-text);
+  font-family: var(--pf-font-heading);
+}
+aside[class*="nowPlayingColumn-"] div[class*="activityDetails-"] {
+  color: var(--pf-muted);
+}
+/* Friends empty states. */
+div[class*="peopleColumn-"] div[class*="emptyState-"],
+div[class*="peopleColumn-"] div[class*="empty-"] {
+  color: var(--pf-muted);
+}
+div[class*="peopleColumn-"] div[class*="emptyState-"] h3 {
+  font-family: var(--pf-font-heading);
+  color: var(--pf-text);
+}
+div[class*="peopleColumn-"] :focus-visible,
+div[class*="privateChannels-"] :focus-visible {
+  outline: 2px solid var(--pf-accent);
+  outline-offset: 2px;
+}
+
+/* ===== 29 THREADS / FORUM / CHANNEL BROWSER / DIRECTORY ===== */
+/* Thread list rows + spines use sky accent. */
+li[class*="threadListItem-"],
+div[class*="thread-"] div[class*="container-"],
+ul[class*="list-"] li[class*="row-"] {
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--pf-radius-card);
+  transition: background-color var(--pf-motion) var(--pf-ease), border-color var(--pf-motion) var(--pf-ease);
+}
+li[class*="threadListItem-"]:hover {
+  background-color: var(--pf-card);
+  border-color: var(--pf-card-border);
+}
+div[class*="spine-"],
+div[class*="threadSpine-"],
+span[class*="spineBorder-"] {
+  background-color: var(--pf-accent-line);
+  color: var(--pf-accent-line);
+}
+div[class*="repliedMessage-"]::before,
+div[class*="repliedTextPreview-"] {
+  border-color: var(--pf-accent-line);
+}
+/* Thread creation box. */
+div[class*="threadCreator-"],
+div[class*="createThread-"] div[class*="container-"] {
+  background: var(--pf-card);
+  border: 1px solid var(--pf-card-border);
+  border-radius: var(--pf-radius-card);
+}
+div[class*="threadCreator-"] input,
+div[class*="createThread-"] input {
+  background: var(--pf-surface);
+  border: 1px solid var(--pf-card-border);
+  border-radius: var(--pf-radius-btn);
+  color: var(--pf-text);
+}
+/* Forum channel: cards, tags, sort/filter bar, composer. */
+ul[class*="grid-"] li div[class*="card-"],
+div[class*="forumPost-"],
+li[class*="card-"] div[class*="mainCard-"] {
+  background: var(--pf-card);
+  border: 1px solid var(--pf-card-border);
+  border-radius: var(--pf-radius-card);
+  box-shadow: none;
+  transition: border-color var(--pf-motion) var(--pf-ease), transform var(--pf-motion) var(--pf-ease);
+}
+ul[class*="grid-"] li div[class*="card-"]:hover,
+div[class*="forumPost-"]:hover {
+  border-color: var(--pf-accent-border);
+  transform: translateY(-1px);
+}
+div[class*="forumPost-"] div[class*="title-"] {
+  font-family: var(--pf-font-heading);
+  color: var(--pf-text);
+}
+div[class*="forumPost-"] div[class*="body-"],
+div[class*="forumPost-"] div[class*="messageContent-"] {
+  color: var(--pf-text-secondary);
+}
+/* Forum tags: sky eyebrow pills. */
+span[class*="tag-"],
+div[class*="tagPill-"],
+button[class*="tag-"] {
+  background: var(--pf-accent-line);
+  border: 1px solid var(--pf-accent-border);
+  color: var(--pf-accent);
+  border-radius: var(--pf-radius-pill);
+  transition: background-color var(--pf-motion) var(--pf-ease);
+}
+span[class*="tag-"]:hover,
+button[class*="tag-"]:hover {
+  background: var(--pf-accent-border);
+  color: var(--pf-text);
+}
+/* Sort / filter bar. */
+div[class*="sortFilterBar-"],
+div[class*="headerRow-"],
+div[class*="forumOrHome-"] div[class*="header-"] {
+  background: rgba(7, 9, 13, 0.6);
+  border: 1px solid var(--pf-card-border);
+  border-radius: var(--pf-radius-card);
+  color: var(--pf-text-secondary);
+}
+div[class*="sortFilterBar-"] button {
+  border-radius: var(--pf-radius-btn);
+  color: var(--pf-text-secondary);
+}
+div[class*="sortFilterBar-"] button:hover,
+div[class*="sortFilterBar-"] button[class*="selected-"] {
+  background: var(--pf-accent-line);
+  color: var(--pf-accent);
+}
+/* New-post composer modal inline. */
+div[class*="forumOrHome-"] div[class*="composer-"],
+div[class*="newPost-"] {
+  background: var(--pf-card);
+  border: 1px solid var(--pf-card-border);
+  border-radius: var(--pf-radius-card);
+}
+/* Channel browser + directory tables. */
+div[class*="channelBrowser-"] div[class*="row-"],
+div[class*="directory-"] div[class*="card-"],
+div[class*="browseChannels-"] li {
+  background: var(--pf-card);
+  border: 1px solid var(--pf-card-border);
+  border-radius: var(--pf-radius-card);
+}
+div[class*="channelBrowser-"] div[class*="row-"]:hover {
+  border-color: var(--pf-accent-border);
+}
+div[class*="directory-"] h3,
+div[class*="channelBrowser-"] h3 {
+  font-family: var(--pf-font-heading);
+  color: var(--pf-text);
+}
+
+/* ===== 30 VOICE EXTENDED ===== */
+/* Stage channels: audience + podium. */
+div[class*="stageSection-"],
+div[class*="audienceContainer-"],
+div[class*="podium-"],
+div[class*="stage-"] div[class*="container-"] {
+  background: var(--pf-card);
+  border: 1px solid var(--pf-card-border);
+  border-radius: var(--pf-radius-card);
+}
+div[class*="stageSection-"] div[class*="title-"],
+div[class*="audience-"] div[class*="header-"] {
+  font-family: var(--pf-font-heading);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 11px;
+  color: var(--pf-accent);
+}
+div[class*="speaker-"],
+div[class*="audienceMember-"] {
+  border-radius: var(--pf-radius-btn);
+  transition: background-color var(--pf-motion) var(--pf-ease);
+}
+div[class*="speaker-"]:hover,
+div[class*="audienceMember-"]:hover {
+  background-color: var(--pf-card);
+}
+/* Screen-share PiP + stream viewer grid. */
+div[class*="pictureInPicture-"],
+div[class*="pip-"],
+div[class*="screenShareVideo-"] {
+  background: var(--pf-surface);
+  border: 1px solid var(--pf-accent-border);
+  border-radius: var(--pf-radius-card);
+  box-shadow: none;
+}
+div[class*="streamGrid-"] div[class*="tile-"],
+div[class*="streamPreview-"] {
+  background: var(--pf-surface);
+  border: 1px solid var(--pf-card-border);
+  border-radius: var(--pf-radius-card);
+}
+div[class*="streamGrid-"] div[class*="tile-"]:hover {
+  border-color: var(--pf-accent-border);
+}
+/* Camera tiles. */
+div[class*="videoTile-"],
+div[class*="cameraTile-"],
+div[class*="tileChild-"] {
+  background: var(--pf-surface);
+  border: 1px solid var(--pf-card-border);
+  border-radius: var(--pf-radius-card);
+}
+/* Noise suppression / Krisp toggle row. */
+div[class*="noiseCancellation-"],
+button[aria-label*="Noise"],
+button[aria-label*="Krisp"] {
+  border-radius: var(--pf-radius-btn);
+  color: var(--pf-text-secondary);
+}
+button[aria-label*="Noise"][class*="selected-"],
+button[aria-label*="Krisp"][class*="enabled-"] {
+  background: var(--pf-accent-line);
+  border: 1px solid var(--pf-accent-border);
+  color: var(--pf-accent);
+}
+/* Voice settings devices + attenuation sliders. */
+div[class*="inputDevice-"] select,
+div[class*="outputDevice-"] select,
+div[aria-label*="Input Device"] select,
+div[aria-label*="Output Device"] select {
+  background: var(--pf-card);
+  border: 1px solid var(--pf-card-border);
+  border-radius: var(--pf-radius-btn);
+  color: var(--pf-text);
+}
+/* Soundboard + sound buttons. */
+div[class*="soundboard-"] button[class*="soundButton-"],
+button[class*="sound-"][class*="button-"],
+div[class*="soundboardPicker-"] button {
+  background: var(--pf-card);
+  border: 1px solid var(--pf-card-border);
+  border-radius: var(--pf-radius-card);
+  color: var(--pf-text-secondary);
+  transition: border-color var(--pf-motion) var(--pf-ease), transform var(--pf-motion) var(--pf-ease);
+}
+div[class*="soundboard-"] button[class*="soundButton-"]:hover {
+  border-color: var(--pf-accent-border);
+  color: var(--pf-accent);
+  transform: translateY(-1px);
+}
+/* Screenshare modal source tiles. */
+div[class*="screenShareModal-"] div[class*="sourceTile-"],
+div[class*="screenShareModal-"] button[class*="source-"] {
+  background: var(--pf-surface);
+  border: 1px solid var(--pf-card-border);
+  border-radius: var(--pf-radius-card);
+}
+div[class*="screenShareModal-"] div[class*="sourceTile-"][class*="selected-"] {
+  border-color: var(--pf-accent);
+  box-shadow: 0 0 0 1px var(--pf-accent-line);
+}
+/* Voice region select + RTC quality. */
+div[class*="regionSelect-"] button,
+div[class*="rtcQuality-"] {
+  background: var(--pf-card);
+  border: 1px solid var(--pf-card-border);
+  border-radius: var(--pf-radius-btn);
+  color: var(--pf-text-secondary);
+}
+
+/* ===== 31 CHAT EXTRAS A: replies / pins / inbox / polls / commands ===== */
+/* Replies: sky spine + glass quote. */
+div[class*="repliedMessage-"] {
+  border-left: 2px solid var(--pf-accent);
+  background: rgba(56, 189, 248, 0.06);
+  border-radius: 0 var(--pf-radius-btn) var(--pf-radius-btn) 0;
+}
+div[class*="repliedMessage-"] div[class*="repliedTextContent-"] {
+  color: var(--pf-muted);
+}
+/* Thread preview chip inside chat. */
+div[class*="threadMessageAccessory-"],
+a[class*="threadLink-"] {
+  color: var(--pf-accent);
+  border-radius: var(--pf-radius-btn);
+}
+a[class*="threadLink-"]:hover {
+  background: var(--pf-accent-line);
+}
+/* Pins / inbox / mentions tabs. */
+div[class*="messagesPopout-"],
+div[class*="recentMentionsPopout-"],
+div[class*="inbox-"] div[class*="container-"] {
+  background: var(--pf-card);
+  border: 1px solid var(--pf-card-border);
+  border-radius: var(--pf-radius-card);
+  box-shadow: none;
+  backdrop-filter: blur(var(--pf-blur));
+}
+div[class*="messagesPopout-"] div[class*="header-"],
+div[class*="recentMentionsPopout-"] div[class*="header-"] {
+  font-family: var(--pf-font-heading);
+  color: var(--pf-text);
+  border-bottom: 1px solid var(--pf-card-border);
+}
+div[class*="messagesPopout-"] div[class*="message-"]:hover {
+  background-color: rgba(16, 20, 27, 0.85);
+}
+div[class*="inbox-"] div[class*="tab-"] {
+  border-radius: var(--pf-radius-pill);
+  color: var(--pf-text-secondary);
+}
+div[class*="inbox-"] div[class*="tab-"][class*="selected-"] {
+  background: var(--pf-accent-line);
+  color: var(--pf-accent);
+}
+/* Polls + votes. */
+div[class*="poll-"],
+div[class*="pollContainer-"],
+div[class*="vote-"] {
+  background: var(--pf-card);
+  border: 1px solid var(--pf-card-border);
+  border-radius: var(--pf-radius-card);
+}
+div[class*="poll-"] div[class*="question-"] {
+  font-family: var(--pf-font-heading);
+  color: var(--pf-text);
+}
+div[class*="poll-"] button[class*="answer-"] {
+  background: transparent;
+  border: 1px solid var(--pf-card-border);
+  border-radius: var(--pf-radius-btn);
+  color: var(--pf-text-secondary);
+  transition: border-color var(--pf-motion) var(--pf-ease), background-color var(--pf-motion) var(--pf-ease);
+}
+div[class*="poll-"] button[class*="answer-"]:hover {
+  border-color: var(--pf-accent-border);
+  background: var(--pf-accent-line);
+  color: var(--pf-text);
+}
+div[class*="poll-"] div[class*="resultsBar-"] {
+  background: var(--pf-surface);
+  border-radius: var(--pf-radius-pill);
+}
+div[class*="poll-"] div[class*="votedFill-"],
+div[class*="poll-"] div[class*="fill-"] {
+  background: var(--pf-accent-line);
+  border-radius: var(--pf-radius-pill);
+}
+/* Apps / commands autocomplete. */
+div[class*="autocomplete-"] div[class*="row-"],
+div[class*="autocomplete-"] li[class*="option-"] {
+  border-radius: var(--pf-radius-btn);
+  color: var(--pf-text-secondary);
+}
+div[class*="autocomplete-"] div[class*="row-"][class*="selected-"] {
+  background: var(--pf-accent-line);
+  color: var(--pf-text);
+}
+/* Slash-command pills. */
+span[class*="commandPill-"],
+span[class*="slashCommand-"],
+span[class*="pill-"][class*="command-"] {
+  background: var(--pf-accent-line);
+  border: 1px solid var(--pf-accent-border);
+  color: var(--pf-accent);
+  border-radius: var(--pf-radius-btn);
+  font-family: var(--pf-font-code);
+}
+
+/* ===== 32 CHAT EXTRAS B: pickers / reactions / toolbar / uploads / media ===== */
+/* Sticker + GIF picker tabs, grid, inspector. */
+div[class*="stickerPicker-"],
+div[class*="gifPicker-"],
+div[class*="contentWrapper-"] {
+  background: var(--pf-card);
+  border: 1px solid var(--pf-card-border);
+  border-radius: var(--pf-radius-card);
+  box-shadow: none;
+  backdrop-filter: blur(var(--pf-blur));
+}
+div[class*="stickerPicker-"] div[class*="category-"],
+div[class*="gifPicker-"] div[class*="category-"] {
+  font-family: var(--pf-font-heading);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 11px;
+  color: var(--pf-muted);
+}
+div[class*="stickerPicker-"] button[class*="sticker-"]:hover,
+div[class*="gifPicker-"] div[class*="result-"]:hover {
+  background: var(--pf-accent-line);
+  border-radius: var(--pf-radius-btn);
+}
+div[class*="stickerPicker-"] div[class*="inspector-"],
+div[class*="gifPicker-"] div[class*="inspector-"] {
+  background: var(--pf-surface);
+  border-top: 1px solid var(--pf-card-border);
+  color: var(--pf-text-secondary);
+}
+div[class*="contentWrapper-"] div[class*="nav-"] button {
+  border-radius: var(--pf-radius-btn);
+  color: var(--pf-text-secondary);
+}
+div[class*="contentWrapper-"] div[class*="nav-"] button[class*="active-"] {
+  background: var(--pf-accent-line);
+  color: var(--pf-accent);
+}
+/* Reactions: grid + reactors list + burst. */
+div[class*="reactions-"] div[class*="reaction-"],
+span[class*="reaction-"] {
+  background: var(--pf-card);
+  border: 1px solid var(--pf-card-border);
+  border-radius: var(--pf-radius-pill);
+  transition: border-color var(--pf-motion) var(--pf-ease), background-color var(--pf-motion) var(--pf-ease);
+}
+div[class*="reactions-"] div[class*="reaction-"]:hover {
+  border-color: var(--pf-accent-border);
+}
+div[class*="reactions-"] div[class*="reaction-"][class*="reacted-"] {
+  background: var(--pf-accent-line);
+  border-color: var(--pf-accent-border);
+  color: var(--pf-accent);
+}
+div[class*="reactors-"],
+div[class*="reactorList-"] {
+  background: var(--pf-card);
+  border: 1px solid var(--pf-card-border);
+  border-radius: var(--pf-radius-card);
+}
+div[class*="burstReaction-"] {
+  border-color: var(--pf-accent-border);
+}
+/* Message actions toolbar. */
+div[class*="messageActions-"],
+div[role="toolbar"][aria-label*="Message"] {
+  background: var(--pf-surface);
+  border: 1px solid var(--pf-card-border);
+  border-radius: var(--pf-radius-pill);
+  box-shadow: none;
+}
+div[class*="messageActions-"] button {
+  border-radius: var(--pf-radius-pill);
+  color: var(--pf-text-secondary);
+  transition: background-color var(--pf-motion) var(--pf-ease), color var(--pf-motion) var(--pf-ease);
+}
+div[class*="messageActions-"] button:hover {
+  background: var(--pf-accent-line);
+  color: var(--pf-accent);
+}
+/* Edit box. */
+div[class*="message-"] div[class*="textArea-"] textarea {
+  background: var(--pf-surface);
+  border: 1px solid var(--pf-accent-border);
+  border-radius: var(--pf-radius-btn);
+  color: var(--pf-text);
+}
+/* Upload modal + attachments + file chips. */
+div[class*="uploadModal-"] div[class*="inner-"],
+div[class*="attachmentArea-"] {
+  background: var(--pf-card);
+  border: 1px solid var(--pf-card-border);
+  border-radius: var(--pf-radius-card);
+}
+li[class*="attachment-"],
+div[class*="fileChip-"],
+a[class*="attachment-"] {
+  background: var(--pf-surface);
+  border: 1px solid var(--pf-card-border);
+  border-radius: var(--pf-radius-btn);
+  color: var(--pf-text-secondary);
+}
+div[class*="fileChip-"] div[class*="filename-"] {
+  color: var(--pf-text);
+  font-family: var(--pf-font-code);
+}
+/* Image embeds + video + audio players. */
+div[class*="imageWrapper-"],
+div[class*="imageContent-"] img,
+div[class*="videoControls-"],
+div[class*="audioControls-"],
+div[class*="wrapperAudio-"] {
+  border-radius: var(--pf-radius-card);
+  border: 1px solid var(--pf-card-border);
+}
+div[class*="videoControls-"],
+div[class*="audioControls-"] {
+  background: rgba(7, 9, 13, 0.85);
+}
+div[class*="videoControls-"] button:hover,
+div[class*="audioControls-"] button:hover {
+  color: var(--pf-accent);
+}
+div[class*="progressBar-"] div[class*="bar-"] {
+  background: var(--pf-surface);
+  border-radius: var(--pf-radius-pill);
+}
+div[class*="progressBar-"] div[class*="fill-"] {
+  background: var(--pf-accent);
+  border-radius: var(--pf-radius-pill);
+}
+/* Invites. */
+div[class*="invite-"],
+div[class*="guildInvite-"] {
+  background: var(--pf-card);
+  border: 1px solid var(--pf-card-border);
+  border-radius: var(--pf-radius-card);
+}
+div[class*="invite-"] div[class*="guildName-"] {
+  font-family: var(--pf-font-heading);
+  color: var(--pf-text);
+}
+/* Code viewer modal. */
+div[class*="codeView-"],
+div[class*="textContainer-"] {
+  background: var(--pf-surface);
+  border: 1px solid var(--pf-accent-line);
+  border-radius: var(--pf-radius-card);
+  color: var(--pf-text);
+}
+/* Timestamps plugin + dividers + date pills. */
+span[class*="timestampInline-"],
+div[class*="timestampTooltip-"] {
+  color: var(--pf-muted);
+  font-family: var(--pf-font-code);
+}
+div[class*="jumpToPresent-"],
+div[class*="newMessagesBar-"] {
+  background: var(--pf-accent);
+  color: var(--pf-btn-text);
+  border-radius: var(--pf-radius-pill);
+  box-shadow: none;
+  font-weight: 600;
+}
+/* Character counter + sticker-suggest + AI summaries. */
+div[class*="counter-"],
+span[class*="characterCount-"] {
+  color: var(--pf-muted);
+  font-family: var(--pf-font-code);
+}
+div[class*="stickerSuggestion-"],
+div[class*="summary-"],
+div[class*="aiSummary-"] {
+  background: var(--pf-card);
+  border: 1px solid var(--pf-accent-line);
+  border-radius: var(--pf-radius-card);
+  color: var(--pf-text-secondary);
+}
+div[class*="summary-"] h4,
+div[class*="aiSummary-"] h4 {
+  font-family: var(--pf-font-heading);
+  color: var(--pf-accent);
+}
+
+/* ===== 33 SERVER A: welcome / rules / onboarding / events / boost ===== */
+div[class*="welcomeChannel-"],
+div[class*="welcome-"] div[class*="container-"] {
+  background: var(--pf-card);
+  border: 1px solid var(--pf-card-border);
+  border-radius: var(--pf-radius-card);
+}
+div[class*="welcome-"] h3 {
+  font-family: var(--pf-font-heading);
+  color: var(--pf-text);
+}
+div[class*="welcome-"] div[class*="description-"] {
+  color: var(--pf-muted);
+}
+/* Rules / membership screening. */
+div[class*="rulesScreening-"] ol li,
+div[class*="membershipScreening-"] div[class*="field-"] {
+  background: var(--pf-card);
+  border: 1px solid var(--pf-card-border);
+  border-radius: var(--pf-radius-card);
+  color: var(--pf-text-secondary);
+}
+/* Onboarding prompts. */
+div[class*="onboarding-"] div[class*="prompt-"],
+div[class*="onboardingPrompt-"] {
+  background: var(--pf-card);
+  border: 1px solid var(--pf-card-border);
+  border-radius: var(--pf-radius-card);
+}
+div[class*="onboarding-"] div[class*="prompt-"] h4 {
+  font-family: var(--pf-font-heading);
+  color: var(--pf-text);
+}
+div[class*="onboarding-"] button[class*="option-"] {
+  background: transparent;
+  border: 1px solid var(--pf-card-border);
+  border-radius: var(--pf-radius-btn);
+  color: var(--pf-text-secondary);
+}
+div[class*="onboarding-"] button[class*="option-"][class*="selected-"] {
+  border-color: var(--pf-accent-border);
+  background: var(--pf-accent-line);
+  color: var(--pf-accent);
+}
+/* Events list + cards. */
+div[class*="eventCard-"],
+li[class*="event-"] {
+  background: var(--pf-card);
+  border: 1px solid var(--pf-card-border);
+  border-radius: var(--pf-radius-card);
+  transition: border-color var(--pf-motion) var(--pf-ease);
+}
+div[class*="eventCard-"]:hover {
+  border-color: var(--pf-accent-border);
+}
+div[class*="eventCard-"] div[class*="title-"] {
+  font-family: var(--pf-font-heading);
+  color: var(--pf-text);
+}
+/* Server boost / progress bar. */
+div[class*="boostBar-"],
+div[class*="progressBar-"][class*="boost-"],
+div[class*="guildBoost-"] div[class*="bar-"] {
+  background: var(--pf-surface);
+  border: 1px solid var(--pf-card-border);
+  border-radius: var(--pf-radius-pill);
+}
+div[class*="boostBar-"] div[class*="fill-"],
+div[class*="guildBoost-"] div[class*="fill-"] {
+  background: linear-gradient(90deg, var(--pf-accent), rgba(56, 189, 248, 0.55));
+  border-radius: var(--pf-radius-pill);
+}
+div[class*="boostBadge-"],
+span[class*="tierBadge-"] {
+  background: var(--pf-accent-line);
+  border: 1px solid var(--pf-accent-border);
+  color: var(--pf-accent);
+  border-radius: var(--pf-radius-pill);
+}
+
+/* ===== 34 SERVER B: roles / audit / integrations / management grids ===== */
+/* Roles list + role editor. */
+div[class*="rolesList-"] div[class*="roleRow-"],
+li[class*="role-"] {
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--pf-radius-btn);
+  transition: background-color var(--pf-motion) var(--pf-ease);
+}
+div[class*="rolesList-"] div[class*="roleRow-"]:hover,
+div[class*="rolesList-"] div[class*="roleRow-"][class*="selected-"] {
+  background-color: var(--pf-card);
+  border-color: var(--pf-card-border);
+}
+div[class*="roleEditor-"] {
+  background: var(--pf-card);
+  border: 1px solid var(--pf-card-border);
+  border-radius: var(--pf-radius-card);
+}
+/* Audit log table. */
+table[class*="auditLog-"],
+div[class*="auditLog-"] div[class*="row-"] {
+  background: var(--pf-card);
+  border: 1px solid var(--pf-card-border);
+  border-radius: var(--pf-radius-card);
+  color: var(--pf-text-secondary);
+}
+table[class*="auditLog-"] th {
+  font-family: var(--pf-font-heading);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 11px;
+  color: var(--pf-muted);
+  border-bottom: 1px solid var(--pf-card-border);
+}
+table[class*="auditLog-"] td {
+  border-bottom: 1px solid var(--pf-card-border);
+  color: var(--pf-text-secondary);
+}
+/* Integrations / webhooks. */
+div[class*="integration-"],
+div[class*="webhook-"],
+div[class*="card-"][class*="integration-"] {
+  background: var(--pf-card);
+  border: 1px solid var(--pf-card-border);
+  border-radius: var(--pf-radius-card);
+}
+/* Emoji / sticker / soundboard management grids. */
+div[class*="emojiRow-"],
+div[class*="stickerRow-"],
+div[class*="soundRow-"] {
+  background: transparent;
+  border-bottom: 1px solid var(--pf-card-border);
+  transition: background-color var(--pf-motion) var(--pf-ease);
+}
+div[class*="emojiRow-"]:hover,
+div[class*="stickerRow-"]:hover,
+div[class*="soundRow-"]:hover {
+  background-color: var(--pf-card);
+}
+div[class*="emojiGrid-"] div[class*="emoji-"],
+div[class*="stickerGrid-"] div[class*="sticker-"] {
+  background: var(--pf-surface);
+  border: 1px solid var(--pf-card-border);
+  border-radius: var(--pf-radius-btn);
+}
+/* Safety setup / automod rules. */
+div[class*="safetySetup-"] div[class*="card-"],
+div[class*="automodRule-"] {
+  background: var(--pf-card);
+  border: 1px solid var(--pf-card-border);
+  border-radius: var(--pf-radius-card);
+}
+div[class*="automodRule-"] div[class*="title-"] {
+  font-family: var(--pf-font-heading);
+  color: var(--pf-text);
+}
+/* Invites manager / bans / discovery / monetization. */
+div[class*="invitesTable-"] div[class*="row-"],
+div[class*="bansTable-"] div[class*="row-"],
+div[class*="discovery-"] div[class*="card-"],
+div[class*="subscription-"] div[class*="card-"] {
+  background: var(--pf-card);
+  border: 1px solid var(--pf-card-border);
+  border-radius: var(--pf-radius-card);
+  color: var(--pf-text-secondary);
+}
+div[class*="shop-"] div[class*="card-"],
+div[class*="nitroGift-"] {
+  background: var(--pf-card);
+  border: 1px solid var(--pf-accent-line);
+  border-radius: var(--pf-radius-card);
+}
+button[class*="giftButton-"],
+button[aria-label*="Send a gift"],
+button[aria-label*="Shop"] {
+  border-radius: var(--pf-radius-btn);
+  color: var(--pf-text-secondary);
+  transition: color var(--pf-motion) var(--pf-ease), background-color var(--pf-motion) var(--pf-ease);
+}
+button[class*="giftButton-"]:hover {
+  background: var(--pf-accent-line);
+  color: var(--pf-accent);
+}
+
+/* ===== 35 SETTINGS PAGES ===== */
+/* Every settings page inherits portfolio inputs; page-specific shells below. */
+div[class*="contentRegion-"] div[class*="card-"],
+div[class*="contentRegion-"] div[class*="container-"][class*="settings-"],
+div[class*="contentRegion-"] div[class*="section-"] {
+  background: var(--pf-card);
+  border: 1px solid var(--pf-card-border);
+  border-radius: var(--pf-radius-card);
+  box-shadow: none;
+}
+div[class*="contentRegion-"] h1,
+div[class*="contentRegion-"] h2 {
+  font-family: var(--pf-font-heading);
+  color: var(--pf-text);
+}
+/* Account page rows. */
+div[class*="fieldList-"] div[class*="field-"] {
+  background: var(--pf-card);
+  border: 1px solid var(--pf-card-border);
+  border-radius: var(--pf-radius-btn);
+}
+div[class*="fieldList-"] div[class*="field-"] div[class*="title-"] {
+  color: var(--pf-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 11px;
+  font-family: var(--pf-font-heading);
+}
+/* Profiles incl. banner/avatar editor preview. */
+div[class*="profileBannerPreview-"],
+div[class*="avatarEditor-"] {
+  border: 1px solid var(--pf-card-border);
+  border-radius: var(--pf-radius-card);
+  background: var(--pf-surface);
+}
+/* Appearance / accessibility swatches. */
+div[class*="swatch-"],
+button[class*="themeButton-"] {
+  border-radius: var(--pf-radius-btn);
+  border: 1px solid var(--pf-card-border);
+  transition: border-color var(--pf-motion) var(--pf-ease), box-shadow var(--pf-motion) var(--pf-ease);
+}
+div[class*="swatch-"][class*="selected-"],
+button[class*="themeButton-"][class*="selected-"] {
+  border-color: var(--pf-accent);
+  box-shadow: 0 0 0 1px var(--pf-accent-line);
+}
+/* Voice & video device rows + mic test. */
+div[class*="voiceSettings-"] div[class*="row-"],
+div[class*="cameraPreview-"] {
+  background: var(--pf-card);
+  border: 1px solid var(--pf-card-border);
+  border-radius: var(--pf-radius-card);
+}
+div[class*="micTest-"] div[class*="bar-"] {
+  background: var(--pf-surface);
+  border-radius: var(--pf-radius-pill);
+}
+div[class*="micTest-"] div[class*="fill-"] {
+  background: var(--pf-accent);
+  border-radius: var(--pf-radius-pill);
+}
+/* Text & images, notifications rows. */
+div[class*="notifications-"] div[class*="row-"],
+div[class*="textImages-"] div[class*="row-"] {
+  border-bottom: 1px solid var(--pf-card-border);
+}
+/* Keybinds recorder pills. */
+div[class*="keybindGroup-"] div[class*="row-"] {
+  background: var(--pf-card);
+  border: 1px solid var(--pf-card-border);
+  border-radius: var(--pf-radius-btn);
+}
+/* Language / Windows / streamer / advanced / overlay rows. */
+div[class*="contentRegion-"] div[class*="row-"][class*="setting-"] {
+  border-bottom: 1px solid var(--pf-card-border);
+}
+div[class*="contentRegion-"] div[class*="label-"] {
+  color: var(--pf-text);
+  font-family: var(--pf-font-heading);
+}
+/* Connected accounts / connections. */
+div[class*="connection-"][class*="card-"],
+div[class*="connectedAccount-"] {
+  background: var(--pf-card);
+  border: 1px solid var(--pf-card-border);
+  border-radius: var(--pf-radius-card);
+}
+/* Authorized apps / sessions / billing / privacy / family / quests. */
+div[class*="authorizedApp-"],
+div[class*="session-"],
+div[class*="billingHistory-"] div[class*="row-"],
+div[class*="privacySafety-"] div[class*="row-"],
+div[class*="familyCenter-"] div[class*="card-"],
+div[class*="quest-"] {
+  background: var(--pf-card);
+  border: 1px solid var(--pf-card-border);
+  border-radius: var(--pf-radius-card);
+  color: var(--pf-text-secondary);
+}
+div[class*="quest-"] div[class*="title-"] {
+  font-family: var(--pf-font-heading);
+  color: var(--pf-text);
+}
+/* Activity privacy + game overlay editor + clippings. */
+div[class*="activityPrivacy-"] div[class*="row-"],
+div[class*="overlayEditor-"],
+div[class*="clipping-"] {
+  background: var(--pf-card);
+  border: 1px solid var(--pf-card-border);
+  border-radius: var(--pf-radius-card);
+}
+
+/* ===== 36 PROFILES / STATUS / DECORATIONS ===== */
+/* Profiles popout + modal: banner, badges, mutuals, roles, notes, activity. */
+div[class*="userPopout-"] div[class*="body-"],
+div[class*="userProfileModal-"] div[class*="body-"] {
+  background: transparent;
+  color: var(--pf-text-secondary);
+}
+div[class*="userPopout-"] div[class*="username-"],
+div[class*="userProfileModal-"] div[class*="username-"] {
+  font-family: var(--pf-font-heading);
+  color: var(--pf-text);
+}
+div[class*="userPopout-"] div[class*="badges-"] div[class*="badge-"],
+div[class*="userProfileModal-"] div[class*="badge-"] {
+  background: var(--pf-card);
+  border: 1px solid var(--pf-card-border);
+  border-radius: var(--pf-radius-btn);
+}
+div[class*="userPopout-"] div[class*="mutuals-"],
+div[class*="userProfileModal-"] div[class*="mutuals-"] {
+  background: var(--pf-card);
+  border: 1px solid var(--pf-card-border);
+  border-radius: var(--pf-radius-btn);
+  color: var(--pf-muted);
+}
+div[class*="userPopout-"] span[class*="rolePill-"],
+div[class*="userProfileModal-"] span[class*="rolePill-"] {
+  background: var(--pf-card);
+  border: 1px solid var(--pf-card-border);
+  border-radius: var(--pf-radius-pill);
+  color: var(--pf-text-secondary);
+}
+div[class*="userPopout-"] textarea,
+div[class*="userProfileModal-"] textarea {
+  background: var(--pf-surface);
+  border: 1px solid var(--pf-card-border);
+  border-radius: var(--pf-radius-btn);
+  color: var(--pf-text);
+}
+div[class*="userPopout-"] textarea:focus,
+div[class*="userProfileModal-"] textarea:focus {
+  border-color: var(--pf-accent-border);
+  box-shadow: 0 0 0 1px var(--pf-accent-line);
+}
+div[class*="activityCard-"],
+div[class*="richPresence-"] {
+  background: var(--pf-card);
+  border: 1px solid var(--pf-card-border);
+  border-radius: var(--pf-radius-card);
+}
+div[class*="activityCard-"] div[class*="header-"] {
+  font-family: var(--pf-font-heading);
+  color: var(--pf-accent);
+}
+/* Spotify / rich presence progress. */
+div[class*="spotifyProgress-"] div[class*="bar-"] {
+  background: var(--pf-surface);
+  border-radius: var(--pf-radius-pill);
+}
+div[class*="spotifyProgress-"] div[class*="fill-"] {
+  background: var(--pf-accent);
+  border-radius: var(--pf-radius-pill);
+}
+/* Status editor + custom status modal. */
+div[class*="statusEditor-"] input,
+div[class*="customStatusModal-"] input {
+  background: var(--pf-surface);
+  border: 1px solid var(--pf-card-border);
+  border-radius: var(--pf-radius-btn);
+  color: var(--pf-text);
+}
+div[class*="statusEditor-"] button[class*="preset-"] {
+  background: var(--pf-card);
+  border: 1px solid var(--pf-card-border);
+  border-radius: var(--pf-radius-pill);
+  color: var(--pf-text-secondary);
+}
+div[class*="statusEditor-"] button[class*="preset-"]:hover {
+  border-color: var(--pf-accent-border);
+  color: var(--pf-accent);
+}
+/* Avatar decorations + profile effects + nameplates: style containers only. */
+div[class*="avatarDecoration-"],
+div[class*="profileEffect-"],
+div[class*="nameplate-"] {
+  border-radius: inherit;
+}
+div[class*="avatarWrapper-"][class*="decorated-"] {
+  border: 1px solid var(--pf-accent-line);
+  border-radius: 50%;
+}
+
+/* ===== 37 OVERLAYS / FLOATING: search / switcher / shortcuts / modals / toasts ===== */
+/* Context submenus + arrows. */
+div[role="menu"] div[class*="submenu-"],
+div[class*="menu-"] div[class*="submenu-"] {
+  background: var(--pf-card);
+  border: 1px solid var(--pf-card-border);
+  border-radius: var(--pf-radius-card);
+  box-shadow: none;
+  backdrop-filter: blur(var(--pf-blur));
+}
+div[class*="menu-"] div[class*="caret-"] {
+  color: var(--pf-muted);
+}
+/* Search popout + filters + results. */
+div[class*="searchPopout-"] {
+  background: var(--pf-card);
+  border: 1px solid var(--pf-card-border);
+  border-radius: var(--pf-radius-card);
+  box-shadow: none;
+  backdrop-filter: blur(var(--pf-blur));
+  /* No animation: Discord's native search popout entrance plays untouched. */
+}
+div[class*="searchPopout-"] div[class*="filter-"] {
+  background: var(--pf-accent-line);
+  border: 1px solid var(--pf-accent-border);
+  color: var(--pf-accent);
+  border-radius: var(--pf-radius-btn);
+}
+div[class*="searchPopout-"] div[class*="result-"]:hover {
+  background-color: var(--pf-accent-line);
+}
+/* Quick switcher. */
+div[class*="quickswitcher-"] {
+  background: var(--pf-card);
+  border: 1px solid var(--pf-card-border);
+  border-radius: var(--pf-radius-card);
+  box-shadow: none;
+  backdrop-filter: blur(var(--pf-blur));
+}
+div[class*="quickswitcher-"] input {
+  background: var(--pf-surface);
+  border: 1px solid var(--pf-card-border);
+  border-radius: var(--pf-radius-btn);
+  color: var(--pf-text);
+}
+div[class*="quickswitcher-"] input:focus {
+  border-color: var(--pf-accent-border);
+  box-shadow: 0 0 0 1px var(--pf-accent-line);
+}
+div[class*="quickswitcher-"] div[class*="result-"][class*="selected-"] {
+  background: var(--pf-accent-line);
+  color: var(--pf-text);
+}
+/* Keyboard shortcuts modal. */
+div[class*="keyboardShortcuts-"] div[class*="combo-"] kbd,
+div[class*="keybindShortcut-"] span {
+  background: var(--pf-surface);
+  border: 1px solid var(--pf-card-border);
+  border-bottom-width: 2px;
+  border-radius: var(--pf-radius-btn);
+  color: var(--pf-text);
+  font-family: var(--pf-font-code);
+}
+/* Confirm / delete / kick / ban / nickname / create channel-role-invite-event / pins. */
+div[role="dialog"] div[class*="footer-"] {
+  background: transparent;
+  border-top: 1px solid var(--pf-card-border);
+}
+div[role="dialog"] input[type="text"],
+div[role="dialog"] textarea,
+div[role="dialog"] select {
+  background: var(--pf-surface);
+  border: 1px solid var(--pf-card-border);
+  border-radius: var(--pf-radius-btn);
+  color: var(--pf-text);
+}
+div[role="dialog"] input:focus,
+div[role="dialog"] textarea:focus {
+  border-color: var(--pf-accent-border);
+  box-shadow: 0 0 0 1px var(--pf-accent-line);
+}
+/* Toasts / notifications stack. */
+div[class*="toast-"],
+div[class*="notification-"],
+div[class*="notices-"] div[class*="notice-"] {
+  background: var(--pf-surface);
+  border: 1px solid var(--pf-card-border);
+  border-radius: var(--pf-radius-card);
+  color: var(--pf-text);
+  box-shadow: none;
+  /* No animation: Discord's native toast slide-in plays untouched. */
+}
+/* Connection status / update / rtc debug / crash-loop banners. */
+div[class*="connectionStatus-"],
+div[class*="updateNotice-"],
+div[class*="rtcDebug-"],
+div[class*="crashNotice-"],
+div[class*="notice-"][class*="info-"] {
+  border-radius: var(--pf-radius-btn);
+  border: 1px solid var(--pf-card-border);
+  background: var(--pf-surface);
+  color: var(--pf-text-secondary);
+}
+div[class*="notice-"][class*="danger-"],
+div[class*="notice-"][class*="streaming-"] {
+  border-color: rgba(242, 63, 67, 0.45);
+  color: var(--pf-text);
+}
+/* Payment / gift / report / age-gate / MFA prompts. */
+div[class*="paymentModal-"],
+div[class*="giftModal-"],
+div[class*="reportModal-"],
+div[class*="ageGate-"],
+div[class*="mfaModal-"] {
+  background: var(--pf-card);
+  border: 1px solid var(--pf-card-border);
+  border-radius: var(--pf-radius-card);
+  box-shadow: none;
+  backdrop-filter: blur(var(--pf-blur));
+}
+div[class*="paymentModal-"] div[class*="plan-"][class*="selected-"] {
+  border-color: var(--pf-accent);
+  box-shadow: 0 0 0 1px var(--pf-accent-line);
+}
+div[class*="mfaModal-"] input[inputmode="numeric"] {
+  background: var(--pf-surface);
+  border: 1px solid var(--pf-accent-border);
+  border-radius: var(--pf-radius-btn);
+  color: var(--pf-text);
+  font-family: var(--pf-font-code);
+  letter-spacing: 0.3em;
+  text-align: center;
+}
+
+/* ===== 38 UI RESTYLE: bolder portfolio transformation ===== */
+/* Wider glass channel sidebar with sky 01/02/03 eyebrows. */
+div[class*="sidebar-"] {
+  background: rgba(7, 9, 13, 0.72);
+  backdrop-filter: blur(var(--pf-blur));
+  width: 264px;
+}
+div[class*="sidebar-"] h2[class*="name-"]::before,
+div[class*="sidebar-"] div[class*="container-"] > h2::before {
+  content: "01";
+  color: var(--pf-accent);
+  font-family: var(--pf-font-heading);
+  margin-right: 6px;
+  font-size: 10px;
+}
+div[class*="sidebar-"] div[class*="sectionDivider-"] {
+  border-top: 1px solid var(--pf-accent-line);
+}
+/* Server list: glowing active pill + custom home button. */
+nav[aria-label="Servers"] div[class*="pill-"] span[class*="item-"] {
+  background: var(--pf-accent);
+  box-shadow: 0 0 12px var(--pf-accent-border), 0 0 2px var(--pf-accent);
+  border-radius: var(--pf-radius-pill);
+}
+nav[aria-label="Servers"] div[class*="homeButton-"],
+nav[aria-label="Servers"] button[aria-label="Home"] {
+  background: var(--pf-card);
+  border: 1px solid var(--pf-accent-border);
+  border-radius: 50%;
+  color: var(--pf-accent);
+  transition: transform var(--pf-motion) var(--pf-ease), box-shadow var(--pf-motion) var(--pf-ease);
+}
+nav[aria-label="Servers"] div[class*="homeButton-"]:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 14px var(--pf-accent-line);
+}
+/* Chat: portfolio-card hover already in §08; sky reply/thread spines. */
+div[class*="cozy-"] div[class*="repliedMessage-"],
+div[class*="message-"] div[class*="threadSpine-"] {
+  border-color: var(--pf-accent);
+}
+/* Member list as glass cards. */
+aside[class*="membersWrap-"] div[class*="member-"] div[class*="layout-"] {
+  background: transparent;
+  border: 1px solid transparent;
+}
+aside[class*="membersWrap-"] div[class*="member-"] div[class*="layout-"]:hover {
+  background: var(--pf-card);
+  border-color: var(--pf-card-border);
+  backdrop-filter: blur(var(--pf-blur));
+}
+/* Composer as portfolio input with sky focus ring. */
+div[class*="channelTextArea-"] div[class*="themedBackground-"] {
+  background: transparent;
+}
+form[class*="form-"] {
+  padding-left: 12px;
+  padding-right: 12px;
+}
+/* Sky unread pills / dividers. */
+div[class*="unreadPill-"],
+span[class*="unreadPill-"] {
+  background: var(--pf-accent);
+  color: var(--pf-btn-text);
+  border-radius: var(--pf-radius-pill);
+  font-weight: 700;
+}
+div[class*="newMessagesBar-"]:hover {
+  background: var(--pf-text);
+  color: var(--pf-btn-text);
+}
+/* Styled tables in audit / settings. */
+div[class*="contentRegion-"] table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: var(--pf-card);
+  border: 1px solid var(--pf-card-border);
+  border-radius: var(--pf-radius-card);
+  overflow: hidden;
+}
+div[class*="contentRegion-"] table th {
+  font-family: var(--pf-font-heading);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--pf-accent);
+  background: rgba(56, 189, 248, 0.06);
+  padding: 10px 12px;
+  text-align: left;
+}
+div[class*="contentRegion-"] table td {
+  padding: 10px 12px;
+  border-top: 1px solid var(--pf-card-border);
+  color: var(--pf-text-secondary);
+}
+/* Toggles / sliders / checkboxes / radio / keybind pills / dropdowns everywhere. */
+button[role="switch"],
+div[role="switch"] {
+  border-radius: var(--pf-radius-pill);
+}
+div[class*="slider-"] input[type="range"]:focus-visible {
+  outline: 2px solid var(--pf-accent);
+  outline-offset: 2px;
+}
+input[type="checkbox"] {
+  accent-color: var(--pf-accent);
+}
+input[type="radio"] {
+  accent-color: var(--pf-accent);
+}
+div[class*="keybind-"] span[class*="key-"],
+span[class*="keybindShortcut-"] span {
+  background: var(--pf-surface);
+  border: 1px solid var(--pf-card-border);
+  border-bottom-width: 2px;
+  border-radius: var(--pf-radius-btn);
+  color: var(--pf-text);
+  font-family: var(--pf-font-code);
+  padding: 2px 6px;
+}
+div[class*="select-"],
+div[class*="dropdown-"] button {
+  background: var(--pf-card);
+  border: 1px solid var(--pf-card-border);
+  border-radius: var(--pf-radius-btn);
+  color: var(--pf-text);
+  transition: border-color var(--pf-motion) var(--pf-ease);
+}
+div[class*="select-"]:hover,
+div[class*="dropdown-"] button:hover {
+  border-color: var(--pf-accent-border);
+}
+div[class*="selectPopout-"],
+div[class*="dropdownPopout-"] {
+  background: var(--pf-card);
+  border: 1px solid var(--pf-card-border);
+  border-radius: var(--pf-radius-card);
+  box-shadow: none;
+  backdrop-filter: blur(var(--pf-blur));
+}
+/* Progress bars (boost / audio). */
+div[class*="progress-"],
+div[class*="bar-"][class*="progress-"] {
+  background: var(--pf-surface);
+  border-radius: var(--pf-radius-pill);
+}
+/* Tab bars + segmented controls. */
+div[class*="tabBar-"] div[class*="item-"],
+div[role="tab"] {
+  border-radius: var(--pf-radius-btn);
+  color: var(--pf-text-secondary);
+  border-bottom: 2px solid transparent;
+  transition: color var(--pf-motion) var(--pf-ease), border-color var(--pf-motion) var(--pf-ease);
+}
+div[class*="tabBar-"] div[class*="item-"]:hover,
+div[role="tab"]:hover {
+  color: var(--pf-text);
+}
+div[class*="tabBar-"] div[class*="item-"][class*="selected-"],
+div[role="tab"][aria-selected="true"] {
+  color: var(--pf-accent);
+  border-bottom-color: var(--pf-accent);
+}
+/* Avatars: subtle ring on hover only. */
+img[class*="avatar-"]:hover,
+div[class*="avatar-"]:hover img {
+  box-shadow: 0 0 0 2px var(--pf-accent-line);
+}
+/* Status dots mapped globally to portfolio palette (inline-SVG wins). */
+rect[fill="#23a55a"],
+rect[fill="#43b581"] { fill: var(--pf-online) !important; }
+rect[fill="#f0b232"],
+rect[fill="#faa81a"] { fill: var(--pf-idle) !important; }
+rect[fill="#f23f43"],
+rect[fill="#ed4245"] { fill: var(--pf-dnd) !important; }
+rect[fill="#593695"],
+rect[fill="#a970ff"] { fill: var(--pf-streaming) !important; }
+rect[fill="#80848e"],
+rect[fill="#747f8d"] { fill: var(--pf-offline) !important; }
+/* Call controls styled. */
+div[class*="videoControls-"] button[class*="controlButton-"],
+div[class*="callControls-"] button {
+  background: var(--pf-card);
+  border: 1px solid var(--pf-card-border);
+  border-radius: 50%;
+  color: var(--pf-text);
+  transition: transform var(--pf-motion) var(--pf-ease), border-color var(--pf-motion) var(--pf-ease);
+}
+div[class*="callControls-"] button:hover {
+  border-color: var(--pf-accent-border);
+  transform: translateY(-1px);
+}
+div[class*="callControls-"] button[class*="danger-"] {
+  background: rgba(242, 63, 67, 0.16);
+  border-color: rgba(242, 63, 67, 0.5);
+  color: var(--pf-dnd);
+}
+/* Bottom voice-status panel as control deck. */
+section[class*="panels-"] div[class*="container-"][class*="voice-"],
+div[class*="panels-"] div[class*="activityPanel-"] {
+  background: var(--pf-card);
+  border: 1px solid var(--pf-card-border);
+  border-radius: var(--pf-radius-card);
+  margin: 6px;
+  padding: 6px;
+}
+/* Global focus-visible for new blocks. */
+div[class*="contentRegion-"] :focus-visible,
+div[role="dialog"] :focus-visible,
+div[role="menu"] :focus-visible,
+div[class*="quickswitcher-"] :focus-visible,
+div[class*="searchPopout-"] :focus-visible,
+aside[class*="membersWrap-"] :focus-visible,
+div[class*="peopleColumn-"] button:focus-visible {
+  outline: 2px solid var(--pf-accent);
+  outline-offset: 2px;
+  border-radius: var(--pf-radius-btn);
+}
+
+/* ===== 39 REDUCED MOTION: extended kill-switch ===== */
+@media (prefers-reduced-motion: reduce) {
+  div[class*="itemCard-"],
+  div[class*="forumPost-"],
+  ul[class*="grid-"] li div[class*="card-"],
+  div[class*="quickswitcher-"],
+  div[class*="searchPopout-"],
+  div[class*="toast-"],
+  div[class*="callControls-"] button,
+  nav[aria-label="Servers"] div[class*="homeButton-"] {
+    animation: none;
+    transition: none;
+    transform: none;
+  }
+}
+
+/* ===== 40 FLOATING APP FRAME: inset panels, gutters, distinct elevation ===== */
+/* Gutters come from margins on flex children only — no parent display,
+   position, width, or overflow touched, so drag regions and layout stay
+   native. Every panel below is a floating card with its own elevation. */
+#app-mount nav[aria-label="Servers"] {
+  margin: 10px 0 10px 10px;
+  padding: 10px 0;
+  background: var(--pf-card);
+  border: 1px solid var(--pf-card-border);
+  border-radius: 16px;
+  backdrop-filter: blur(var(--pf-blur));
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+}
+#app-mount div[class*="sidebar-"],
+#app-mount div[class*="sidebar__"] {
+  margin: 10px 0 10px 10px;
+  background: rgba(7, 9, 13, 0.72);
+  border: 1px solid var(--pf-card-border);
+  border-radius: var(--pf-radius-card);
+  backdrop-filter: blur(var(--pf-blur));
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+}
+#app-mount main[class*="chatContent-"],
+#app-mount main[class*="chatContent__"] {
+  margin: 10px 0 10px 10px;
+  padding-right: 10px;
+  background: transparent;
+}
+#app-mount div[class*="chat-"],
+#app-mount div[class*="chat__"],
+#app-mount div[class*="chatContent-"],
+#app-mount div[class*="chatContent__"] {
+  border-color: var(--pf-card-border);
+}
+#app-mount div[class*="chat-"]:not([class*="chatContent-"]):not([class*="chatContent__"]),
+#app-mount div[class*="chat__"]:not([class*="chatContent-"]):not([class*="chatContent__"]) {
+  background: rgba(16, 20, 27, 0.55);
+  border: 1px solid var(--pf-card-border);
+  border-radius: var(--pf-radius-card);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.38);
+  overflow: hidden;
+}
+#app-mount aside[class*="membersWrap-"],
+#app-mount aside[class*="membersWrap__"] {
+  margin: 10px 10px 10px 0;
+  background: rgba(7, 9, 13, 0.6);
+  border: 1px solid var(--pf-card-border);
+  border-radius: var(--pf-radius-card);
+  backdrop-filter: blur(var(--pf-blur));
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+}
+#app-mount div[class*="forumOrHome-"],
+#app-mount div[class*="forumOrHome__"] {
+  background: rgba(16, 20, 27, 0.55);
+  border: 1px solid var(--pf-card-border);
+  border-radius: var(--pf-radius-card);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.38);
+  overflow: hidden;
+}
+
+/* ===== 41 SERVER RAIL: spacing, rings, glowing active pill, folders ===== */
+#app-mount nav[aria-label="Servers"] div[class*="listItem-"],
+#app-mount nav[aria-label="Servers"] div[class*="listItem__"] {
+  margin-bottom: 10px;
+  padding: 0 6px;
+}
+#app-mount nav[aria-label="Servers"] div[class*="listItem-"] div[class*="wrapper-"] img,
+#app-mount nav[aria-label="Servers"] div[class*="listItem__"] div[class*="wrapper__"] img,
+#app-mount nav[aria-label="Servers"] div[class*="listItem-"] div[class*="icon-"],
+#app-mount nav[aria-label="Servers"] div[class*="listItem__"] div[class*="icon__"],
+#app-mount nav[aria-label="Servers"] div[class*="listItem-"] div[class*="childWrapper-"],
+#app-mount nav[aria-label="Servers"] div[class*="listItem__"] div[class*="childWrapper__"] {
+  border-radius: 50%;
+  transition: transform var(--pf-motion) var(--pf-ease), box-shadow var(--pf-motion) var(--pf-ease);
+}
+#app-mount nav[aria-label="Servers"] div[class*="listItem-"]:hover div[class*="wrapper-"] img,
+#app-mount nav[aria-label="Servers"] div[class*="listItem__"]:hover div[class*="wrapper__"] img,
+#app-mount nav[aria-label="Servers"] div[class*="listItem-"]:hover div[class*="icon-"],
+#app-mount nav[aria-label="Servers"] div[class*="listItem__"]:hover div[class*="icon__"] {
+  box-shadow: 0 0 0 2px var(--pf-accent-border), 0 0 12px var(--pf-accent-line);
+  transform: scale(1.06);
+}
+#app-mount nav[aria-label="Servers"] div[class*="listItem-"] div[class*="selected-"] img,
+#app-mount nav[aria-label="Servers"] div[class*="listItem__"] div[class*="selected__"] img,
+#app-mount nav[aria-label="Servers"] div[class*="listItem-"] div[class*="selected-"] div[class*="icon-"],
+#app-mount nav[aria-label="Servers"] div[class*="listItem__"] div[class*="selected__"] div[class*="icon__"] {
+  box-shadow: 0 0 0 2px var(--pf-accent), 0 0 16px var(--pf-accent-border);
+  /* No transform: selected state keeps stock icon size, glow ring only. */
+}
+#app-mount nav[aria-label="Servers"] div[class*="pill-"] span[class*="item-"],
+#app-mount nav[aria-label="Servers"] div[class*="pill__"] span[class*="item__"] {
+  background: var(--pf-accent);
+  border-radius: var(--pf-radius-pill);
+  box-shadow: 0 0 12px var(--pf-accent-border), 0 0 2px var(--pf-accent);
+}
+#app-mount nav[aria-label="Servers"] div[class*="folder-"],
+#app-mount nav[aria-label="Servers"] div[class*="folder__"] {
+  background: rgba(16, 20, 27, 0.6);
+  border: 1px solid var(--pf-card-border);
+  border-radius: var(--pf-radius-card);
+  transition: border-color var(--pf-motion) var(--pf-ease), box-shadow var(--pf-motion) var(--pf-ease);
+}
+#app-mount nav[aria-label="Servers"] div[class*="folder-"]:hover,
+#app-mount nav[aria-label="Servers"] div[class*="folder__"]:hover {
+  border-color: var(--pf-accent-border);
+  box-shadow: 0 0 12px var(--pf-accent-line);
+}
+#app-mount nav[aria-label="Servers"] div[class*="expandedFolderBackground-"],
+#app-mount nav[aria-label="Servers"] div[class*="expandedFolderBackground__"] {
+  background: rgba(56, 189, 248, 0.06);
+  border: 1px solid var(--pf-accent-line);
+  border-radius: var(--pf-radius-card);
+}
+#app-mount nav[aria-label="Servers"] div[class*="unread-"],
+#app-mount nav[aria-label="Servers"] div[class*="unread__"] {
+  background: var(--pf-accent);
+  box-shadow: 0 0 8px var(--pf-accent-border);
+  border-radius: var(--pf-radius-pill);
+}
+#app-mount nav[aria-label="Servers"] div[class*="lowerBadge-"] div[class*="numberBadge-"],
+#app-mount nav[aria-label="Servers"] div[class*="lowerBadge__"] div[class*="numberBadge__"] {
+  background: var(--pf-accent);
+  color: var(--pf-btn-text);
+  border-radius: var(--pf-radius-pill);
+  font-weight: 700;
+}
+#app-mount nav[aria-label="Servers"] div[class*="listItem-"] :focus-visible,
+#app-mount nav[aria-label="Servers"] div[class*="listItem__"] :focus-visible {
+  outline: 2px solid var(--pf-accent);
+  outline-offset: 2px;
+  border-radius: 50%;
+}
+
+/* ===== 42 CHANNEL SIDEBAR: roomy rows, pill active, eyebrows, voice tiles ===== */
+#app-mount div[class*="sidebar-"] li a[class*="link-"],
+#app-mount div[class*="sidebar__"] li a[class*="link__"],
+#app-mount div[class*="sidebar-"] div[class*="containerDefault-"] a,
+#app-mount div[class*="sidebar__"] div[class*="containerDefault__"] a {
+  margin: 1px 8px;
+  padding: 7px 10px;
+  min-height: 34px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  color: var(--pf-text-secondary);
+  transition: background-color var(--pf-motion) var(--pf-ease), color var(--pf-motion) var(--pf-ease), border-color var(--pf-motion) var(--pf-ease);
+}
+#app-mount div[class*="sidebar-"] li a[class*="link-"]:hover,
+#app-mount div[class*="sidebar__"] li a[class*="link__"]:hover {
+  background: rgba(56, 189, 248, 0.06);
+  color: var(--pf-text);
+}
+#app-mount div[class*="sidebar-"] li[class*="selected-"] a[class*="link-"],
+#app-mount div[class*="sidebar__"] li[class*="selected__"] a[class*="link__"],
+#app-mount div[class*="sidebar-"] a[class*="link-"][class*="selected-"],
+#app-mount div[class*="sidebar__"] a[class*="link__"][class*="selected__"] {
+  position: relative;
+  background: rgba(56, 189, 248, 0.14);
+  border-color: var(--pf-accent-line);
+  color: var(--pf-text);
+  font-weight: 600;
+  border-radius: 8px;
+}
+#app-mount div[class*="sidebar-"] li[class*="selected-"] a[class*="link-"]::before,
+#app-mount div[class*="sidebar__"] li[class*="selected__"] a[class*="link__"]::before {
+  content: "";
+  position: absolute;
+  left: -9px;
+  top: 6px;
+  bottom: 6px;
+  width: 3px;
+  background: var(--pf-accent);
+  border-radius: var(--pf-radius-pill);
+  box-shadow: 0 0 10px var(--pf-accent-border);
+}
+#app-mount div[class*="sidebar-"] h2[class*="name-"],
+#app-mount div[class*="sidebar__"] h2[class*="name__"],
+#app-mount div[class*="sidebar-"] h3[class*="name-"],
+#app-mount div[class*="sidebar__"] h3[class*="name__"],
+#app-mount div[class*="sidebar-"] div[class*="headerText-"],
+#app-mount div[class*="sidebar__"] div[class*="headerText__"] {
+  font-family: var(--pf-font-heading);
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--pf-accent);
+}
+#app-mount div[class*="sidebar-"] div[class*="container-"] svg[class*="icon-"],
+#app-mount div[class*="sidebar__"] div[class*="container__"] svg[class*="icon__"] {
+  color: var(--pf-muted);
+}
+#app-mount div[class*="sidebar-"] div[class*="voiceUser-"],
+#app-mount div[class*="sidebar__"] div[class*="voiceUser__"] {
+  margin: 2px 8px;
+  padding: 6px 8px;
+  background: var(--pf-card);
+  border: 1px solid var(--pf-card-border);
+  border-radius: 8px;
+  transition: border-color var(--pf-motion) var(--pf-ease), box-shadow var(--pf-motion) var(--pf-ease);
+}
+#app-mount div[class*="sidebar-"] div[class*="voiceUser-"]:hover,
+#app-mount div[class*="sidebar__"] div[class*="voiceUser__"]:hover {
+  border-color: var(--pf-accent-border);
+}
+#app-mount div[class*="sidebar-"] div[class*="voiceUser-"][class*="speaking-"],
+#app-mount div[class*="sidebar__"] div[class*="voiceUser__"][class*="speaking__"] {
+  border-color: rgba(35, 165, 90, 0.6);
+  box-shadow: 0 0 10px rgba(35, 165, 90, 0.35);
+}
+#app-mount div[class*="sidebar-"] div[class*="tile-"],
+#app-mount div[class*="sidebar__"] div[class*="tile__"] {
+  background: var(--pf-card);
+  border: 1px solid var(--pf-card-border);
+  border-radius: 8px;
+}
+#app-mount div[class*="sidebar-"] a[class*="link-"]:focus-visible,
+#app-mount div[class*="sidebar__"] a[class*="link__"]:focus-visible {
+  outline: 2px solid var(--pf-accent);
+  outline-offset: 1px;
+  border-radius: 8px;
+}
+
+/* ===== 43 CHAT: grouping, hover toolbar pill, sky day pills, rich shapes ===== */
+#app-mount li[class*="messageListItem-"],
+#app-mount li[class*="messageListItem__"] {
+  margin-bottom: 6px;
+  padding: 2px 8px 2px 0;
+}
+#app-mount div[class*="message-"][class*="cozy-"],
+#app-mount div[class*="message__"][class*="cozy__"] {
+  margin-top: 14px;
+  padding: 6px 12px 6px 16px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  transition: background-color var(--pf-motion) var(--pf-ease), border-color var(--pf-motion) var(--pf-ease);
+}
+#app-mount div[class*="message-"][class*="cozy-"]:hover,
+#app-mount div[class*="message__"][class*="cozy__"]:hover {
+  background: rgba(16, 20, 27, 0.5);
+  border-color: var(--pf-card-border);
+}
+#app-mount div[class*="message-"][class*="groupStart-"],
+#app-mount div[class*="message__"][class*="groupStart__"] {
+  margin-top: 18px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+#app-mount div[class*="message-"] div[class*="buttonContainer-"],
+#app-mount div[class*="message__"] div[class*="buttonContainer__"],
+#app-mount div[class*="message-"] div[class*="buttonsInner-"],
+#app-mount div[class*="message__"] div[class*="buttonsInner__"] {
+  background: rgba(16, 20, 27, 0.92);
+  border: 1px solid var(--pf-card-border);
+  border-radius: var(--pf-radius-pill);
+  backdrop-filter: blur(var(--pf-blur));
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4);
+  padding: 2px 6px;
+}
+#app-mount div[class*="message-"] div[class*="button-"],
+#app-mount div[class*="message__"] div[class*="button__"] {
+  border-radius: var(--pf-radius-pill);
+  color: var(--pf-text-secondary);
+  transition: color var(--pf-motion) var(--pf-ease), background-color var(--pf-motion) var(--pf-ease);
+}
+#app-mount div[class*="message-"] div[class*="button-"]:hover,
+#app-mount div[class*="message__"] div[class*="button__"]:hover {
+  background: rgba(56, 189, 248, 0.14);
+  color: var(--pf-accent);
+}
+#app-mount div[class*="message-"] div[class*="button-"][class*="selected-"],
+#app-mount div[class*="message__"] div[class*="button__"][class*="selected__"] {
+  background: rgba(56, 189, 248, 0.2);
+  color: var(--pf-accent);
+}
+#app-mount div[class*="divider-"] span[class*="content-"],
+#app-mount div[class*="divider__"] span[class*="content__"] {
+  background: rgba(56, 189, 248, 0.12);
+  border: 1px solid var(--pf-accent-border);
+  border-radius: var(--pf-radius-pill);
+  color: var(--pf-accent);
+  font-family: var(--pf-font-heading);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  padding: 3px 12px;
+}
+#app-mount div[class*="divider-"][class*="isUnread-"],
+#app-mount div[class*="divider__"][class*="isUnread__"] {
+  border-top-color: var(--pf-accent);
+}
+#app-mount div[class*="jumpToPresentBar-"],
+#app-mount div[class*="jumpToPresentBar__"],
+#app-mount div[class*="newMessagesBar-"],
+#app-mount div[class*="newMessagesBar__"] {
+  background: var(--pf-accent);
+  color: var(--pf-btn-text);
+  border-radius: var(--pf-radius-pill);
+  box-shadow: 0 6px 20px rgba(56, 189, 248, 0.45);
+  font-weight: 700;
+  padding: 6px 16px;
+  transition: transform var(--pf-motion) var(--pf-ease), box-shadow var(--pf-motion) var(--pf-ease);
+}
+#app-mount div[class*="jumpToPresentBar-"]:hover,
+#app-mount div[class*="jumpToPresentBar__"]:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 24px rgba(56, 189, 248, 0.55);
+}
+#app-mount div[class*="messageContent-"] blockquote,
+#app-mount div[class*="messageContent__"] blockquote,
+#app-mount div[class*="markup-"] blockquote,
+#app-mount div[class*="markup__"] blockquote {
+  background: rgba(56, 189, 248, 0.05);
+  border-left: 2px solid var(--pf-accent);
+  border-radius: 0 8px 8px 0;
+  color: var(--pf-text-secondary);
+  margin: 6px 0;
+  padding: 6px 12px;
+}
+#app-mount div[class*="markup-"] code:not([class*="codeBlock-"]):not(pre code),
+#app-mount div[class*="markup__"] code:not([class*="codeBlock__"]):not(pre code) {
+  background: var(--pf-surface);
+  border: 1px solid var(--pf-card-border);
+  border-radius: var(--pf-radius-btn);
+  color: var(--pf-accent);
+  font-family: var(--pf-font-code);
+  padding: 1px 6px;
+}
+#app-mount div[class*="markup-"] pre,
+#app-mount div[class*="markup__"] pre {
+  background: var(--pf-surface);
+  border: 1px solid var(--pf-card-border);
+  border-radius: 8px;
+  padding: 10px 12px;
+}
+#app-mount article[class*="embedWrapper-"],
+#app-mount article[class*="embedWrapper__"],
+#app-mount div[class*="embed-"],
+#app-mount div[class*="embed__"] {
+  background: var(--pf-card);
+  border: 1px solid var(--pf-card-border);
+  border-left: 3px solid var(--pf-accent);
+  border-radius: var(--pf-radius-card);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+}
+#app-mount div[class*="repliedMessage-"]::before,
+#app-mount div[class*="repliedMessage__"]::before {
+  border-left: 2px solid var(--pf-accent);
+  border-top: 2px solid var(--pf-accent);
+  border-top-left-radius: 6px;
+  opacity: 0.8;
+}
+#app-mount div[class*="reaction-"],
+#app-mount div[class*="reaction__"] {
+  background: rgba(16, 20, 27, 0.6);
+  border: 1px solid var(--pf-card-border);
+  border-radius: var(--pf-radius-pill);
+  transition: border-color var(--pf-motion) var(--pf-ease), transform var(--pf-motion) var(--pf-ease);
+}
+#app-mount div[class*="reaction-"]:hover,
+#app-mount div[class*="reaction__"]:hover {
+  border-color: var(--pf-accent-border);
+  transform: scale(1.05);
+}
+#app-mount div[class*="reaction-"][class*="reacted-"],
+#app-mount div[class*="reaction__"][class*="reacted__"] {
+  background: rgba(56, 189, 248, 0.14);
+  border-color: var(--pf-accent-border);
+}
+
+/* ===== 44 COMPOSER: detached floating bar, sky focus ring, styled buttons ===== */
+#app-mount div[class*="channelTextArea-"],
+#app-mount div[class*="channelTextArea__"] {
+  margin: 0 12px 12px;
+  background: rgba(16, 20, 27, 0.85);
+  border: 1px solid var(--pf-card-border);
+  border-radius: 14px;
+  backdrop-filter: blur(var(--pf-blur));
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+  transition: border-color var(--pf-motion) var(--pf-ease), box-shadow var(--pf-motion) var(--pf-ease);
+}
+#app-mount div[class*="channelTextArea-"]:focus-within,
+#app-mount div[class*="channelTextArea__"]:focus-within {
+  border-color: var(--pf-accent-border);
+  box-shadow: 0 0 0 2px var(--pf-accent-line), 0 0 22px rgba(56, 189, 248, 0.28);
+}
+#app-mount div[class*="scrollableContainer-"],
+#app-mount div[class*="scrollableContainer__"] {
+  background: transparent;
+  border-radius: 14px;
+}
+#app-mount div[class*="channelTextArea-"] div[class*="placeholder-"],
+#app-mount div[class*="channelTextArea__"] div[class*="placeholder__"] {
+  color: var(--pf-muted);
+}
+#app-mount button[class*="attachButton-"],
+#app-mount button[class*="attachButton__"] {
+  color: var(--pf-text-secondary);
+  border-radius: 8px;
+  transition: color var(--pf-motion) var(--pf-ease), background-color var(--pf-motion) var(--pf-ease), transform var(--pf-motion) var(--pf-ease);
+}
+#app-mount button[class*="attachButton-"]:hover,
+#app-mount button[class*="attachButton__"]:hover {
+  background: rgba(56, 189, 248, 0.12);
+  color: var(--pf-accent);
+  transform: scale(1.08);
+}
+#app-mount div[class*="buttons-"] button,
+#app-mount div[class*="buttons__"] button,
+#app-mount button[class*="emojiButton-"],
+#app-mount button[class*="emojiButton__"],
+#app-mount button[aria-label="Send a gift"],
+#app-mount button[aria-label="Open GIF picker"],
+#app-mount button[aria-label="Open sticker picker"],
+#app-mount button[aria-label="Select emoji"] {
+  border-radius: 8px;
+  color: var(--pf-text-secondary);
+  transition: color var(--pf-motion) var(--pf-ease), background-color var(--pf-motion) var(--pf-ease), transform var(--pf-motion) var(--pf-ease);
+}
+#app-mount div[class*="buttons-"] button:hover,
+#app-mount div[class*="buttons__"] button:hover,
+#app-mount button[class*="emojiButton-"]:hover,
+#app-mount button[class*="emojiButton__"]:hover,
+#app-mount button[aria-label="Send a gift"]:hover,
+#app-mount button[aria-label="Open GIF picker"]:hover,
+#app-mount button[aria-label="Open sticker picker"]:hover,
+#app-mount button[aria-label="Select emoji"]:hover {
+  background: rgba(56, 189, 248, 0.12);
+  color: var(--pf-accent);
+  transform: scale(1.08);
+}
+#app-mount div[class*="buttons-"] button:focus-visible,
+#app-mount div[class*="buttons__"] button:focus-visible,
+#app-mount button[class*="attachButton-"]:focus-visible,
+#app-mount button[class*="attachButton__"]:focus-visible {
+  outline: 2px solid var(--pf-accent);
+  outline-offset: 1px;
+  border-radius: 8px;
+}
+#app-mount div[class*="replyBar-"],
+#app-mount div[class*="replyBar__"] {
+  background: rgba(56, 189, 248, 0.06);
+  border: 1px solid var(--pf-accent-line);
+  border-radius: 8px;
+  margin: 0 12px 8px;
+}
+#app-mount div[class*="typing-"],
+#app-mount div[class*="typing__"] {
+  color: var(--pf-muted);
+  font-size: 12px;
+}
+
+/* ===== 45 MEMBERS: mini cards, eyebrow roles, muted activity ===== */
+#app-mount aside[class*="membersWrap-"] div[class*="member-"] div[class*="layout-"],
+#app-mount aside[class*="membersWrap__"] div[class*="member__"] div[class*="layout__"],
+#app-mount aside[class*="membersWrap-"] div[class*="member__"] div[class*="layout-"],
+#app-mount aside[class*="membersWrap__"] div[class*="member-"] div[class*="layout-"] {
+  margin: 1px 8px;
+  padding: 6px 8px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  transition: background-color var(--pf-motion) var(--pf-ease), border-color var(--pf-motion) var(--pf-ease), transform var(--pf-motion) var(--pf-ease);
+}
+#app-mount aside[class*="membersWrap-"] div[class*="member-"] div[class*="layout-"]:hover,
+#app-mount aside[class*="membersWrap__"] div[class*="member__"] div[class*="layout__"]:hover {
+  background: var(--pf-card);
+  border-color: var(--pf-card-border);
+  backdrop-filter: blur(var(--pf-blur));
+  transform: translateX(2px);
+}
+#app-mount aside[class*="membersWrap-"] div[class*="member-"][class*="selected-"] div[class*="layout-"],
+#app-mount aside[class*="membersWrap__"] div[class*="member__"][class*="selected__"] div[class*="layout__"] {
+  background: rgba(56, 189, 248, 0.12);
+  border-color: var(--pf-accent-line);
+}
+#app-mount aside[class*="membersWrap-"] h2[class*="membersGroup-"],
+#app-mount aside[class*="membersWrap__"] h2[class*="membersGroup__"],
+#app-mount aside[class*="membersWrap-"] h3[class*="membersGroup-"],
+#app-mount aside[class*="membersWrap__"] h3[class*="membersGroup__"] {
+  font-family: var(--pf-font-heading);
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--pf-accent);
+  padding: 14px 16px 4px;
+}
+#app-mount aside[class*="membersWrap-"] div[class*="activity-"],
+#app-mount aside[class*="membersWrap__"] div[class*="activity__"],
+#app-mount aside[class*="membersWrap-"] div[class*="activityText-"],
+#app-mount aside[class*="membersWrap__"] div[class*="activityText__"] {
+  color: var(--pf-muted);
+  font-size: 12px;
+}
+#app-mount aside[class*="membersWrap-"] div[class*="member-"] :focus-visible,
+#app-mount aside[class*="membersWrap__"] div[class*="member__"] :focus-visible {
+  outline: 2px solid var(--pf-accent);
+  outline-offset: 1px;
+  border-radius: 8px;
+}
+
+/* ===== 46 HEADER: glass bar, strong divider, custom search, tidy chrome ===== */
+#app-mount div[class*="title-"],
+#app-mount div[class*="title__"],
+#app-mount header[class*="header-"],
+#app-mount header[class*="header__"] {
+  background: rgba(7, 9, 13, 0.8);
+  border-bottom: 1px solid var(--pf-accent-line);
+  backdrop-filter: blur(var(--pf-blur));
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+#app-mount div[class*="title-"] h1[class*="title-"],
+#app-mount div[class*="title__"] h1[class*="title__"],
+#app-mount div[class*="title-"] div[class*="title-"],
+#app-mount div[class*="title__"] div[class*="title__"] {
+  font-family: var(--pf-font-heading);
+  color: var(--pf-text);
+}
+#app-mount div[class*="title-"] div[class*="topic-"],
+#app-mount div[class*="title__"] div[class*="topic__"] {
+  color: var(--pf-muted);
+}
+#app-mount div[class*="title-"] div[class*="iconWrapper-"],
+#app-mount div[class*="title__"] div[class*="iconWrapper__"] {
+  border-radius: 8px;
+  color: var(--pf-text-secondary);
+  transition: color var(--pf-motion) var(--pf-ease), background-color var(--pf-motion) var(--pf-ease);
+}
+#app-mount div[class*="title-"] div[class*="iconWrapper-"]:hover,
+#app-mount div[class*="title__"] div[class*="iconWrapper__"]:hover,
+#app-mount div[class*="title-"] div[class*="iconWrapper-"][class*="selected-"],
+#app-mount div[class*="title__"] div[class*="iconWrapper__"][class*="selected__"] {
+  background: rgba(56, 189, 248, 0.12);
+  color: var(--pf-accent);
+}
+#app-mount div[class*="search-"] div[class*="searchBar-"],
+#app-mount div[class*="search__"] div[class*="searchBar__"] {
+  background: var(--pf-surface);
+  border: 1px solid var(--pf-card-border);
+  border-radius: 8px;
+  color: var(--pf-text-secondary);
+  transition: border-color var(--pf-motion) var(--pf-ease), box-shadow var(--pf-motion) var(--pf-ease);
+}
+#app-mount div[class*="search-"] div[class*="searchBar-"]:focus-within,
+#app-mount div[class*="search__"] div[class*="searchBar__"]:focus-within {
+  border-color: var(--pf-accent-border);
+  box-shadow: 0 0 0 2px var(--pf-accent-line);
+  color: var(--pf-text);
+}
+#app-mount div[class*="titleBar-"],
+#app-mount div[class*="titleBar__"] {
+  padding: 6px 10px;
+  background: transparent;
+}
+#app-mount div[class*="winButton-"],
+#app-mount div[class*="winButton__"] {
+  border-radius: 8px;
+  color: var(--pf-text-secondary);
+}
+#app-mount div[class*="winButton-"]:hover,
+#app-mount div[class*="winButton__"]:hover {
+  background: rgba(56, 189, 248, 0.12);
+  color: var(--pf-text);
+}
+
+/* ===== 47 USER PANEL: bottom control deck with glowing status ===== */
+#app-mount section[class*="panels-"],
+#app-mount div[class*="panels__"] {
+  margin: 8px;
+  padding: 8px;
+  background: var(--pf-card);
+  border: 1px solid var(--pf-card-border);
+  border-radius: var(--pf-radius-card);
+  backdrop-filter: blur(var(--pf-blur));
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+}
+#app-mount section[class*="panels-"] div[class*="container-"],
+#app-mount div[class*="panels__"] div[class*="container__"] {
+  background: transparent;
+  border: 0;
+  border-radius: 8px;
+  padding: 4px;
+}
+#app-mount section[class*="panels-"] div[class*="avatarWrapper-"],
+#app-mount div[class*="panels__"] div[class*="avatarWrapper__"] {
+  border-radius: 50%;
+  transition: box-shadow var(--pf-motion) var(--pf-ease), transform var(--pf-motion) var(--pf-ease);
+}
+#app-mount section[class*="panels-"] div[class*="avatarWrapper-"]:hover,
+#app-mount div[class*="panels__"] div[class*="avatarWrapper__"]:hover {
+  box-shadow: 0 0 0 2px var(--pf-accent-border), 0 0 12px var(--pf-accent-line);
+  transform: scale(1.04);
+}
+#app-mount section[class*="panels-"] div[class*="nameTag-"],
+#app-mount div[class*="panels__"] div[class*="nameTag__"] {
+  color: var(--pf-text);
+}
+#app-mount section[class*="panels-"] div[class*="subtext-"],
+#app-mount div[class*="panels__"] div[class*="subtext__"] {
+  color: var(--pf-muted);
+}
+#app-mount section[class*="panels-"] button,
+#app-mount div[class*="panels__"] button {
+  border-radius: 8px;
+  color: var(--pf-text-secondary);
+  transition: color var(--pf-motion) var(--pf-ease), background-color var(--pf-motion) var(--pf-ease), transform var(--pf-motion) var(--pf-ease);
+}
+#app-mount section[class*="panels-"] button:hover,
+#app-mount div[class*="panels__"] button:hover {
+  background: rgba(56, 189, 248, 0.12);
+  color: var(--pf-accent);
+  transform: translateY(-1px);
+}
+#app-mount section[class*="panels-"] button:focus-visible,
+#app-mount div[class*="panels__"] button:focus-visible {
+  outline: 2px solid var(--pf-accent);
+  outline-offset: 1px;
+  border-radius: 8px;
+}
+
+/* ===== 48 DMS / FRIENDS: card rows, active-now cards, segmented tabs ===== */
+#app-mount div[class*="peopleColumn-"] div[class*="peopleListItem-"],
+#app-mount div[class*="peopleColumn__"] div[class*="peopleListItem__"] {
+  margin: 4px 12px;
+  padding: 10px 12px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--pf-radius-card);
+  transition: background-color var(--pf-motion) var(--pf-ease), border-color var(--pf-motion) var(--pf-ease), transform var(--pf-motion) var(--pf-ease);
+}
+#app-mount div[class*="peopleColumn-"] div[class*="peopleListItem-"]:hover,
+#app-mount div[class*="peopleColumn__"] div[class*="peopleListItem__"]:hover {
+  background: var(--pf-card);
+  border-color: var(--pf-card-border);
+  backdrop-filter: blur(var(--pf-blur));
+  transform: translateY(-1px);
+}
+#app-mount div[class*="peopleColumn-"] div[class*="peopleListItem-"][class*="active-"],
+#app-mount div[class*="peopleColumn__"] div[class*="peopleListItem__"][class*="active__"] {
+  background: rgba(56, 189, 248, 0.1);
+  border-color: var(--pf-accent-line);
+}
+#app-mount aside[class*="nowPlayingColumn-"] div[class*="itemCard-"],
+#app-mount aside[class*="nowPlayingColumn__"] div[class*="itemCard__"],
+#app-mount div[class*="activeNowCard-"],
+#app-mount div[class*="activeNowCard__"] {
+  background: var(--pf-card);
+  border: 1px solid var(--pf-card-border);
+  border-radius: var(--pf-radius-card);
+  backdrop-filter: blur(var(--pf-blur));
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
+  transition: border-color var(--pf-motion) var(--pf-ease), transform var(--pf-motion) var(--pf-ease);
+}
+#app-mount aside[class*="nowPlayingColumn-"] div[class*="itemCard-"]:hover,
+#app-mount aside[class*="nowPlayingColumn__"] div[class*="itemCard__"]:hover {
+  border-color: var(--pf-accent-border);
+  transform: translateY(-1px);
+}
+#app-mount div[class*="tabBar-"] div[class*="item-"],
+#app-mount div[class*="tabBar__"] div[class*="item__"] {
+  margin: 2px;
+  padding: 6px 14px;
+  border: 1px solid transparent;
+  border-radius: var(--pf-radius-pill);
+  color: var(--pf-text-secondary);
+  transition: color var(--pf-motion) var(--pf-ease), background-color var(--pf-motion) var(--pf-ease), border-color var(--pf-motion) var(--pf-ease);
+}
+#app-mount div[class*="tabBar-"] div[class*="item-"]:hover,
+#app-mount div[class*="tabBar__"] div[class*="item__"]:hover {
+  background: rgba(56, 189, 248, 0.08);
+  color: var(--pf-text);
+}
+#app-mount div[class*="tabBar-"] div[class*="item-"][class*="selected-"],
+#app-mount div[class*="tabBar__"] div[class*="item__"][class*="selected__"] {
+  background: rgba(56, 189, 248, 0.16);
+  border-color: var(--pf-accent-line);
+  color: var(--pf-accent);
+  font-weight: 600;
+}
+#app-mount div[class*="tabBar-"] div[class*="item-"]:focus-visible,
+#app-mount div[class*="tabBar__"] div[class*="item__"]:focus-visible {
+  outline: 2px solid var(--pf-accent);
+  outline-offset: 1px;
+  border-radius: var(--pf-radius-pill);
+}
+#app-mount div[class*="privateChannels-"] li a[class*="channel-"],
+#app-mount div[class*="privateChannels__"] li a[class*="channel__"] {
+  margin: 1px 8px;
+  padding: 7px 10px;
+  min-height: 42px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  transition: background-color var(--pf-motion) var(--pf-ease), border-color var(--pf-motion) var(--pf-ease);
+}
+#app-mount div[class*="privateChannels-"] li a[class*="channel-"]:hover,
+#app-mount div[class*="privateChannels__"] li a[class*="channel__"]:hover {
+  background: rgba(56, 189, 248, 0.06);
+}
+#app-mount div[class*="privateChannels-"] li[class*="selected-"] a[class*="channel-"],
+#app-mount div[class*="privateChannels__"] li[class*="selected__"] a[class*="channel__"] {
+  background: rgba(56, 189, 248, 0.14);
+  border-color: var(--pf-accent-line);
+}
+
+/* ===== 49 SETTINGS: nav panel, pill active item, bordered cards ===== */
+#app-mount div[class*="sidebarRegion-"] nav,
+#app-mount div[class*="sidebarRegion__"] nav {
+  margin: 12px 0 12px 12px;
+  padding: 10px;
+  background: var(--pf-card);
+  border: 1px solid var(--pf-card-border);
+  border-radius: var(--pf-radius-card);
+  backdrop-filter: blur(var(--pf-blur));
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+#app-mount div[class*="side-"] div[class*="item-"],
+#app-mount div[class*="side__"] div[class*="item__"],
+#app-mount div[class*="side-"] div[class*="themed-"],
+#app-mount div[class*="side__"] div[class*="themed__"] {
+  margin: 1px 0;
+  padding: 7px 12px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  color: var(--pf-text-secondary);
+  transition: background-color var(--pf-motion) var(--pf-ease), color var(--pf-motion) var(--pf-ease), border-color var(--pf-motion) var(--pf-ease);
+}
+#app-mount div[class*="side-"] div[class*="item-"]:hover,
+#app-mount div[class*="side__"] div[class*="item__"]:hover {
+  background: rgba(56, 189, 248, 0.08);
+  color: var(--pf-text);
+}
+#app-mount div[class*="side-"] div[class*="item-"][class*="selected-"],
+#app-mount div[class*="side__"] div[class*="item__"][class*="selected__"] {
+  background: rgba(56, 189, 248, 0.16);
+  border-color: var(--pf-accent-line);
+  border-radius: var(--pf-radius-pill);
+  color: var(--pf-accent);
+  font-weight: 600;
+}
+#app-mount div[class*="side-"] div[class*="header-"],
+#app-mount div[class*="side__"] div[class*="header__"] {
+  font-family: var(--pf-font-heading);
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--pf-accent);
+  padding: 14px 12px 4px;
+}
+#app-mount div[class*="contentRegion-"] div[class*="card-"],
+#app-mount div[class*="contentRegion__"] div[class*="card__"],
+#app-mount div[class*="contentRegion-"] div[class*="card__"],
+#app-mount div[class*="contentRegion__"] div[class*="card-"] {
+  background: var(--pf-card);
+  border: 1px solid var(--pf-card-border);
+  border-radius: var(--pf-radius-card);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
+}
+#app-mount div[class*="contentRegion-"] div[class*="card-"][class*="danger-"],
+#app-mount div[class*="contentRegion__"] div[class*="card__"][class*="danger__"] {
+  border-color: rgba(242, 63, 67, 0.5);
+}
+#app-mount div[class*="contentRegion-"] h1,
+#app-mount div[class*="contentRegion__"] h1 {
+  font-family: var(--pf-font-heading);
+  font-weight: 700;
+  color: var(--pf-text);
+}
+#app-mount div[class*="contentRegion-"] h2,
+#app-mount div[class*="contentRegion__"] h2 {
+  font-family: var(--pf-font-heading);
+  font-weight: 600;
+  color: var(--pf-text);
+}
+#app-mount div[class*="contentRegion-"] h3[class*="title-"],
+#app-mount div[class*="contentRegion__"] h3[class*="title__"] {
+  font-family: var(--pf-font-heading);
+  color: var(--pf-text);
+}
+#app-mount div[class*="contentRegion-"] div[class*="divider-"],
+#app-mount div[class*="contentRegion__"] div[class*="divider__"] {
+  border-top: 1px solid var(--pf-accent-line);
+}
+#app-mount div[class*="side-"] div[class*="item-"]:focus-visible,
+#app-mount div[class*="side__"] div[class*="item__"]:focus-visible {
+  outline: 2px solid var(--pf-accent);
+  outline-offset: 1px;
+  border-radius: 8px;
+}
+
+/* ===== 50 MODALS / POPOVERS / MENUS: floating glass, scale-in, pill hover ===== */
+@keyframes pf-pop-in {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+#app-mount div[role="dialog"],
+#app-mount div[class*="modal-"],
+#app-mount div[class*="modal__"] {
+  background: rgba(16, 20, 27, 0.92);
+  border: 1px solid var(--pf-card-border);
+  border-radius: 16px;
+  backdrop-filter: blur(var(--pf-blur));
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(56, 189, 248, 0.08);
+  /* No animation: Discord's native modal open plays untouched. */
+}
+#app-mount div[role="dialog"] div[class*="header-"],
+#app-mount div[role="dialog"] div[class*="header__"] {
+  font-family: var(--pf-font-heading);
+  color: var(--pf-text);
+}
+#app-mount div[role="dialog"] div[class*="footer-"],
+#app-mount div[role="dialog"] div[class*="footer__"] {
+  background: rgba(7, 9, 13, 0.5);
+  border-top: 1px solid var(--pf-card-border);
+  border-radius: 0 0 16px 16px;
+}
+#app-mount div[role="menu"],
+#app-mount div[class*="menu-"],
+#app-mount div[class*="menu__"] {
+  background: rgba(16, 20, 27, 0.94);
+  border: 1px solid var(--pf-card-border);
+  border-radius: var(--pf-radius-card);
+  backdrop-filter: blur(var(--pf-blur));
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.5);
+  padding: 6px;
+  /* No animation: Discord's native menu open plays untouched. */
+}
+#app-mount div[role="menu"] div[role="menuitem"],
+#app-mount div[class*="menu-"] div[class*="item-"],
+#app-mount div[class*="menu__"] div[class*="item__"] {
+  margin: 1px 0;
+  padding: 7px 10px;
+  border-radius: 8px;
+  color: var(--pf-text-secondary);
+  transition: background-color var(--pf-motion) var(--pf-ease), color var(--pf-motion) var(--pf-ease);
+}
+#app-mount div[role="menu"] div[role="menuitem"]:hover,
+#app-mount div[class*="menu-"] div[class*="item-"]:hover,
+#app-mount div[class*="menu__"] div[class*="item__"]:hover,
+#app-mount div[role="menu"] div[role="menuitem"]:focus-visible,
+#app-mount div[class*="menu-"] div[class*="item-"]:focus-visible,
+#app-mount div[class*="menu__"] div[class*="item__"]:focus-visible {
+  background: rgba(56, 189, 248, 0.14);
+  color: var(--pf-text);
+  outline: 2px solid transparent;
+}
+#app-mount div[class*="menu-"] div[class*="colorDanger-"],
+#app-mount div[class*="menu__"] div[class*="colorDanger__"],
+#app-mount div[role="menu"] div[class*="danger-"] {
+  color: var(--pf-dnd);
+}
+#app-mount div[class*="menu-"] div[class*="colorDanger-"]:hover,
+#app-mount div[class*="menu__"] div[class*="colorDanger__"]:hover,
+#app-mount div[role="menu"] div[class*="danger-"]:hover {
+  background: rgba(242, 63, 67, 0.14);
+  color: var(--pf-dnd);
+}
+#app-mount div[class*="popout-"],
+#app-mount div[class*="popout__"],
+#app-mount div[class*="userPopout-"],
+#app-mount div[class*="userPopout__"] {
+  background: rgba(16, 20, 27, 0.94);
+  border: 1px solid var(--pf-card-border);
+  border-radius: var(--pf-radius-card);
+  backdrop-filter: blur(var(--pf-blur));
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.5);
+  /* native popout animation preserved */
+  overflow: hidden;
+}
+#app-mount div[class*="popout-"] :focus-visible,
+#app-mount div[class*="popout__"] :focus-visible {
+  outline: 2px solid var(--pf-accent);
+  outline-offset: 1px;
+  border-radius: var(--pf-radius-btn);
+}
+
+/* ===== 51 DETAILS: thin scrollbars, pills, inputs, sliders, tables, tabs ===== */
+#app-mount ::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+#app-mount ::-webkit-scrollbar-track {
+  background: transparent;
+}
+#app-mount ::-webkit-scrollbar-thumb {
+  background: rgba(56, 189, 248, 0.28);
+  border-radius: var(--pf-radius-pill);
+}
+#app-mount ::-webkit-scrollbar-thumb:hover {
+  background: rgba(56, 189, 248, 0.5);
+}
+#app-mount ::selection {
+  background: var(--pf-selection);
+  color: var(--pf-text);
+}
+#app-mount div[class*="tooltip-"],
+#app-mount div[class*="tooltip__"] {
+  background: rgba(7, 9, 13, 0.94);
+  border: 1px solid var(--pf-card-border);
+  border-radius: var(--pf-radius-pill);
+  backdrop-filter: blur(var(--pf-blur));
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
+  color: var(--pf-text);
+  font-size: 12px;
+  padding: 5px 12px;
+}
+#app-mount span[class*="badge-"],
+#app-mount span[class*="badge__"],
+#app-mount div[class*="numberBadge-"],
+#app-mount div[class*="numberBadge__"] {
+  background: var(--pf-accent);
+  border-radius: var(--pf-radius-pill);
+  color: var(--pf-btn-text);
+  font-weight: 700;
+}
+#app-mount hr[class*="divider-"],
+#app-mount hr[class*="divider__"],
+#app-mount div[class*="separator-"],
+#app-mount div[class*="separator__"] {
+  border: 0;
+  border-top: 1px solid var(--pf-accent-line);
+  margin: 10px 0;
+}
+#app-mount input[class*="input-"],
+#app-mount input[class*="input__"],
+#app-mount textarea[class*="input-"],
+#app-mount textarea[class*="input__"] {
+  background: var(--pf-surface);
+  border: 1px solid var(--pf-card-border);
+  border-radius: 8px;
+  color: var(--pf-text);
+  transition: border-color var(--pf-motion) var(--pf-ease), box-shadow var(--pf-motion) var(--pf-ease);
+}
+#app-mount input[class*="input-"]:focus,
+#app-mount input[class*="input__"]:focus,
+#app-mount textarea[class*="input-"]:focus,
+#app-mount textarea[class*="input__"]:focus {
+  border-color: var(--pf-accent-border);
+  box-shadow: 0 0 0 2px var(--pf-accent-line);
+  outline: none;
+}
+#app-mount div[class*="selectPopout-"],
+#app-mount div[class*="selectPopout__"],
+#app-mount div[class*="popout-"][class*="select-"],
+#app-mount div[class*="popout__"][class*="select__"] {
+  background: rgba(16, 20, 27, 0.94);
+  border: 1px solid var(--pf-card-border);
+  border-radius: var(--pf-radius-card);
+  backdrop-filter: blur(var(--pf-blur));
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+}
+#app-mount div[class*="slider-"] div[class*="bar-"],
+#app-mount div[class*="slider__"] div[class*="bar__"] {
+  background: var(--pf-surface);
+  border-radius: var(--pf-radius-pill);
+}
+#app-mount div[class*="slider-"] div[class*="barFill-"],
+#app-mount div[class*="slider__"] div[class*="barFill__"],
+#app-mount div[class*="slider-"] div[class*="fill-"],
+#app-mount div[class*="slider__"] div[class*="fill__"] {
+  background: var(--pf-accent);
+  border-radius: var(--pf-radius-pill);
+}
+#app-mount div[class*="slider-"] div[class*="grabber-"],
+#app-mount div[class*="slider__"] div[class*="grabber__"] {
+  background: var(--pf-text);
+  border: 2px solid var(--pf-accent);
+  border-radius: 50%;
+  box-shadow: 0 0 10px var(--pf-accent-line);
+}
+#app-mount button[role="switch"][aria-checked="true"],
+#app-mount div[role="switch"][aria-checked="true"] {
+  background: var(--pf-accent);
+}
+#app-mount button[role="switch"][aria-checked="true"] div[class*="handle-"],
+#app-mount div[role="switch"][aria-checked="true"] div[class*="handle__"] {
+  background: var(--pf-btn-text);
+}
+#app-mount div[class*="contentRegion-"] table tbody tr,
+#app-mount div[class*="contentRegion__"] table tbody tr {
+  transition: background-color var(--pf-motion) var(--pf-ease);
+}
+#app-mount div[class*="contentRegion-"] table tbody tr:hover,
+#app-mount div[class*="contentRegion__"] table tbody tr:hover {
+  background: rgba(56, 189, 248, 0.06);
+}
+#app-mount div[class*="contentRegion-"] div[class*="tabBar-"],
+#app-mount div[class*="contentRegion__"] div[class*="tabBar__"] {
+  background: rgba(16, 20, 27, 0.6);
+  border: 1px solid var(--pf-card-border);
+  border-radius: var(--pf-radius-pill);
+  padding: 3px;
+}
+#app-mount div[class*="progressBar-"] div[class*="fill-"],
+#app-mount div[class*="progressBar__"] div[class*="fill__"],
+#app-mount div[class*="progress-"][class*="bar-"] div[class*="fill-"] {
+  background: var(--pf-accent);
+  border-radius: var(--pf-radius-pill);
+  box-shadow: 0 0 8px var(--pf-accent-line);
+}
+
+/* ===== 52 STRUCTURAL FOCUS + REDUCED MOTION COVERAGE ===== */
+#app-mount div[class*="chat-"] :focus-visible,
+#app-mount div[class*="chat__"] :focus-visible,
+#app-mount section[class*="panels-"] :focus-visible,
+#app-mount div[class*="peopleColumn-"] :focus-visible,
+#app-mount div[class*="peopleColumn__"] :focus-visible,
+#app-mount div[role="dialog"] button:focus-visible,
+#app-mount div[class*="channelTextArea-"] button:focus-visible,
+#app-mount div[class*="channelTextArea__"] button:focus-visible {
+  outline: 2px solid var(--pf-accent);
+  outline-offset: 2px;
+  border-radius: var(--pf-radius-btn);
+}
+@media (prefers-reduced-motion: reduce) {
+  #app-mount nav[aria-label="Servers"] div[class*="listItem-"] img,
+  #app-mount nav[aria-label="Servers"] div[class*="listItem__"] img,
+  #app-mount div[class*="sidebar-"] li a[class*="link-"],
+  #app-mount div[class*="sidebar__"] li a[class*="link__"],
+  #app-mount div[class*="message-"] div[class*="button-"],
+  #app-mount div[class*="message__"] div[class*="button__"],
+  #app-mount div[class*="reaction-"],
+  #app-mount div[class*="reaction__"],
+  #app-mount div[role="dialog"],
+  #app-mount div[role="menu"],
+  #app-mount div[class*="menu-"],
+  #app-mount div[class*="menu__"],
+  #app-mount div[class*="popout-"],
+  #app-mount div[class*="popout__"],
+  #app-mount div[class*="tooltip-"],
+  #app-mount div[class*="tooltip__"],
+  #app-mount aside[class*="membersWrap-"] div[class*="member-"] div[class*="layout-"],
+  #app-mount aside[class*="membersWrap__"] div[class*="member__"] div[class*="layout__"],
+  #app-mount div[class*="peopleColumn-"] div[class*="peopleListItem-"],
+  #app-mount div[class*="peopleColumn__"] div[class*="peopleListItem__"] {
+    animation: none;
+    transition: none;
+    transform: none;
+  }
+}
+
+/* ===== 53 BGFX TUNABLES (animated hero backdrop) ===== */
+/* :root in §01 is fixed, so the CSS-only constellation hero tunables
+   live in this small section-owned :root block (valid CSS — later :root
+   rules only add/override custom properties). Palette measured live from
+   the portfolio canvas (histogram: 99% near-black, ~209 bright px):
+   vast empty darkness + a few wandering 1–2px cyan specks + ghostly
+   short fragments. NO uniform mesh — tiles are LARGE and mostly empty
+   (2–3 dots per tile), amplitudes tiny. */
+:root {
+  --pf-bgfx-glow-opacity: 0.1;
+  --pf-bgfx-grid-line: rgba(56, 189, 248, 0.06);
+  --pf-bgfx-grid-size: 48px;
+  /* Layer A dots: cyan-dominant, 2–3 specks per 320px tile, 1–2px. */
+  --pf-bgfx-dot-a1: rgba(0, 255, 255, 0.9);
+  --pf-bgfx-dot-a2: rgba(64, 191, 255, 0.9);
+  --pf-bgfx-dot-a3: rgba(51, 204, 255, 0.9);
+  --pf-bgfx-tile-a: 320px;
+  --pf-bgfx-opacity-a: 0.55;
+  --pf-bgfx-dur-const-a: 50s;
+  /* Ghost links: 2–3 SHORT 1px fragments (20–40px at ~20°/100°) in one
+     380px tile, rgba(0,128,255,0.10); baked as an SVG tile (see §55 —
+     CSS vars cannot pierce a data-URI, so the SVG stroke matches this
+     value literally). Rides layer A drift (50s, same direction). */
+  --pf-bgfx-frag: rgba(0, 128, 255, 0.1);
+  --pf-bgfx-tile-link: 380px;
+  --pf-bgfx-opacity-link: 0.5;
+  /* Layer B dots: cyan + dim blue, 2–3 specks per 430px tile, 1–2px. */
+  --pf-bgfx-dot-b1: rgba(0, 255, 255, 0.9);
+  --pf-bgfx-dot-b2: rgba(51, 204, 255, 0.9);
+  --pf-bgfx-dot-b3: rgba(26, 102, 204, 0.9);
+  --pf-bgfx-tile-b: 430px;
+  --pf-bgfx-opacity-b: 0.4;
+  --pf-bgfx-dur-const-b: 70s;
+  --pf-bgfx-dur-glow-b: 34s;
+  --pf-bgfx-dur-twinkle: 7s;
+  --pf-bgfx-dur-breathe: 14s;
+}
+
+/* ===== 54 BGFX DRIFTING GLOW LAYER ===== */
+/* §04 owns #app-mount::before/::after (26s pf-glow-drift, kept intact).
+   §§04/40 never touch body pseudos, so the companion ultra-soft sky-glow
+   pair stacks on body::before (free). Together: 26s (§04) + 34s (here).
+   Transform + opacity only; no blur/filter animation.
+   z-index 1: above the §04 base coat (z 0), below the §04 drift glow
+   (z 2), grid (z 3), constellation (z 4-5) and content (z 10). */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(720px 420px at 18% 82%, rgba(56, 189, 248, var(--pf-bgfx-glow-opacity, 0.1)), transparent 65%),
+    radial-gradient(760px 440px at 84% 78%, rgba(56, 189, 248, 0.06), transparent 65%);
+  background-repeat: no-repeat;
+  opacity: 0.8;
+  animation: pf-glow-drift-b var(--pf-bgfx-dur-glow-b, 34s) ease-in-out infinite alternate;
+  z-index: 1;
+}
+
+@keyframes pf-glow-drift-b {
+  from { opacity: 0.55; transform: translate3d(-40px, -20px, 0) scale(1); }
+  to { opacity: 0.85; transform: translate3d(40px, 20px, 0) scale(1.03); }
+}
+
+/* ===== 55 BGFX STATIC GRID + CONSTELLATION LAYER A ===== */
+/* Measured hero order is base → glows (§54) → grid → constellation, so
+   the static perspective grid sits on body::after (no animation — the
+   48px sky-tinted cells never move, whisper-quiet 0.06) while
+   constellation layer A drifts on the bg-wrapper ::before above it.
+   Layer A carries ONLY sparse wandering specks: 3 tiny cyan dots
+   (#00ffff / #40bfff / #33ccff, 1–2px) placed far apart inside a LARGE
+   320px tile that is otherwise empty — isolated specks in darkness,
+   never a field. Ghost links are 3 SHORT 1px SVG fragments (36px @ 20°,
+   29px @ 100°, 23px @ 20°) inside one 380px tile at rgba(0,128,255,0.10)
+   × layer opacity — broken and faint, never a mesh. One shared 50s
+   linear drift moves dots + fragments down-right together
+   (background-position only — per-layer distances match each layer's
+   own tile, 320px / 380px, so every loop is seamless). A 7s twinkle
+   envelope breathes this layer's opacity independently.
+   z-order: grid z 3 above both glows (z 1-2), layer A z 4 above grid. */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    repeating-linear-gradient(0deg, var(--pf-bgfx-grid-line, rgba(56, 189, 248, 0.06)) 0 1px, transparent 1px var(--pf-bgfx-grid-size, 48px)),
+    repeating-linear-gradient(90deg, var(--pf-bgfx-grid-line, rgba(56, 189, 248, 0.06)) 0 1px, transparent 1px var(--pf-bgfx-grid-size, 48px));
+  background-repeat: repeat;
+  opacity: 1;
+  z-index: 3;
+}
+
+#app-mount div[class*="bg-"]::before,
+#app-mount div[class*="bg__"]::before,
+div[class*="appMount-"] div[class*="bg-"]::before,
+div[class*="appMount__"] div[class*="bg__"]::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    radial-gradient(circle at 48px 64px, var(--pf-bgfx-dot-a1, rgba(0, 255, 255, 0.9)) 1.5px, transparent 2.3px),
+    radial-gradient(circle at 210px 180px, var(--pf-bgfx-dot-a2, rgba(64, 191, 255, 0.9)) 1px, transparent 1.8px),
+    radial-gradient(circle at 262px 292px, var(--pf-bgfx-dot-a3, rgba(51, 204, 255, 0.9)) 2px, transparent 2.8px),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='380' height='380'%3E%3Cg stroke='%230080ff' stroke-opacity='0.1' stroke-width='1'%3E%3Cline x1='60' y1='80' x2='94' y2='92'/%3E%3Cline x1='200' y1='240' x2='194' y2='268'/%3E%3Cline x1='300' y1='120' x2='322' y2='128'/%3E%3C/g%3E%3C/svg%3E");
+  background-size:
+    var(--pf-bgfx-tile-a, 320px) var(--pf-bgfx-tile-a, 320px),
+    var(--pf-bgfx-tile-a, 320px) var(--pf-bgfx-tile-a, 320px),
+    var(--pf-bgfx-tile-a, 320px) var(--pf-bgfx-tile-a, 320px),
+    var(--pf-bgfx-tile-link, 380px) var(--pf-bgfx-tile-link, 380px);
+  background-repeat: repeat;
+  opacity: var(--pf-bgfx-opacity-a, 0.55);
+  animation:
+    pf-const-drift-a var(--pf-bgfx-dur-const-a, 50s) linear infinite,
+    pf-const-twinkle var(--pf-bgfx-dur-twinkle, 7s) ease-in-out infinite alternate;
+  z-index: 4;
+}
+
+@keyframes pf-const-drift-a {
+  from { background-position: 0 0, 0 0, 0 0, 0 0; }
+  to { background-position: 320px 320px, 320px 320px, 320px 320px, 380px 380px; }
+}
+
+/* ===== 56 BGFX CONSTELLATION LAYER B + BREATHE ===== */
+/* Counter-drift partner to layer A: 3 tiny specks (cyan #00ffff /
+   #33ccff + one dim blue #1a66cc, 1–2px) placed far apart inside a
+   LARGE 430px tile that is otherwise empty — isolated wandering specks,
+   never a field. NO web echo: the uniform mesh is deleted. Glides
+   up-left over 70s while layer A goes down-right over 50s, echoing the
+   free-floating multi-direction drift measured on the live canvas
+   (drift distance equals the layer's own tile, so every loop is
+   seamless). The organic part: a slow 14s breathe envelope
+   (opacity 0.15↔0.55, ease-in-out alternate) fades specks in/out like
+   the real frames; background-position and opacity animate
+   independently, nothing else. (The 7s twinkle lives on layer A, §55 —
+   one opacity envelope per layer so they never fight.) z-index 5:
+   topmost bgfx layer, still below content (z 10). */
+#app-mount div[class*="bg-"]::after,
+#app-mount div[class*="bg__"]::after,
+div[class*="appMount-"] div[class*="bg-"]::after,
+div[class*="appMount__"] div[class*="bg__"]::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    radial-gradient(circle at 80px 120px, var(--pf-bgfx-dot-b1, rgba(0, 255, 255, 0.9)) 1.5px, transparent 2.3px),
+    radial-gradient(circle at 300px 90px, var(--pf-bgfx-dot-b2, rgba(51, 204, 255, 0.9)) 1px, transparent 1.8px),
+    radial-gradient(circle at 220px 330px, var(--pf-bgfx-dot-b3, rgba(26, 102, 204, 0.9)) 2px, transparent 2.8px);
+  background-size:
+    var(--pf-bgfx-tile-b, 430px) var(--pf-bgfx-tile-b, 430px),
+    var(--pf-bgfx-tile-b, 430px) var(--pf-bgfx-tile-b, 430px),
+    var(--pf-bgfx-tile-b, 430px) var(--pf-bgfx-tile-b, 430px);
+  background-repeat: repeat;
+  opacity: var(--pf-bgfx-opacity-b, 0.4);
+  animation:
+    pf-const-drift-b var(--pf-bgfx-dur-const-b, 70s) linear infinite,
+    pf-speck-breathe var(--pf-bgfx-dur-breathe, 14s) ease-in-out infinite alternate;
+  z-index: 5;
+}
+
+@keyframes pf-const-drift-b {
+  from { background-position: 0 0, 0 0, 0 0; }
+  to { background-position: -430px -430px, -430px -430px, -430px -430px; }
+}
+
+@keyframes pf-const-twinkle {
+  from { opacity: 0.25; }
+  to { opacity: 0.6; }
+}
+
+@keyframes pf-speck-breathe {
+  from { opacity: 0.15; }
+  to { opacity: 0.55; }
+}
+
+/* ===== 57 BGFX READABILITY GUARD + REDUCED MOTION ===== */
+/* All motion stays behind content (z-index 0, decorative layers only get
+   pointer-events: none — functional elements untouched). The chat card
+   gets a slightly stronger backdrop so text contrast never suffers under
+   the glows. */
+#app-mount div[class*="chat-"]:not([class*="chatContent-"]):not([class*="chatContent__"]),
+#app-mount div[class*="chat__"]:not([class*="chatContent-"]):not([class*="chatContent__"]) {
+  background: rgba(9, 12, 17, 0.78);
+}
+
+/* Content sits provably above animated bg layers (z 0-5): no backgrounds
+   touched here — §59 translucency stays so animation shows through. */
+#app-mount nav[aria-label="Servers"],
+#app-mount div[class*="sidebar-"],
+#app-mount div[class*="sidebar__"],
+#app-mount main,
+#app-mount div[class*="chat-"],
+#app-mount div[class*="chat__"],
+#app-mount aside[class*="membersWrap-"],
+#app-mount aside[class*="membersWrap__"] {
+  position: relative;
+  z-index: 10;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* Kill-switch covers every BGFX keyframe/layer: pf-glow-drift-b (§54),
+     pf-const-drift-a + pf-const-twinkle (§55 dots + fragments + twinkle),
+     pf-const-drift-b + pf-speck-breathe (§56 dots + breathe).
+     animation:none below freezes drifts, twinkle and breathe together.
+     Layers freeze at their base opacity; the static grid needs no
+     kill-switch but is listed so future animation there is also cut. */
+  body::before,
+  body::after,
+  #app-mount div[class*="bg-"]::before,
+  #app-mount div[class*="bg__"]::before,
+  #app-mount div[class*="bg-"]::after,
+  #app-mount div[class*="bg__"]::after,
+  div[class*="appMount-"] div[class*="bg-"]::before,
+  div[class*="appMount__"] div[class*="bg__"]::before,
+  div[class*="appMount-"] div[class*="bg-"]::after,
+  div[class*="appMount__"] div[class*="bg__"]::after {
+    animation: none;
+  }
+}
+
+/* ===== 58 COMPACT SPACING OVERRIDES (tighten §§40-52 rhythm ~30%) ===== */
+/* Cascade-order overrides only: same selectors as §§40-52, smaller values.
+   No display/position/overflow/display:none touched; no motion overrides. */
+:root {
+  --pf-sp-1: 2px;
+  --pf-sp-2: 4px;
+  --pf-sp-3: 6px;
+  --pf-sp-4: 8px;
+  --pf-sp-5: 10px;
+}
+/* -- §40 frame gutters 10px -> 6px, radii 16px -> 12px / 12px -> 10px -- */
+#app-mount nav[aria-label="Servers"] {
+  margin: var(--pf-sp-3) 0 var(--pf-sp-3) var(--pf-sp-3);
+  padding: var(--pf-sp-3) 0;
+  border-radius: var(--pf-radius-card);
+}
+#app-mount div[class*="sidebar-"],
+#app-mount div[class*="sidebar__"] {
+  margin: var(--pf-sp-3) 0 var(--pf-sp-3) var(--pf-sp-3);
+  border-radius: 10px;
+}
+#app-mount main[class*="chatContent-"],
+#app-mount main[class*="chatContent__"] {
+  margin: var(--pf-sp-3) 0 var(--pf-sp-3) var(--pf-sp-3);
+  padding-right: var(--pf-sp-3);
+}
+#app-mount div[class*="chat-"]:not([class*="chatContent-"]):not([class*="chatContent__"]),
+#app-mount div[class*="chat__"]:not([class*="chatContent-"]):not([class*="chatContent__"]) {
+  border-radius: 10px;
+}
+#app-mount aside[class*="membersWrap-"],
+#app-mount aside[class*="membersWrap__"] {
+  margin: var(--pf-sp-3) var(--pf-sp-3) var(--pf-sp-3) 0;
+  border-radius: 10px;
+}
+#app-mount div[class*="forumOrHome-"],
+#app-mount div[class*="forumOrHome__"] {
+  border-radius: 10px;
+}
+/* -- §41 server rail 10px -> 6px -- */
+#app-mount nav[aria-label="Servers"] div[class*="listItem-"],
+#app-mount nav[aria-label="Servers"] div[class*="listItem__"] {
+  margin-bottom: var(--pf-sp-3);
+  padding: 0 var(--pf-sp-2);
+}
+/* -- §42 channels: rows 34px -> 28px, padding/gap down, headers tight -- */
+#app-mount div[class*="sidebar-"] li a[class*="link-"],
+#app-mount div[class*="sidebar__"] li a[class*="link__"],
+#app-mount div[class*="sidebar-"] div[class*="containerDefault-"] a,
+#app-mount div[class*="sidebar__"] div[class*="containerDefault__"] a {
+  margin: 1px var(--pf-sp-3);
+  padding: 5px var(--pf-sp-4);
+  min-height: 28px;
+}
+#app-mount div[class*="sidebar-"] div[class*="voiceUser-"],
+#app-mount div[class*="sidebar__"] div[class*="voiceUser__"] {
+  margin: var(--pf-sp-1) var(--pf-sp-3);
+  padding: var(--pf-sp-2) var(--pf-sp-3);
+}
+/* -- §43 chat rhythm 14/18px -> 8/10px, embeds/reactions tight -- */
+#app-mount li[class*="messageListItem-"],
+#app-mount li[class*="messageListItem__"] {
+  margin-bottom: var(--pf-sp-2);
+  padding: var(--pf-sp-1) var(--pf-sp-4) var(--pf-sp-1) 0;
+}
+#app-mount div[class*="message-"][class*="cozy-"],
+#app-mount div[class*="message__"][class*="cozy__"] {
+  margin-top: var(--pf-sp-4);
+  padding: var(--pf-sp-2) var(--pf-sp-4) var(--pf-sp-2) var(--pf-sp-5);
+}
+#app-mount div[class*="message-"][class*="groupStart-"],
+#app-mount div[class*="message__"][class*="groupStart__"] {
+  margin-top: var(--pf-sp-5);
+  padding-top: var(--pf-sp-3);
+}
+#app-mount div[class*="message-"] div[class*="buttonContainer-"],
+#app-mount div[class*="message__"] div[class*="buttonContainer__"],
+#app-mount div[class*="message-"] div[class*="buttonsInner-"],
+#app-mount div[class*="message__"] div[class*="buttonsInner__"] {
+  padding: var(--pf-sp-1) var(--pf-sp-2);
+}
+#app-mount div[class*="messageContent-"] blockquote,
+#app-mount div[class*="messageContent__"] blockquote,
+#app-mount div[class*="markup-"] blockquote,
+#app-mount div[class*="markup__"] blockquote {
+  margin: var(--pf-sp-2) 0;
+  padding: var(--pf-sp-2) var(--pf-sp-4);
+}
+#app-mount div[class*="markup-"] pre,
+#app-mount div[class*="markup__"] pre {
+  padding: var(--pf-sp-3) var(--pf-sp-4);
+}
+#app-mount div[class*="reactions-"],
+#app-mount div[class*="reactions__"] {
+  gap: var(--pf-sp-2);
+}
+#app-mount div[class*="reaction-"],
+#app-mount div[class*="reaction__"] {
+  padding: var(--pf-sp-1) var(--pf-sp-3);
+}
+/* -- §44 composer margin 14px(12px) -> 8px, padding down -- */
+#app-mount div[class*="channelTextArea-"],
+#app-mount div[class*="channelTextArea__"] {
+  margin: 0 var(--pf-sp-4) var(--pf-sp-4);
+  border-radius: var(--pf-radius-card);
+}
+#app-mount div[class*="scrollableContainer-"],
+#app-mount div[class*="scrollableContainer__"] {
+  border-radius: var(--pf-radius-card);
+}
+#app-mount div[class*="replyBar-"],
+#app-mount div[class*="replyBar__"] {
+  margin: 0 var(--pf-sp-4) var(--pf-sp-3);
+}
+/* -- §45 members rows tight -- */
+#app-mount aside[class*="membersWrap-"] div[class*="member-"] div[class*="layout-"],
+#app-mount aside[class*="membersWrap__"] div[class*="member__"] div[class*="layout__"],
+#app-mount aside[class*="membersWrap-"] div[class*="member__"] div[class*="layout-"],
+#app-mount aside[class*="membersWrap__"] div[class*="member-"] div[class*="layout-"] {
+  margin: 1px var(--pf-sp-3);
+  padding: var(--pf-sp-2) var(--pf-sp-3);
+}
+#app-mount aside[class*="membersWrap-"] h2[class*="membersGroup-"],
+#app-mount aside[class*="membersWrap__"] h2[class*="membersGroup__"],
+#app-mount aside[class*="membersWrap-"] h3[class*="membersGroup-"],
+#app-mount aside[class*="membersWrap__"] h3[class*="membersGroup__"] {
+  padding: var(--pf-sp-4) var(--pf-sp-5) var(--pf-sp-1);
+}
+/* -- §47 user panel tight -- */
+#app-mount section[class*="panels-"],
+#app-mount div[class*="panels__"] {
+  margin: var(--pf-sp-3);
+  padding: var(--pf-sp-3);
+}
+/* -- §48 friends/DM rows: 10/12px -> 6/8px, DM rows 42px -> 32px -- */
+#app-mount div[class*="peopleColumn-"] div[class*="peopleListItem-"],
+#app-mount div[class*="peopleColumn__"] div[class*="peopleListItem__"] {
+  margin: var(--pf-sp-1) var(--pf-sp-4);
+  padding: var(--pf-sp-3) var(--pf-sp-4);
+}
+#app-mount div[class*="tabBar-"] div[class*="item-"],
+#app-mount div[class*="tabBar__"] div[class*="item__"] {
+  padding: var(--pf-sp-2) var(--pf-sp-5);
+}
+#app-mount div[class*="privateChannels-"] li a[class*="channel-"],
+#app-mount div[class*="privateChannels__"] li a[class*="channel__"] {
+  margin: 1px var(--pf-sp-3);
+  padding: 5px var(--pf-sp-4);
+  min-height: 32px;
+}
+/* -- §49 settings: nav 12px -> 8px, cards tight -- */
+#app-mount div[class*="sidebarRegion-"] nav,
+#app-mount div[class*="sidebarRegion__"] nav {
+  margin: var(--pf-sp-4) 0 var(--pf-sp-4) var(--pf-sp-4);
+  padding: var(--pf-sp-3);
+}
+#app-mount div[class*="side-"] div[class*="item-"],
+#app-mount div[class*="side__"] div[class*="item__"],
+#app-mount div[class*="side-"] div[class*="themed-"],
+#app-mount div[class*="side__"] div[class*="themed__"] {
+  padding: 5px var(--pf-sp-5);
+}
+#app-mount div[class*="side-"] div[class*="header-"],
+#app-mount div[class*="side__"] div[class*="header__"] {
+  padding: var(--pf-sp-4) var(--pf-sp-5) var(--pf-sp-1);
+}
+/* -- §50 menus/modals: item 7-10px -> 6-8px, modal radius 16 -> 12 -- */
+#app-mount div[role="dialog"],
+#app-mount div[class*="modal-"],
+#app-mount div[class*="modal__"] {
+  border-radius: var(--pf-radius-card);
+}
+#app-mount div[role="dialog"] div[class*="footer-"],
+#app-mount div[role="dialog"] div[class*="footer__"] {
+  border-radius: 0 0 var(--pf-radius-card) var(--pf-radius-card);
+}
+#app-mount div[role="menu"] div[role="menuitem"],
+#app-mount div[class*="menu-"] div[class*="item-"],
+#app-mount div[class*="menu__"] div[class*="item__"] {
+  padding: var(--pf-sp-3) var(--pf-sp-4);
+}
+/* -- §51 details: separators/inputs tight -- */
+#app-mount hr[class*="divider-"],
+#app-mount hr[class*="divider__"],
+#app-mount div[class*="separator-"],
+#app-mount div[class*="separator__"] {
+  margin: var(--pf-sp-3) 0;
+}
+#app-mount div[class*="contentRegion-"] div[class*="tabBar-"],
+#app-mount div[class*="contentRegion__"] div[class*="tabBar__"] {
+  padding: var(--pf-sp-1);
+}
+
+/* ===== 59 GLASS TRANSPARENCY OVERRIDES (panels breathe, chat stays readable) ===== */
+/* Large chrome panels -> translucent gradient (alpha ~0.35-0.45); chat column
+   keeps a stronger guard (~0.60) + dark scrim for #f4f2ec text contrast.
+   Floating content (modals/menus/popouts/tooltips) stays near-solid (>=0.85).
+   Borders + sky accents + blur retained so edges stay defined. */
+/* -- server rail: flat card -> translucent gradient -- */
+#app-mount nav[aria-label="Servers"] {
+  background: linear-gradient(to bottom, rgba(16, 20, 27, 0.42), rgba(11, 14, 20, 0.48));
+  backdrop-filter: blur(var(--pf-blur));
+}
+/* -- channel sidebar: 0.72 -> ~0.40 gradient -- */
+#app-mount div[class*="sidebar-"],
+#app-mount div[class*="sidebar__"] {
+  background: linear-gradient(to bottom, rgba(16, 20, 27, 0.38), rgba(11, 14, 20, 0.44));
+  backdrop-filter: blur(var(--pf-blur));
+}
+/* -- members list: 0.60 -> ~0.40 gradient -- */
+#app-mount aside[class*="membersWrap-"],
+#app-mount aside[class*="membersWrap__"] {
+  background: linear-gradient(to bottom, rgba(16, 20, 27, 0.38), rgba(11, 14, 20, 0.44));
+  backdrop-filter: blur(var(--pf-blur));
+}
+/* -- chat column: readability guard 0.78 -> 0.60 gradient + text scrim -- */
+#app-mount div[class*="chat-"]:not([class*="chatContent-"]):not([class*="chatContent__"]),
+#app-mount div[class*="chat__"]:not([class*="chatContent-"]):not([class*="chatContent__"]) {
+  background: linear-gradient(to bottom, rgba(16, 20, 27, 0.58), rgba(11, 14, 20, 0.62));
+  backdrop-filter: blur(var(--pf-blur));
+}
+#app-mount div[class*="chatContent-"],
+#app-mount div[class*="chatContent__"] {
+  background: linear-gradient(to bottom, rgba(7, 9, 13, 0.32), rgba(7, 9, 13, 0.22));
+}
+#app-mount div[class*="messagesWrapper-"],
+#app-mount div[class*="messagesWrapper__"] {
+  background: linear-gradient(to bottom, rgba(7, 9, 13, 0.30), transparent 22%);
+}
+/* -- forum/home: 0.55 -> ~0.50 gradient -- */
+#app-mount div[class*="forumOrHome-"],
+#app-mount div[class*="forumOrHome__"] {
+  background: linear-gradient(to bottom, rgba(16, 20, 27, 0.48), rgba(11, 14, 20, 0.52));
+}
+/* -- header: 0.80 -> ~0.55 glass, divider + blur kept -- */
+#app-mount div[class*="title-"],
+#app-mount div[class*="title__"],
+#app-mount header[class*="header-"],
+#app-mount header[class*="header__"] {
+  background: linear-gradient(to bottom, rgba(16, 20, 27, 0.52), rgba(11, 14, 20, 0.58));
+  backdrop-filter: blur(var(--pf-blur));
+}
+/* -- user panel: flat card -> ~0.45 gradient -- */
+#app-mount section[class*="panels-"],
+#app-mount div[class*="panels__"] {
+  background: linear-gradient(to bottom, rgba(16, 20, 27, 0.42), rgba(11, 14, 20, 0.48));
+  backdrop-filter: blur(var(--pf-blur));
+}
+/* -- composer: 0.85 -> ~0.60 glass, focus ring + blur kept -- */
+#app-mount div[class*="channelTextArea-"],
+#app-mount div[class*="channelTextArea__"] {
+  background: linear-gradient(to bottom, rgba(16, 20, 27, 0.58), rgba(11, 14, 20, 0.62));
+  backdrop-filter: blur(var(--pf-blur));
+}
+/* -- settings nav: flat card -> ~0.45 gradient -- */
+#app-mount div[class*="sidebarRegion-"] nav,
+#app-mount div[class*="sidebarRegion__"] nav {
+  background: linear-gradient(to bottom, rgba(16, 20, 27, 0.42), rgba(11, 14, 20, 0.48));
+  backdrop-filter: blur(var(--pf-blur));
+}
+/* -- text contrast lock: body/message text stays warm off-white -- */
+#app-mount div[class*="messageContent-"],
+#app-mount div[class*="messageContent__"],
+#app-mount div[class*="markup-"],
+#app-mount div[class*="markup__"] {
+  color: var(--pf-text, #f4f2ec);
+}
+/* -- floating content stays near-solid for readability (reaffirm >=0.85) -- */
+#app-mount div[role="dialog"],
+#app-mount div[class*="modal-"],
+#app-mount div[class*="modal__"] {
+  background: rgba(16, 20, 27, 0.92);
+}
+#app-mount div[role="menu"],
+#app-mount div[class*="menu-"],
+#app-mount div[class*="menu__"] {
+  background: rgba(16, 20, 27, 0.94);
+}
+#app-mount div[class*="popout-"],
+#app-mount div[class*="popout__"],
+#app-mount div[class*="userPopout-"],
+#app-mount div[class*="userPopout__"] {
+  background: rgba(16, 20, 27, 0.94);
+}
+#app-mount div[class*="tooltip-"],
+#app-mount div[class*="tooltip__"] {
+  background: rgba(7, 9, 13, 0.94);
+}
+
+/* ===== 60 BG SURFACE EXTENSION (backdrop §§53-57 bleeds onto every page) ===== */
+/* Pure cascade-order overrides appended after §59: every full-surface container
+   below drops its opaque fill to a translucent gradient twin (≈0.36–0.62 alpha)
+   so the §54 glows + §55 grid + §§55–56 constellations show through. §§53–57
+   layers themselves untouched. Text contrast kept via gradient scrims + the
+   off-white lock (§60M). Small floating content (pickers, quick switcher,
+   popouts, modals) stays ≥0.85 alpha. No display/position/overflow/animation
+   touched; functional greens/reds kept. */
+/* -- A: settings pages — content region + sidebar inner -- */
+#app-mount div[class*="standardSidebarView-"],
+#app-mount div[class*="standardSidebarView__"],
+#app-mount div[class*="contentRegion-"],
+#app-mount div[class*="contentRegion__"],
+#app-mount div[class*="contentRegionScroller-"],
+#app-mount div[class*="contentRegionScroller__"] {
+  background: linear-gradient(to bottom, rgba(16, 20, 27, 0.42), rgba(11, 14, 20, 0.5));
+  backdrop-filter: blur(var(--pf-blur));
+}
+#app-mount div[class*="sidebarRegion-"],
+#app-mount div[class*="sidebarRegion__"],
+#app-mount div[class*="sidebarRegionScroller-"],
+#app-mount div[class*="sidebarRegionScroller__"] {
+  background: linear-gradient(to bottom, rgba(16, 20, 27, 0.36), rgba(11, 14, 20, 0.44));
+  backdrop-filter: blur(var(--pf-blur));
+}
+#app-mount div[class*="contentColumn-"],
+#app-mount div[class*="contentColumn__"],
+#app-mount div[class*="customColumn-"],
+#app-mount div[class*="customColumn__"] {
+  background: transparent;
+}
+/* -- B: friends / DM home + active-now -- */
+#app-mount div[class*="container-"][class*="friends-"],
+#app-mount div[class*="peopleColumn-"],
+#app-mount div[class*="peopleColumn__"],
+#app-mount div[class*="tabBody-"],
+#app-mount div[class*="tabBody__"],
+#app-mount div[class*="friendsTable-"],
+#app-mount div[class*="friendsTable__"] {
+  background: linear-gradient(to bottom, rgba(16, 20, 27, 0.42), rgba(11, 14, 20, 0.5));
+  backdrop-filter: blur(var(--pf-blur));
+}
+#app-mount aside[class*="nowPlayingColumn-"],
+#app-mount aside[class*="nowPlayingColumn__"],
+#app-mount div[class*="privateChannels-"] div[class*="scroller-"],
+#app-mount div[class*="privateChannels__"] div[class*="scroller__"] {
+  background: linear-gradient(to bottom, rgba(16, 20, 27, 0.36), rgba(11, 14, 20, 0.44));
+}
+#app-mount div[class*="peopleList-"],
+#app-mount div[class*="peopleList__"] {
+  background: linear-gradient(to bottom, rgba(7, 9, 13, 0.3), transparent 24%);
+}
+/* -- C: forum + threads + channel browser + directory -- */
+#app-mount div[class*="list-"][class*="forum-"],
+#app-mount div[class*="forumList-"],
+#app-mount div[class*="forumList__"],
+#app-mount div[class*="grid-"][class*="forum-"],
+#app-mount div[class*="grid__"][class*="forum__"],
+#app-mount div[class*="threadSidebar-"],
+#app-mount div[class*="threadSidebar__"],
+#app-mount div[class*="channelBrowser-"],
+#app-mount div[class*="channelBrowser__"],
+#app-mount div[class*="directoryContainer-"],
+#app-mount div[class*="directoryContainer__"] {
+  background: linear-gradient(to bottom, rgba(16, 20, 27, 0.44), rgba(11, 14, 20, 0.52));
+  backdrop-filter: blur(var(--pf-blur));
+}
+#app-mount div[class*="forumPost-"],
+#app-mount div[class*="forumPost__"],
+#app-mount div[class*="card-"][class*="forum-"],
+#app-mount ul[class*="grid-"] li div[class*="card-"],
+#app-mount ul[class*="grid__"] li div[class*="card__"] {
+  background: linear-gradient(to bottom, rgba(16, 20, 27, 0.55), rgba(11, 14, 20, 0.6));
+}
+/* -- D: search results page (results translucent + scrim; popout shell untouched) -- */
+#app-mount div[class*="searchResultsWrap-"],
+#app-mount div[class*="searchResultsWrap__"],
+#app-mount div[class*="searchResult-"],
+#app-mount div[class*="searchResult__"],
+#app-mount div[class*="searchHeader-"],
+#app-mount div[class*="searchHeader__"] {
+  background: linear-gradient(to bottom, rgba(16, 20, 27, 0.5), rgba(11, 14, 20, 0.56));
+  backdrop-filter: blur(var(--pf-blur));
+}
+#app-mount div[class*="searchResultsWrap-"] div[class*="scroller-"],
+#app-mount div[class*="searchResultsWrap__"] div[class*="scroller__"] {
+  background: linear-gradient(to bottom, rgba(7, 9, 13, 0.3), transparent 24%);
+}
+/* quick switcher floats: readable ≥0.85, slight bleed at edges */
+#app-mount div[class*="quickswitcher-"],
+#app-mount div[class*="quickswitcher__"] {
+  background: rgba(16, 20, 27, 0.88);
+  backdrop-filter: blur(var(--pf-blur));
+}
+/* -- E: emoji / sticker / GIF pickers (floating: ≥0.85, inner panes breathe) -- */
+#app-mount div[class*="contentWrapper-"][class*="picker-"],
+#app-mount div[class*="contentWrapper__"][class*="picker__"],
+#app-mount div[class*="emojiPicker-"],
+#app-mount div[class*="emojiPicker__"],
+#app-mount div[class*="stickerPicker-"],
+#app-mount div[class*="stickerPicker__"],
+#app-mount div[class*="gifPicker-"],
+#app-mount div[class*="gifPicker__"] {
+  background: rgba(16, 20, 27, 0.88);
+  backdrop-filter: blur(var(--pf-blur));
+}
+#app-mount div[class*="inspector-"],
+#app-mount div[class*="inspector__"],
+#app-mount div[class*="categoryList-"],
+#app-mount div[class*="categoryList__"],
+#app-mount div[class*="unicodeTable-"],
+#app-mount div[class*="unicodeTable__"] {
+  background: transparent;
+}
+/* -- F: user profiles — popout shell stays ≥0.85, modal body gets scrim -- */
+#app-mount div[class*="userProfileModal-"],
+#app-mount div[class*="userProfileModal__"],
+#app-mount div[class*="profileCustomizationPreview-"],
+#app-mount div[class*="profileCustomizationPreview__"] {
+  background: rgba(16, 20, 27, 0.92);
+  backdrop-filter: blur(var(--pf-blur));
+}
+#app-mount div[class*="userProfileModal-"] div[class*="body-"],
+#app-mount div[class*="userProfileModal__"] div[class*="body__"],
+#app-mount div[class*="userPopout-"] div[class*="body-"],
+#app-mount div[class*="userPopout__"] div[class*="body__"] {
+  background: linear-gradient(to bottom, rgba(7, 9, 13, 0.35), rgba(7, 9, 13, 0.25));
+}
+#app-mount div[class*="overlay-"][class*="profile-"],
+#app-mount div[class*="overlay__"][class*="profile__"] {
+  background: linear-gradient(to bottom, rgba(7, 9, 13, 0.4), rgba(7, 9, 13, 0.3));
+}
+/* -- G: modal backdrops — lighten dim so bg glows bleed through at edges -- */
+#app-mount div[class*="backdrop-"],
+#app-mount div[class*="backdrop__"],
+#app-mount div[class*="backdropWithLayer-"],
+#app-mount div[class*="backdropWithLayer__"] {
+  background: rgba(7, 9, 13, 0.48);
+  backdrop-filter: blur(2px);
+}
+/* -- H: voice / stage pages -- */
+#app-mount div[class*="callContainer-"],
+#app-mount div[class*="callContainer__"],
+#app-mount div[class*="voiceCall-"],
+#app-mount div[class*="voiceCall__"],
+#app-mount div[class*="stageSection-"],
+#app-mount div[class*="stageSection__"],
+#app-mount div[class*="participants-"],
+#app-mount div[class*="participants__"] {
+  background: linear-gradient(to bottom, rgba(16, 20, 27, 0.44), rgba(11, 14, 20, 0.52));
+  backdrop-filter: blur(var(--pf-blur));
+}
+#app-mount div[class*="tile-"][class*="voice-"],
+#app-mount div[class*="tile__"][class*="voice__"],
+#app-mount div[class*="voiceChat-"],
+#app-mount div[class*="voiceChat__"] {
+  background: linear-gradient(to bottom, rgba(16, 20, 27, 0.5), rgba(11, 14, 20, 0.56));
+}
+/* -- I: onboarding / welcome / rules / events -- */
+#app-mount div[class*="welcomeChannel-"],
+#app-mount div[class*="welcomeChannel__"],
+#app-mount div[class*="onboardingContainer-"],
+#app-mount div[class*="onboardingContainer__"],
+#app-mount div[class*="rules-"],
+#app-mount div[class*="rules__"],
+#app-mount div[class*="events-"],
+#app-mount div[class*="events__"],
+#app-mount div[class*="guildEvent-"],
+#app-mount div[class*="guildEvent__"] {
+  background: linear-gradient(to bottom, rgba(16, 20, 27, 0.44), rgba(11, 14, 20, 0.52));
+  backdrop-filter: blur(var(--pf-blur));
+}
+/* -- J: shop / Nitro pages -- */
+#app-mount div[class*="shop-"],
+#app-mount div[class*="shop__"],
+#app-mount div[class*="premium-"],
+#app-mount div[class*="premium__"],
+#app-mount div[class*="nitro-"],
+#app-mount div[class*="nitro__"],
+#app-mount div[class*="billingInformation-"],
+#app-mount div[class*="billingInformation__"] {
+  background: linear-gradient(to bottom, rgba(16, 20, 27, 0.44), rgba(11, 14, 20, 0.52));
+  backdrop-filter: blur(var(--pf-blur));
+}
+/* -- K: inbox / mentions -- */
+#app-mount div[class*="inbox-"],
+#app-mount div[class*="inbox__"],
+#app-mount div[class*="mentions-"],
+#app-mount div[class*="mentions__"],
+#app-mount div[class*="messageContainer-"][class*="inbox-"],
+#app-mount div[class*="recentMentionsPopout-"],
+#app-mount div[class*="recentMentionsPopout__"] {
+  background: linear-gradient(to bottom, rgba(16, 20, 27, 0.5), rgba(11, 14, 20, 0.56));
+  backdrop-filter: blur(var(--pf-blur));
+}
+/* -- L: audit log / settings tables (functional greens/reds untouched) -- */
+#app-mount div[class*="auditLog-"],
+#app-mount div[class*="auditLog__"],
+#app-mount div[class*="table-"][class*="audit-"],
+#app-mount div[class*="tableRow-"],
+#app-mount div[class*="tableRow__"],
+#app-mount div[class*="settingsCard-"],
+#app-mount div[class*="settingsCard__"] {
+  background: linear-gradient(to bottom, rgba(16, 20, 27, 0.44), rgba(11, 14, 20, 0.5));
+}
+#app-mount div[class*="card-"][class*="settings-"],
+#app-mount div[class*="card__"][class*="settings__"],
+#app-mount div[class*="row-"][class*="settings-"] {
+  background: linear-gradient(to bottom, rgba(16, 20, 27, 0.5), rgba(11, 14, 20, 0.55));
+}
+/* -- M: text contrast lock on newly translucent surfaces -- */
+#app-mount div[class*="contentRegion-"] div[class*="title-"],
+#app-mount div[class*="contentRegion__"] div[class*="title__"],
+#app-mount div[class*="peopleColumn-"] div[class*="title-"],
+#app-mount div[class*="peopleColumn__"] div[class*="title__"],
+#app-mount div[class*="searchResultsWrap-"] div[class*="title-"],
+#app-mount div[class*="searchResultsWrap__"] div[class*="title__"],
+#app-mount div[class*="auditLog-"] div[class*="title-"],
+#app-mount div[class*="auditLog__"] div[class*="title__"] {
+  color: var(--pf-text, #f4f2ec);
+}
+#app-mount div[class*="contentRegion-"] div[class*="description-"],
+#app-mount div[class*="contentRegion__"] div[class*="description__"],
+#app-mount div[class*="peopleColumn-"] div[class*="description-"],
+#app-mount div[class*="peopleColumn__"] div[class*="description__"] {
+  color: var(--pf-text-secondary, #cfccc2);
+}
+
+/* ===== 61 STAGGERED LINE-BY-LINE REVEALS (Framer-Motion style) ===== */
+/* One-shot initial-render stagger ONLY on lists/messages/cards. Forbidden
+   native layers (modal/dialog open, context menus, popouts, tooltips,
+   toasts/notices, search popout container, select dropdowns, window controls)
+   are never targeted here — see §17B. transform/opacity only. */
+@keyframes pf-line-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+/* -- chat message groups: first 12, 45ms steps (delays 0–495ms) -- */
+#app-mount li[class*="messageListItem-"],
+#app-mount li[class*="messageListItem__"] {
+  animation: pf-line-in 320ms var(--pf-ease, cubic-bezier(0.4, 0, 0.2, 1)) backwards 1;
+}
+#app-mount li[class*="messageListItem-"]:nth-child(1), #app-mount li[class*="messageListItem__"]:nth-child(1) { animation-delay: 0ms; }
+#app-mount li[class*="messageListItem-"]:nth-child(2), #app-mount li[class*="messageListItem__"]:nth-child(2) { animation-delay: 45ms; }
+#app-mount li[class*="messageListItem-"]:nth-child(3), #app-mount li[class*="messageListItem__"]:nth-child(3) { animation-delay: 90ms; }
+#app-mount li[class*="messageListItem-"]:nth-child(4), #app-mount li[class*="messageListItem__"]:nth-child(4) { animation-delay: 135ms; }
+#app-mount li[class*="messageListItem-"]:nth-child(5), #app-mount li[class*="messageListItem__"]:nth-child(5) { animation-delay: 180ms; }
+#app-mount li[class*="messageListItem-"]:nth-child(6), #app-mount li[class*="messageListItem__"]:nth-child(6) { animation-delay: 225ms; }
+#app-mount li[class*="messageListItem-"]:nth-child(7), #app-mount li[class*="messageListItem__"]:nth-child(7) { animation-delay: 270ms; }
+#app-mount li[class*="messageListItem-"]:nth-child(8), #app-mount li[class*="messageListItem__"]:nth-child(8) { animation-delay: 315ms; }
+#app-mount li[class*="messageListItem-"]:nth-child(9), #app-mount li[class*="messageListItem__"]:nth-child(9) { animation-delay: 360ms; }
+#app-mount li[class*="messageListItem-"]:nth-child(10), #app-mount li[class*="messageListItem__"]:nth-child(10) { animation-delay: 405ms; }
+#app-mount li[class*="messageListItem-"]:nth-child(11), #app-mount li[class*="messageListItem__"]:nth-child(11) { animation-delay: 450ms; }
+#app-mount li[class*="messageListItem-"]:nth-child(12), #app-mount li[class*="messageListItem__"]:nth-child(12) { animation-delay: 495ms; }
+/* -- channel list rows: first 10, 30ms steps (delays 0–270ms) -- */
+#app-mount div[class*="sidebar-"] li,
+#app-mount div[class*="sidebar__"] li {
+  animation: pf-line-in 320ms var(--pf-ease, cubic-bezier(0.4, 0, 0.2, 1)) backwards 1;
+}
+#app-mount div[class*="sidebar-"] li:nth-child(1), #app-mount div[class*="sidebar__"] li:nth-child(1) { animation-delay: 0ms; }
+#app-mount div[class*="sidebar-"] li:nth-child(2), #app-mount div[class*="sidebar__"] li:nth-child(2) { animation-delay: 30ms; }
+#app-mount div[class*="sidebar-"] li:nth-child(3), #app-mount div[class*="sidebar__"] li:nth-child(3) { animation-delay: 60ms; }
+#app-mount div[class*="sidebar-"] li:nth-child(4), #app-mount div[class*="sidebar__"] li:nth-child(4) { animation-delay: 90ms; }
+#app-mount div[class*="sidebar-"] li:nth-child(5), #app-mount div[class*="sidebar__"] li:nth-child(5) { animation-delay: 120ms; }
+#app-mount div[class*="sidebar-"] li:nth-child(6), #app-mount div[class*="sidebar__"] li:nth-child(6) { animation-delay: 150ms; }
+#app-mount div[class*="sidebar-"] li:nth-child(7), #app-mount div[class*="sidebar__"] li:nth-child(7) { animation-delay: 180ms; }
+#app-mount div[class*="sidebar-"] li:nth-child(8), #app-mount div[class*="sidebar__"] li:nth-child(8) { animation-delay: 210ms; }
+#app-mount div[class*="sidebar-"] li:nth-child(9), #app-mount div[class*="sidebar__"] li:nth-child(9) { animation-delay: 240ms; }
+#app-mount div[class*="sidebar-"] li:nth-child(10), #app-mount div[class*="sidebar__"] li:nth-child(10) { animation-delay: 270ms; }
+/* -- member list rows: first 6, 40ms steps (delays 0–200ms) -- */
+#app-mount aside[class*="membersWrap-"] div[class*="member-"],
+#app-mount aside[class*="membersWrap__"] div[class*="member__"],
+#app-mount aside[class*="membersWrap-"] div[class*="member__"],
+#app-mount aside[class*="membersWrap__"] div[class*="member-"] {
+  animation: pf-line-in 320ms var(--pf-ease, cubic-bezier(0.4, 0, 0.2, 1)) backwards 1;
+}
+#app-mount aside[class*="membersWrap-"] div[class*="member-"]:nth-child(1), #app-mount aside[class*="membersWrap__"] div[class*="member__"]:nth-child(1) { animation-delay: 0ms; }
+#app-mount aside[class*="membersWrap-"] div[class*="member-"]:nth-child(2), #app-mount aside[class*="membersWrap__"] div[class*="member__"]:nth-child(2) { animation-delay: 40ms; }
+#app-mount aside[class*="membersWrap-"] div[class*="member-"]:nth-child(3), #app-mount aside[class*="membersWrap__"] div[class*="member__"]:nth-child(3) { animation-delay: 80ms; }
+#app-mount aside[class*="membersWrap-"] div[class*="member-"]:nth-child(4), #app-mount aside[class*="membersWrap__"] div[class*="member__"]:nth-child(4) { animation-delay: 120ms; }
+#app-mount aside[class*="membersWrap-"] div[class*="member-"]:nth-child(5), #app-mount aside[class*="membersWrap__"] div[class*="member__"]:nth-child(5) { animation-delay: 160ms; }
+#app-mount aside[class*="membersWrap-"] div[class*="member-"]:nth-child(6), #app-mount aside[class*="membersWrap__"] div[class*="member__"]:nth-child(6) { animation-delay: 200ms; }
+/* -- settings section cards: first 6, 50ms steps (delays 0–250ms) -- */
+#app-mount div[class*="contentRegion-"] div[class*="card-"],
+#app-mount div[class*="contentRegion__"] div[class*="card__"],
+#app-mount div[class*="contentRegion-"] div[class*="section-"],
+#app-mount div[class*="contentRegion__"] div[class*="section__"] {
+  animation: pf-line-in 320ms var(--pf-ease, cubic-bezier(0.4, 0, 0.2, 1)) backwards 1;
+}
+#app-mount div[class*="contentRegion-"] div[class*="card-"]:nth-child(1), #app-mount div[class*="contentRegion__"] div[class*="card__"]:nth-child(1) { animation-delay: 0ms; }
+#app-mount div[class*="contentRegion-"] div[class*="card-"]:nth-child(2), #app-mount div[class*="contentRegion__"] div[class*="card__"]:nth-child(2) { animation-delay: 50ms; }
+#app-mount div[class*="contentRegion-"] div[class*="card-"]:nth-child(3), #app-mount div[class*="contentRegion__"] div[class*="card__"]:nth-child(3) { animation-delay: 100ms; }
+#app-mount div[class*="contentRegion-"] div[class*="card-"]:nth-child(4), #app-mount div[class*="contentRegion__"] div[class*="card__"]:nth-child(4) { animation-delay: 150ms; }
+#app-mount div[class*="contentRegion-"] div[class*="card-"]:nth-child(5), #app-mount div[class*="contentRegion__"] div[class*="card__"]:nth-child(5) { animation-delay: 200ms; }
+#app-mount div[class*="contentRegion-"] div[class*="card-"]:nth-child(6), #app-mount div[class*="contentRegion__"] div[class*="card__"]:nth-child(6) { animation-delay: 250ms; }
+/* -- friends rows: first 8, 35ms steps (delays 0–245ms) -- */
+#app-mount div[class*="peopleColumn-"] div[class*="peopleListItem-"],
+#app-mount div[class*="peopleColumn__"] div[class*="peopleListItem__"] {
+  animation: pf-line-in 320ms var(--pf-ease, cubic-bezier(0.4, 0, 0.2, 1)) backwards 1;
+}
+#app-mount div[class*="peopleColumn-"] div[class*="peopleListItem-"]:nth-child(1), #app-mount div[class*="peopleColumn__"] div[class*="peopleListItem__"]:nth-child(1) { animation-delay: 0ms; }
+#app-mount div[class*="peopleColumn-"] div[class*="peopleListItem-"]:nth-child(2), #app-mount div[class*="peopleColumn__"] div[class*="peopleListItem__"]:nth-child(2) { animation-delay: 35ms; }
+#app-mount div[class*="peopleColumn-"] div[class*="peopleListItem-"]:nth-child(3), #app-mount div[class*="peopleColumn__"] div[class*="peopleListItem__"]:nth-child(3) { animation-delay: 70ms; }
+#app-mount div[class*="peopleColumn-"] div[class*="peopleListItem-"]:nth-child(4), #app-mount div[class*="peopleColumn__"] div[class*="peopleListItem__"]:nth-child(4) { animation-delay: 105ms; }
+#app-mount div[class*="peopleColumn-"] div[class*="peopleListItem-"]:nth-child(5), #app-mount div[class*="peopleColumn__"] div[class*="peopleListItem__"]:nth-child(5) { animation-delay: 140ms; }
+#app-mount div[class*="peopleColumn-"] div[class*="peopleListItem-"]:nth-child(6), #app-mount div[class*="peopleColumn__"] div[class*="peopleListItem__"]:nth-child(6) { animation-delay: 175ms; }
+#app-mount div[class*="peopleColumn-"] div[class*="peopleListItem-"]:nth-child(7), #app-mount div[class*="peopleColumn__"] div[class*="peopleListItem__"]:nth-child(7) { animation-delay: 210ms; }
+#app-mount div[class*="peopleColumn-"] div[class*="peopleListItem-"]:nth-child(8), #app-mount div[class*="peopleColumn__"] div[class*="peopleListItem__"]:nth-child(8) { animation-delay: 245ms; }
+
+/* ===== 62 NETWORK PACKET PULSES (decorative, below content) ===== */
+/* Three fixed body-level dot layers (plus one trailing dot via box-shadow =
+   4 dots) glide on slow straight paths across the viewport like packets on
+   network lines. Palette: cyan / sky / blue-periwinkle. transform + opacity
+   only; pointer-events none; z-index 2 (with bgfx, below content z 10).
+   html::before/::after are free (§§04/40/54–56 never touch them); the third
+   layer reuses the layers-wrapper ::after pseudo (background-color stays
+   transparent per §02 — only the 3px dot paints). */
+:root {
+  --pf-pkt-a: rgba(0, 255, 255, 0.9);
+  --pf-pkt-b: rgba(56, 189, 248, 0.9);
+  --pf-pkt-c: rgba(0, 128, 255, 0.9);
+  --pf-pkt-d: rgba(128, 128, 255, 0.9);
+}
+@keyframes pf-pkt-a {
+  0% { transform: translate3d(-4vw, 0, 0); opacity: 0; }
+  8% { opacity: 0.5; }
+  92% { opacity: 0.5; }
+  100% { transform: translate3d(104vw, 0, 0); opacity: 0; }
+}
+@keyframes pf-pkt-b {
+  0% { transform: translate3d(-4vw, 0, 0); opacity: 0; }
+  8% { opacity: 0.45; }
+  92% { opacity: 0.45; }
+  100% { transform: translate3d(104vw, 0, 0); opacity: 0; }
+}
+@keyframes pf-pkt-c {
+  0% { transform: translate3d(-4vw, 0, 0); opacity: 0; }
+  8% { opacity: 0.4; }
+  92% { opacity: 0.4; }
+  100% { transform: translate3d(104vw, 0, 0); opacity: 0; }
+}
+html::before {
+  content: "";
+  position: fixed;
+  left: 0;
+  top: 20%;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  pointer-events: none;
+  background: var(--pf-pkt-a);
+  box-shadow: 0 0 8px 2px rgba(0, 255, 255, 0.45);
+  opacity: 0;
+  animation: pf-pkt-a 18s linear infinite;
+  animation-delay: -4s;
+  z-index: 2;
+}
+html::after {
+  content: "";
+  position: fixed;
+  left: 0;
+  top: 47%;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  pointer-events: none;
+  background: var(--pf-pkt-b);
+  box-shadow: 0 0 8px 2px rgba(56, 189, 248, 0.45);
+  opacity: 0;
+  animation: pf-pkt-b 23s linear infinite;
+  animation-delay: -11s;
+  z-index: 2;
+}
+#app-mount div[class*="layers-"]::after,
+#app-mount div[class*="layers__"]::after {
+  content: "";
+  position: fixed;
+  left: 0;
+  top: 74%;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  pointer-events: none;
+  background: var(--pf-pkt-c);
+  box-shadow:
+    0 0 8px 2px rgba(0, 128, 255, 0.45),
+    30px -16px 5px 1px rgba(128, 128, 255, 0.35);
+  opacity: 0;
+  animation: pf-pkt-c 29s linear infinite;
+  animation-delay: -19s;
+  z-index: 2;
+}
+
+/* ===== 63 REDUCED MOTION: stagger + packets kill-switch ===== */
+/* Extends §§27/39/52/57: pf-line-in (§61) + pf-pkt-a/b/c (§62) freeze off.
+   Packet layers rest at opacity 0 (invisible); stagger targets render in
+   their natural state. Forbidden native layers untouched here (covered by
+   the earlier kill-switches). */
+@media (prefers-reduced-motion: reduce) {
+  #app-mount li[class*="messageListItem-"],
+  #app-mount li[class*="messageListItem__"],
+  #app-mount div[class*="sidebar-"] li,
+  #app-mount div[class*="sidebar__"] li,
+  #app-mount aside[class*="membersWrap-"] div[class*="member-"],
+  #app-mount aside[class*="membersWrap__"] div[class*="member__"],
+  #app-mount aside[class*="membersWrap-"] div[class*="member__"],
+  #app-mount aside[class*="membersWrap__"] div[class*="member-"],
+  #app-mount div[class*="contentRegion-"] div[class*="card-"],
+  #app-mount div[class*="contentRegion__"] div[class*="card__"],
+  #app-mount div[class*="contentRegion-"] div[class*="section-"],
+  #app-mount div[class*="contentRegion__"] div[class*="section__"],
+  #app-mount div[class*="peopleColumn-"] div[class*="peopleListItem-"],
+  #app-mount div[class*="peopleColumn__"] div[class*="peopleListItem__"] {
+    animation: none;
+  }
+  html::before,
+  html::after,
+  #app-mount div[class*="layers-"]::after,
+  #app-mount div[class*="layers__"]::after {
+    animation: none;
+    opacity: 0;
+  }
+}
+
+
